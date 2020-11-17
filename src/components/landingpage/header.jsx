@@ -17,7 +17,7 @@ export class Header extends Component {
                   <p>
                     {this.props.data ? this.props.data.paragraph : "Loading"}
                   </p>
-                  <Link to="/dashboard" className="btn btn-custom btn-lg">Home</Link>
+                  <Link to="/dashboard" className="btn btn-custom btn-lg">Empezar ahora</Link>
                 </div>
               </div>
             </div>
