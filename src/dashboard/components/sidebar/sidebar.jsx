@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { IoIosHome, IoIosLock, IoIosArrowDropright, IoIosArrowDropleft, IoMdRestaurant } from "react-icons/io";
+import { IoIosHome, IoIosBriefcase, IoIosLock, IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
 import { IconButton } from '@material-ui/core';
 import "../../style.scss";
 
@@ -26,6 +26,10 @@ const Sidebar = props => {
                 <SidebarContent>
                     <Menu iconShape="square">
                         <MenuItem icon={ <IoIosHome /> } ><b>Inicio</b></MenuItem>
+                        <SubMenu icon={ <IoIosBriefcase /> } title={<b>Administración</b>}>
+                            <MenuItem><b>Mi restaurante</b></MenuItem>
+                            <MenuItem><b>Sucursales</b></MenuItem>
+                        </SubMenu>
                         <SubMenu icon={ <IoIosLock /> } title={<b>Seguridad</b>}>
                             <MenuItem><b>Roles</b></MenuItem>
                             <MenuItem><b>Usuarios</b></MenuItem>
@@ -44,7 +48,7 @@ const Sidebar = props => {
             </ProSidebar>
         </>
     );
-    }
+}
 
 
 export default Sidebar;

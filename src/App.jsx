@@ -1,60 +1,137 @@
 import React, { Component } from 'react'
+import { CircularProgress } from '@material-ui/core';
 import {
   BrowserRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
 
+import { GuardProvider, GuardedRoute } from 'react-router-guards';
+
 // Components
-import Navigation from './components/landingpage/navigation';
-import Header from './components/landingpage/header';
-import Features from './components/landingpage/features';
-import About from './components/landingpage/about';
-import Services from './components/landingpage/services';
-import Gallery from './components/landingpage/gallery';
-import Testimonials from './components/landingpage/testimonials';
-import Contact from './components/landingpage/contact';
-import JsonData from './data/data.json';
+import Navigation from './landingpage/components/navigation';
+import Header from './landingpage/components/header';
+import Features from './landingpage/components/features';
+import About from './landingpage/components/about';
+import Services from './landingpage/components/services';
+import Gallery from './landingpage/components/gallery';
+import Testimonials from './landingpage/components/testimonials';
+import Contact from './landingpage/components/contact';
+import JsonData from './landingpage/data/data.json';
 
 // Admin
 import Home from "./dashboard/views/home/home";
+import Login from "./dashboard/views/auth/login/login";
+import Register from "./dashboard/views/auth/register/register";
+import Error404 from "./dashboard/views/errors/404";
+
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const Loading = () => {
+  return(
+    <div style={{position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)'}}>
+      <CircularProgress/>
+    </div>
+  );
+}
 
 export class App extends Component {
-  state = {
-    landingPageData: {},
+  constructor(props){
+    super(props);
+    this.state = {
+      landingPageData: {},
+    }
   }
-  getlandingPageData() {
-    this.setState({landingPageData : JsonData})
+
+  async getAuthLogin(){
+    try {
+      const sessionAuthSession = await AsyncStorage.getItem('sessionAuthSession');
+      let authSession = sessionAuthSession ? JSON.parse(sessionAuthSession) : {};
+      this.props.setAuthSession(authSession);
+      // return authSession;
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   componentDidMount() {
     this.getlandingPageData();
   }
 
+  requireLogin = async (to, from, next) => {
+    await this.getAuthLogin();
+    if (to.meta.auth) {
+      if (this.props.authSession.user) {
+        if (to.meta.routeLogin) {
+          next.redirect('/dashboard');
+        }
+        next();
+      }
+      next.redirect('/login');
+    } else {
+      next();
+    }
+  };
+
+  getlandingPageData() {
+    this.setState({landingPageData : JsonData})
+  }
+
   render() {
     return (
       <Router>
-        <Switch>
-        {/* LandingPage */}
-          <Route exact path="/">
-            <Navigation />
-            <Header data={this.state.landingPageData.Header} />
-            <Features data={this.state.landingPageData.Features} />
-            <About data={this.state.landingPageData.About} />
-            <Services data={this.state.landingPageData.Services} />
-            <Gallery />
-            <Testimonials data={this.state.landingPageData.Testimonials} />
-            <Contact data={this.state.landingPageData.Contact} />
-          </Route>
+        <GuardProvider guards={[this.requireLogin]} loading={Loading} error={Error404}>
+          <Switch>
+            {/* LandingPage */}
+            <Route exact path="/">
+              <Navigation />
+              <Header data={this.state.landingPageData.Header} />
+              <Features data={this.state.landingPageData.Features} />
+              <About data={this.state.landingPageData.About} />
+              <Services data={this.state.landingPageData.Services} />
+              <Gallery />
+              <Testimonials data={this.state.landingPageData.Testimonials} />
+              <Contact data={this.state.landingPageData.Contact} />
+            </Route>
 
-          {/* Dashboard */}
-          <Route exact path="/dashboard">
-            <Home />
-          </Route>
-        </Switch>
+            {/* Dashboard */}
+            
+            {/* Login */}
+            <GuardedRoute exact path="/login" meta={{ auth: true, routeLogin: true }}>
+              <Login />
+            </GuardedRoute>
+            {/* Register */}
+            <GuardedRoute exact path="/register" meta={{ auth: true, routeLogin: true }}>
+              <Register />
+            </GuardedRoute>
+            {/* Dashboard */}
+            <GuardedRoute exact path="/dashboard" meta={{ auth: true }}>
+              <Home />
+            </GuardedRoute>
+
+            {/* Not found */}
+            <Route path="*" component={Error404} />
+          </Switch>
+        </GuardProvider>
       </Router>
     )
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    authSession: state.authSession,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAuthSession : (authSession) => dispatch({
+      type: 'SET_AUTH_SESSION',
+      payload: authSession
+    })
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
