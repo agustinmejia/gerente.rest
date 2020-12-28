@@ -20,9 +20,11 @@ import Contact from './landingpage/components/contact';
 import JsonData from './landingpage/data/data.json';
 
 // Admin
-import Home from "./dashboard/views/home/home";
 import Login from "./dashboard/views/auth/login/login";
 import Register from "./dashboard/views/auth/register/register";
+import Home from "./dashboard/views/home/home";
+import MyCompany from "./dashboard/views/mycompany/mycompany";
+
 import Error404 from "./dashboard/views/errors/404";
 
 import { connect } from 'react-redux';
@@ -57,6 +59,13 @@ export class App extends Component {
 
   componentDidMount() {
     this.getlandingPageData();
+    this.loadGlobalConfig();
+  }
+
+  async loadGlobalConfig(){
+    const sessionGlobalConfig = await AsyncStorage.getItem('sessionGlobalConfig');
+    let globalConfig = sessionGlobalConfig ? JSON.parse(sessionGlobalConfig) : this.props.globalConfig;
+    this.props.setGlobalConfig(globalConfig);
   }
 
   requireLogin = async (to, from, next) => {
@@ -102,12 +111,16 @@ export class App extends Component {
               <Login />
             </GuardedRoute>
             {/* Register */}
-            <GuardedRoute exact path="/register" meta={{ auth: true, routeLogin: true }}>
+            <GuardedRoute exact path="/register" meta={{ routeLogin: true }}>
               <Register />
             </GuardedRoute>
             {/* Dashboard */}
             <GuardedRoute exact path="/dashboard" meta={{ auth: true }}>
               <Home />
+            </GuardedRoute>
+            {/* Dashboard */}
+            <GuardedRoute exact path="/dashboard/mycompany" meta={{ auth: true }}>
+              <MyCompany />
             </GuardedRoute>
 
             {/* Not found */}
@@ -122,6 +135,7 @@ export class App extends Component {
 const mapStateToProps = (state) => {
   return {
     authSession: state.authSession,
+    globalConfig: state.globalConfig,
   }
 }
 
@@ -130,6 +144,10 @@ const mapDispatchToProps = (dispatch) => {
     setAuthSession : (authSession) => dispatch({
       type: 'SET_AUTH_SESSION',
       payload: authSession
+    }),
+    setGlobalConfig : (globalConfig) => dispatch({
+      type: 'SET_GLOBAL_CONFIG',
+      payload: globalConfig
     })
   }
 }

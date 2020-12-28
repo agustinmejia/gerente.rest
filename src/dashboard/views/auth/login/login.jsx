@@ -1,13 +1,8 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import {
+    Avatar, Button, TextField, FormControlLabel, Checkbox, Paper, Box, Grid, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, FormControl
+} from '@material-ui/core';
+import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Link, useHistory } from "react-router-dom";
@@ -17,7 +12,7 @@ import { env } from '../../../../config/env';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const URL = env.API;
+const { API } = env;
 
 function Copyright() {
   return (
@@ -69,6 +64,7 @@ function SignInSide(props) {
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
     const [password, setpassword] = React.useState('');
+    const [showPassword, setshowPassword] = React.useState(false);
     const history = useHistory();
 
     const handleLogin = async (event) => {
@@ -76,7 +72,7 @@ function SignInSide(props) {
         let params = {
             email, password
         }
-        let login = await fetch(`${URL}/api/auth/login`, {
+        let login = await fetch(`${API}/api/auth/login`, {
             method: 'POST',
             body: JSON.stringify(params),
             headers:{
@@ -118,7 +114,7 @@ function SignInSide(props) {
                             value={ email }
                             onChange={ event => setEmail(event.target.value) }
                         />
-                        <TextField
+                        {/* <TextField
                             variant="outlined"
                             margin="normal"
                             required
@@ -128,9 +124,31 @@ function SignInSide(props) {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            value={ password }
-                            onChange={ event => setpassword(event.target.value) }
-                        />
+                            
+                        /> */}
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-password"
+                                type={ showPassword ? 'text' : 'password'}
+                                label="Contraseña"
+                                fullWidth
+                                value={ password }
+                                onChange={ event => setpassword(event.target.value) }
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={ () => setshowPassword(!showPassword) }
+                                    // onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                    >
+                                    { showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                            />
+                        </FormControl>
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Recuerdame"

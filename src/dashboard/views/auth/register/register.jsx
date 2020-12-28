@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container, Grid, Box, Avatar, Button, TextField, FormControlLabel, Checkbox, Typography, Select, MenuItem
+    Container, Grid, Box, Avatar, Button, TextField, FormControlLabel, Checkbox, Typography, Select, MenuItem, OutlinedInput, InputAdornment, IconButton, InputLabel, FormControl
 }from '@material-ui/core';
+import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useHistory } from "react-router-dom";
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import PhoneInput from 'react-phone-input-2'
 import es from 'react-phone-input-2/lang/es.json'
 import '../../../assets/css/material-input-code-number.css'
 
-import { env } from '../../../../config/env'
+import { env } from '../../../../config/env';
 
-const URL = env.API;
+const { API } = env;
 
 
 function Copyright() {
@@ -52,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function SignUp() {
+function SignUp(props) {
     const classes = useStyles();
     const [cities, setCities] = useState([]);
     const [firstName, setFirstName] = useState('');
@@ -62,6 +65,7 @@ export default function SignUp() {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = React.useState('');
     const [password, setpassword] = React.useState('');
+    const [showPassword, setshowPassword] = React.useState(false);
     const history = useHistory();
 
     const handleChangeCity = (event) => {
@@ -69,7 +73,7 @@ export default function SignUp() {
     };
 
     useEffect(() => {
-        fetch(`${URL}/api/cities/list/registers?request=api`)
+        fetch(`${API}/api/cities/list/registers?request=api`)
         .then(res => res.json())
         .then(res => {
             setCities(res.cities);
@@ -82,7 +86,7 @@ export default function SignUp() {
         let params = {
             firstName,lastName,companyName,city,phone,email, password
         }
-        let register = await fetch(`${URL}/api/auth/register`, {
+        let register = await fetch(`${API}/api/auth/register`, {
             method: 'POST',
             body: JSON.stringify(params),
             headers:{
@@ -93,6 +97,8 @@ export default function SignUp() {
         .then(res => res.json())
         .catch(error => ({'error': error}));
         if(register.user){
+            props.setAuthSession(register);
+            await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(register));
             history.push("/dashboard");
         }else{
             console.log(register)
@@ -146,29 +152,31 @@ export default function SignUp() {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <Select
-                                labelId="demo-simple-select-filled-label"
-                                id="demo-simple-select-filled"
-                                variant="outlined"
-                                // label="Ciudad"
-                                inputProps={{ 'aria-label': 'Ciudad' }}
-                                required
-                                fullWidth
-                                value={ city }
-                                onChange={ handleChangeCity }
-                                >
-                                    <MenuItem disabled key={0} value="none">
-                                        <em>Selecciona tu ciudad</em>
-                                    </MenuItem>
-                                    {
-                                        cities.map(city => 
-                                            <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
-                                        )
-                                    }
-                            </Select>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel htmlFor="outlined-adornment-password">Ciudad</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-filled-label"
+                                    id="demo-simple-select-filled"
+                                    variant="outlined"
+                                    label="Ciudad"
+                                    inputProps={{ 'aria-label': 'Ciudad' }}
+                                    required
+                                    fullWidth
+                                    value={ city }
+                                    onChange={ handleChangeCity }
+                                    >
+                                        <MenuItem disabled key={0} value="none">
+                                            <em>Selecciona tu ciudad</em>
+                                        </MenuItem>
+                                        {
+                                            cities.map(city => 
+                                                <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
+                                            )
+                                        }
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={6}>
-
                             <PhoneInput
                                 country={'bo'}
                                 value={phone}
@@ -194,17 +202,29 @@ export default function SignUp() {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Contraseña"
-                                type="password"
-                                id="password"
-                                value={ password }
-                                onChange={ event => setpassword(event.target.value) }
-                            />
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-password"
+                                    type={ showPassword ? 'text' : 'password'}
+                                    label="Contraseña"
+                                    fullWidth
+                                    value={ password }
+                                    onChange={ event => setpassword(event.target.value) }
+                                    endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={ () => setshowPassword(!showPassword) }
+                                        // onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                        >
+                                        { showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
+                                        </IconButton>
+                                    </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControlLabel
@@ -238,3 +258,14 @@ export default function SignUp() {
         </Container>
     );
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setAuthSession : (authSession) => dispatch({
+            type: 'SET_AUTH_SESSION',
+            payload: authSession
+        })
+    }
+}
+
+export default connect(null, mapDispatchToProps)(SignUp);
