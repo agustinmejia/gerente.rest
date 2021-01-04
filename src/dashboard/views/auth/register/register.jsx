@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container, Grid, Box, Avatar, Button, TextField, FormControlLabel, Checkbox, Typography, Select, MenuItem, OutlinedInput, InputAdornment, IconButton, InputLabel, FormControl
+    Container,
+    Grid,
+    Box,
+    Avatar,
+    Button,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Typography,
+    Select,
+    MenuItem,
+    OutlinedInput,
+    InputAdornment,
+    IconButton,
+    InputLabel,
+    FormControl,
+    Backdrop,
+    CircularProgress
 }from '@material-ui/core';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
@@ -57,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SignUp(props) {
     const classes = useStyles();
+    const [loading, setLoading] = React.useState(false);
     const [cities, setCities] = useState([]);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -82,6 +100,7 @@ function SignUp(props) {
     }, []);
     
     const handleRegistre = async (event) => {
+        setLoading(true);
         event.preventDefault();
         let params = {
             firstName,lastName,companyName,city,phone,email, password
@@ -96,6 +115,7 @@ function SignUp(props) {
         })
         .then(res => res.json())
         .catch(error => ({'error': error}));
+        setLoading(false);
         if(register.user){
             props.setAuthSession(register);
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(register));
@@ -106,156 +126,163 @@ function SignUp(props) {
     }
 
     return (
-        <Container maxWidth="sm">
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar} />
-                <Typography variant="h4">
-                    Registrarse
-                </Typography>
-                <form className={classes.form} onSubmit={handleRegistre}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                name="firstName"
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="firstName"
-                                label="Nombre(s)"
-                                autoFocus
-                                value={ firstName }
-                                onChange={ event => setFirstName(event.target.value) }
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="lastName"
-                                label="Apellidos"
-                                name="lastName"
-                                value={ lastName }
-                                onChange={ event => setLastName(event.target.value) }
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="companyName"
-                                label="Nombre de tu restaurante"
-                                name="companyName"
-                                value={ companyName }
-                                onChange={ event => setCompanyName(event.target.value) }
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel htmlFor="outlined-adornment-password">Ciudad</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-filled-label"
-                                    id="demo-simple-select-filled"
+        <>
+            { loading &&
+                <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            }
+            <Container maxWidth="sm">
+                <div className={classes.paper}>
+                    <Avatar className={classes.avatar} />
+                    <Typography variant="h4">
+                        Registrarse
+                    </Typography>
+                    <form className={classes.form} onSubmit={handleRegistre}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    name="firstName"
                                     variant="outlined"
-                                    label="Ciudad"
-                                    inputProps={{ 'aria-label': 'Ciudad' }}
                                     required
                                     fullWidth
-                                    value={ city }
-                                    onChange={ handleChangeCity }
-                                    >
-                                        <MenuItem disabled key={0} value="none">
-                                            <em>Selecciona tu ciudad</em>
-                                        </MenuItem>
-                                        {
-                                            cities.map(city => 
-                                                <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
-                                            )
-                                        }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <PhoneInput
-                                country={'bo'}
-                                value={phone}
-                                onChange={ code => setPhone(code) }
-                                localization={es}
-                                specialLabel='Nº de celular'
-                                inputProps={{
-                                    name: 'phone',
-                                    required: true
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email"
-                                name="email"
-                                value={ email }
-                                onChange={ event => setEmail(event.target.value) }
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                                <OutlinedInput
-                                    id="outlined-adornment-password"
-                                    type={ showPassword ? 'text' : 'password'}
-                                    label="Contraseña"
-                                    fullWidth
-                                    value={ password }
-                                    onChange={ event => setpassword(event.target.value) }
-                                    endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={ () => setshowPassword(!showPassword) }
-                                        // onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                        >
-                                        { showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
-                                        </IconButton>
-                                    </InputAdornment>
-                                    }
+                                    id="firstName"
+                                    label="Nombre(s)"
+                                    autoFocus
+                                    value={ firstName }
+                                    onChange={ event => setFirstName(event.target.value) }
                                 />
-                            </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="lastName"
+                                    label="Apellidos"
+                                    name="lastName"
+                                    value={ lastName }
+                                    onChange={ event => setLastName(event.target.value) }
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="companyName"
+                                    label="Nombre de tu restaurante"
+                                    name="companyName"
+                                    value={ companyName }
+                                    onChange={ event => setCompanyName(event.target.value) }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth variant="outlined">
+                                    <InputLabel htmlFor="outlined-adornment-password">Ciudad</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-filled-label"
+                                        id="demo-simple-select-filled"
+                                        variant="outlined"
+                                        label="Ciudad"
+                                        inputProps={{ 'aria-label': 'Ciudad' }}
+                                        required
+                                        fullWidth
+                                        value={ city }
+                                        onChange={ handleChangeCity }
+                                        >
+                                            <MenuItem disabled key={0} value="none">
+                                                <em>Selecciona tu ciudad</em>
+                                            </MenuItem>
+                                            {
+                                                cities.map(city => 
+                                                    <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
+                                                )
+                                            }
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <PhoneInput
+                                    country={'bo'}
+                                    value={phone}
+                                    onChange={ code => setPhone(code) }
+                                    localization={es}
+                                    specialLabel='Nº de celular'
+                                    inputProps={{
+                                        name: 'phone',
+                                        required: true
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email"
+                                    name="email"
+                                    value={ email }
+                                    onChange={ event => setEmail(event.target.value) }
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined">
+                                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                    <OutlinedInput
+                                        id="outlined-adornment-password"
+                                        type={ showPassword ? 'text' : 'password'}
+                                        label="Contraseña"
+                                        fullWidth
+                                        value={ password }
+                                        onChange={ event => setpassword(event.target.value) }
+                                        endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={ () => setshowPassword(!showPassword) }
+                                            // onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                            >
+                                            { showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
+                                            </IconButton>
+                                        </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    control={<Checkbox value="allowExtraEmails" color="primary" checked />}
+                                    label="Quiero recibir promociones de marketing y actualizaciones por correo electrónico"
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={<Checkbox value="allowExtraEmails" color="primary" checked />}
-                                label="Quiero recibir promociones de marketing y actualizaciones por correo electrónico"
-                            />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            size="large"
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            Registrarse
+                        </Button>
+                        <Grid container justify="flex-end">
+                            <Grid item>
+                                <Link to="/login" className="btn btn-link">
+                                    Ya tienes una cuenta?
+                                </Link>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        size="large"
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        Registrarse
-                    </Button>
-                    <Grid container justify="flex-end">
-                        <Grid item>
-                            <Link to="/login" className="btn btn-link">
-                                Ya tienes una cuenta?
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </form>
-            </div>
-            <Box mt={5}>
-                <Copyright />
-            </Box>
-        </Container>
+                    </form>
+                </div>
+                <Box mt={5}>
+                    <Copyright />
+                </Box>
+            </Container>
+        </>
     );
 }
 

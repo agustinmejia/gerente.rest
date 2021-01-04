@@ -24,6 +24,9 @@ import Login from "./dashboard/views/auth/login/login";
 import Register from "./dashboard/views/auth/register/register";
 import Home from "./dashboard/views/home/home";
 import MyCompany from "./dashboard/views/mycompany/mycompany";
+// Branches
+import BranchesList from "./dashboard/views/branches/branchesList";
+import BranchesCreate from "./dashboard/views/branches/branchesCreate";
 
 import Error404 from "./dashboard/views/errors/404";
 
@@ -105,7 +108,7 @@ export class App extends Component {
             </Route>
 
             {/* Dashboard */}
-            
+
             {/* Login */}
             <GuardedRoute exact path="/login" meta={{ auth: true, routeLogin: true }}>
               <Login />
@@ -118,9 +121,16 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard" meta={{ auth: true }}>
               <Home />
             </GuardedRoute>
+
             {/* Dashboard */}
             <GuardedRoute exact path="/dashboard/mycompany" meta={{ auth: true }}>
               <MyCompany />
+            </GuardedRoute>
+            <GuardedRoute exact path="/dashboard/branches" meta={{ auth: true }}>
+              <BranchesList />
+            </GuardedRoute>
+            <GuardedRoute exact path="/dashboard/branches/create" meta={{ auth: true }}>
+              <BranchesCreate />
             </GuardedRoute>
 
             {/* Not found */}

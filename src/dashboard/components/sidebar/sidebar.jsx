@@ -41,7 +41,7 @@ const Sidebar = props => {
                         <MenuItem icon={ <IoIosHome /> } ><Link to="/dashboard">Inicio</Link></MenuItem>
                         <SubMenu icon={ <IoIosBriefcase /> } title={<b>Administración</b>}>
                             <MenuItem><Link to="/dashboard/mycompany">Mi restaurante</Link></MenuItem>
-                            <MenuItem><b>Sucursales</b></MenuItem>
+                            <MenuItem><Link to="/dashboard/branches">Sucursales</Link></MenuItem>
                         </SubMenu>
                         <SubMenu icon={ <IoIosLock /> } title={<b>Seguridad</b>}>
                             <MenuItem><Link to="/dashboard">Usuarios</Link></MenuItem>

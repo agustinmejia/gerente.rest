@@ -23,9 +23,7 @@ class Home extends Component {
                     </div>
                     <Navbar/>
                     <header style={{ paddingLeft: 30 }}>
-                        <h2>
-                            Bienvenido
-                        </h2>
+                        <h1>Bienvenido</h1>
                     </header>
                 </main>
             </div>
