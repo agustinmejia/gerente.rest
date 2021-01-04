@@ -1,6 +1,21 @@
 import React from 'react';
 import {
-    Avatar, Button, TextField, FormControlLabel, Checkbox, Paper, Box, Grid, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, FormControl
+    Avatar,
+    Button,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Paper,
+    Box,
+    Grid,
+    Typography,
+    OutlinedInput,
+    InputAdornment,
+    IconButton,
+    InputLabel,
+    FormControl,
+    Backdrop,
+    CircularProgress
 } from '@material-ui/core';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
@@ -61,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function SignInSide(props) {
+    const [loading, setLoading] = React.useState(false);
     const classes = useStyles();
     const [email, setEmail] = React.useState('');
     const [password, setpassword] = React.useState('');
@@ -68,6 +84,7 @@ function SignInSide(props) {
     const history = useHistory();
 
     const handleLogin = async (event) => {
+        setLoading(true);
         event.preventDefault();
         let params = {
             email, password
@@ -82,6 +99,7 @@ function SignInSide(props) {
         })
         .then(res => res.json())
         .catch(error => ({'error': error}));
+        setLoading(false);
         if(login.user){
             props.setAuthSession(login);
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(login));
@@ -92,8 +110,14 @@ function SignInSide(props) {
     }
 
   return (
-    <Grid container component="main" className={classes.root}>
-        <Grid item xs={false} sm={4} md={7} className={classes.image} />
+    <>
+        { loading &&
+            <Backdrop open={true} style={{ zIndex: 2 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        }
+        <Grid container component="main" className={classes.root}>
+            <Grid item xs={false} sm={4} md={7} className={classes.image} />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar} />
@@ -182,6 +206,7 @@ function SignInSide(props) {
                 </div>
             </Grid>
         </Grid>
+    </>
   );
 }
 

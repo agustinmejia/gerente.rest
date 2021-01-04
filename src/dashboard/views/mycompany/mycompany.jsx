@@ -100,19 +100,16 @@ class MyCompany extends Component {
             method: 'post',
             url: `${API}/api/company/owner/${auth.user.owner.id}/update/images`,
             data: formData,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${this.props.authSession.token}`
-            }
+            headers: this.state.headers
         })
         .then(res => {
             if(res.data.logo){
                 this.setState({logo: `${API}/storage/${res.data.logo.replace('.', '-cropped.')}`});
-                this.props.enqueueSnackbar('Logo actualizado correctamnete!', { variant: 'success' });
+                this.props.enqueueSnackbar('Logo actualizado correctamente!', { variant: 'success' });
             }
             if(res.data.banner){
                 this.setState({banner: `${API}/storage/${res.data.banner}`});
-                this.props.enqueueSnackbar('Banner actualizado correctamnete!', { variant: 'success' });
+                this.props.enqueueSnackbar('Banner actualizado correctamente!', { variant: 'success' });
             }
         })
         .catch((err) => alert("File Upload Error"))
@@ -136,11 +133,7 @@ class MyCompany extends Component {
             method: 'post',
             url: `${API}/api/company/owner/${auth.user.owner.id}/update`,
             data: params,
-            headers: {
-                'Content-Type': 'application/json',
-                'accept': 'application/json',
-                'Authorization': `Bearer ${this.props.authSession.token}`
-            }
+            headers: this.state.headers
         })
         .then(res => {
             if(res.data.company){
@@ -169,7 +162,7 @@ class MyCompany extends Component {
                         </div>
                         <Navbar/>
                         <header style={{ paddingLeft: 30 }}>
-                            <h2>{ this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h2>
+                            <h1>{ this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h1>
                         </header>
                         <Grid style={{ marginTop: -100 }}>
                             <form>
