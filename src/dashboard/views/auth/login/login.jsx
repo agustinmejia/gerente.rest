@@ -17,6 +17,8 @@ import {
     Backdrop,
     CircularProgress
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -82,6 +84,8 @@ function SignInSide(props) {
     const [password, setpassword] = React.useState('');
     const [showPassword, setshowPassword] = React.useState(false);
     const history = useHistory();
+    const [errorMessage, setErrorMessage] = React.useState('');
+
 
     const handleLogin = async (event) => {
         setLoading(true);
@@ -105,7 +109,8 @@ function SignInSide(props) {
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(login));
             history.push("/dashboard");
         }else{
-            console.log(login)
+            // console.log(login)
+            setErrorMessage(login.error);
         }
     }
 
@@ -138,18 +143,6 @@ function SignInSide(props) {
                             value={ email }
                             onChange={ event => setEmail(event.target.value) }
                         />
-                        {/* <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Contraseña"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            
-                        /> */}
                         <FormControl fullWidth variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                             <OutlinedInput
@@ -173,6 +166,7 @@ function SignInSide(props) {
                                 }
                             />
                         </FormControl>
+                        { errorMessage && <Alert severity="error" style={{marginTop: 20, marginBottom: 10}}>{ errorMessage }</Alert> }
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Recuerdame"

@@ -5,8 +5,12 @@ const reducerApp = (
                 sidebar: {
                     collapsed: false,
                     toggled: ''
+                },
+                TPVSales:{
+                    productsShowType: 'cuadricula'
                 }
-            }
+            },
+            productsTPV: []
         }, action
     ) => {
     switch (action.type) {
@@ -14,6 +18,8 @@ const reducerApp = (
             return {...state, authSession: action.payload};
         case 'SET_GLOBAL_CONFIG':
             return {...state, globalConfig: action.payload};
+        case 'SET_PRODUCTS_TPV':
+            return {...state, productsTPV: action.payload};
         default:
             return state;
     }

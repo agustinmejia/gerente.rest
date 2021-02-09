@@ -24,7 +24,7 @@ import { env } from '../../../config/env';
 
 const { API } = env;
 
-class BranchesCreate extends Component {
+class BranchesEdit extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -36,7 +36,7 @@ class BranchesCreate extends Component {
             sidebarToggled: false,
             loading: false,
             cities: [],
-            ownerId: 0,
+            id: this.props.match.params.id,
             name: '',
             city: 'none',
             location: '',
@@ -46,6 +46,7 @@ class BranchesCreate extends Component {
     }
 
     componentDidMount(){
+        // Get cities
         fetch(`${API}/api/cities/list/registers?request=api`)
         .then(res => res.json())
         .then(res => {
@@ -53,9 +54,21 @@ class BranchesCreate extends Component {
         })
         .catch(error => ({'error': error}));
 
-        if(this.props.authSession.user){
-            this.setState({ownerId: this.props.authSession.user.owner.id})
-        }
+        // Get branch info
+        fetch(`${API}/api/branch/${this.state.id}`, {headers: this.state.headers})
+        .then(res => res.json())
+        .then(res => {
+            let { branch } = res;
+            this.setState({
+                name: branch.name,
+                city: branch.city_id ? branch.city_id : 'none',
+                location: branch.location,
+                phones: branch.phones,
+                address: branch.address
+            });
+            // console.log(res)
+        })
+        .catch(error => ({'error': error}));
     }
 
     handleApiLoaded = (map, maps) => {
@@ -71,7 +84,6 @@ class BranchesCreate extends Component {
 
         this.setState({loading: true});
         let params = {
-            ownerId: this.state.ownerId,
             name: this.state.name,
             city: this.state.city,
             location: this.state.location,
@@ -80,7 +92,7 @@ class BranchesCreate extends Component {
         }
         axios({
             method: 'post',
-            url: `${API}/api/branch/create`,
+            url: `${API}/api/branch/${this.state.id}/update`,
             data: params,
             headers: this.state.headers
         })
@@ -111,8 +123,8 @@ class BranchesCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Nueva sucursal' />
-                        
+                        <Navbar title='Edita sucursal' />
+
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
                                 <Grid container spacing={2}>
@@ -218,7 +230,7 @@ class BranchesCreate extends Component {
                                                 color="primary"
                                                 endIcon={ <IoIosCheckmarkCircle/> }
                                             >
-                                                Guardar
+                                                Actualizar
                                             </Button>
                                         </Grid>
                                     </Grid>
@@ -238,4 +250,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(BranchesCreate));
+export default connect(mapStateToProps)(withSnackbar(BranchesEdit));

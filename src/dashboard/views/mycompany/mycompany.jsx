@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
 import {
-    Grid, TextField, Select, MenuItem, Card, CardActionArea, CardMedia, Button, IconButton, Backdrop, CircularProgress
+    Grid,
+    TextField,
+    Select,
+    MenuItem,
+    Card,
+    CardActionArea,
+    CardMedia,
+    Button,
+    IconButton,
+    Tooltip,
+    Backdrop,
+    CircularProgress
 } from '@material-ui/core';
 import { IoIosMenu, IoMdCreate, IoIosCamera } from "react-icons/io";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import { connect } from 'react-redux';
@@ -30,7 +42,6 @@ class MyCompany extends Component {
             logo: `${API}/images/logo.png`,
             sidebarToggled: false,
             cities: [],
-            imputCompanyID: null,
             imputCompanyName: 'Mi restaurante',
             inputSlogan: '',
             selectCity: 'none',
@@ -38,7 +49,7 @@ class MyCompany extends Component {
             inputAddress: '',
             inputBanner: null,
             inputLogo: null,
-            inputSmallDescription: ''
+            inputShortDescription: ''
         }
 
         this.myForm = React.createRef();
@@ -56,93 +67,93 @@ class MyCompany extends Component {
         })
         
         // Get company info
-        let auth = this.props.authSession;
-        let options = {
-            headers: this.state.headers
+        let { company } = this.props.authSession;
+        this.setState({
+            imputCompanyName: company.name,
+            inputSlogan: company.slogan,
+            selectCity: company.city_id,
+            inputPhones: company.phones,
+            inputAddress: company.address,
+            inputShortDescription: company.short_description
+        });
+
+        if(company.logos){
+            this.setState({logo: `${API}/storage/${company.logos.replace('.', '-cropped.')}`});
         }
-        axios.get(`${API}/api/company/owner/${auth.user.owner.id}`, options)
-        .then(response => {
-            let { company } = response.data;
-            this.setState({
-                imputCompanyID: company.id,
-                imputCompanyName: company.name,
-                inputSlogan: company.slogan,
-                selectCity: company.city_id,
-                inputPhones: company.phones,
-                inputAddress: company.address,
-                inputSmallDescription: company.small_description
-            });
-
-            if(company.logos){
-                this.setState({logo: `${API}/storage/${company.logos.replace('.', '-cropped.')}`});
-            }
-            if(company.banners){
-                this.setState({banner: `${API}/storage/${company.banners}`});
-            }
-        })
-        .catch(error => {
-            // handle error
-            console.log(error);
-        })
-
-    }
-
-    handleChangeImage(event, name){
-        this.setState({loading: true});
-        let auth = this.props.authSession;
-        let file = event.target.files[0];
-
-        let formData = new FormData();
-        formData.append(name, file);
-        formData.append("id", this.state.imputCompanyID);
-
-        axios({
-            method: 'post',
-            url: `${API}/api/company/owner/${auth.user.owner.id}/update/images`,
-            data: formData,
-            headers: this.state.headers
-        })
-        .then(res => {
-            if(res.data.logo){
-                this.setState({logo: `${API}/storage/${res.data.logo.replace('.', '-cropped.')}`});
-                this.props.enqueueSnackbar('Logo actualizado correctamente!', { variant: 'success' });
-            }
-            if(res.data.banner){
-                this.setState({banner: `${API}/storage/${res.data.banner}`});
-                this.props.enqueueSnackbar('Banner actualizado correctamente!', { variant: 'success' });
-            }
-        })
-        .catch((err) => alert("File Upload Error"))
-        .then(() => this.setState({loading: false}));
+        if(company.banners){
+            this.setState({banner: `${API}/storage/${company.banners}`});
+        }
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
         this.setState({loading: true});
-        let auth = this.props.authSession;
+        let { company } = this.props.authSession;
         let params = {
-            id: this.state.imputCompanyID,
             name: this.state.imputCompanyName,
             slogan: this.state.inputSlogan,
             city_id: this.state.selectCity,
             phones: this.state.inputPhones,
             address: this.state.inputAddress,
-            small_description: this.state.inputSmallDescription
+            short_description: this.state.inputShortDescription
         }
         axios({
             method: 'post',
-            url: `${API}/api/company/owner/${auth.user.owner.id}/update`,
+            url: `${API}/api/company/${company.id}/update`,
             data: params,
             headers: this.state.headers
         })
-        .then(res => {
+        .then(async res => {
             if(res.data.company){
-                this.props.enqueueSnackbar('Datos actualizados correctamnete!', { variant: 'success' });
+                let { company } = res.data;
+                let authSession = {
+                    ...this.props.authSession,
+                    company
+                };
+                this.props.setAuthSession(authSession);
+                await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(authSession));
+                this.props.enqueueSnackbar('Datos actualizados correctamente!', { variant: 'success' });
             }else{
                 this.props.enqueueSnackbar('Ocurrió un error inesparado, intente nuevamente!', { variant: 'error' })
             }
         })
         .catch((err) => this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor!', { variant: 'error' }))
+        .then(() => this.setState({loading: false}));
+    }
+
+    handleChangeImage(event, name){
+        this.setState({loading: true});
+        let { company } = this.props.authSession;
+        let file = event.target.files[0];
+
+        let formData = new FormData();
+        formData.append(name, file);
+
+        axios({
+            method: 'post',
+            url: `${API}/api/company/${company.id}/update/images`,
+            data: formData,
+            headers: this.state.headers
+        })
+        .then(async res => {
+            let { company } = res.data;
+            let authSession = {
+                ...this.props.authSession,
+                company
+            };
+            this.props.setAuthSession(authSession);
+            await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(authSession));
+
+            if(company.logos){
+                this.setState({logo: `${API}/storage/${company.logos.replace('.', '-cropped.')}`});
+                this.props.enqueueSnackbar('Logo actualizado correctamente!', { variant: 'success' });
+            }
+            if(company.banners){
+                this.setState({banner: `${API}/storage/${company.banners}`});
+                this.props.enqueueSnackbar('Banner actualizado correctamente!', { variant: 'success' });
+            }
+        })
+        .catch((err) => alert("File Upload Error"))
         .then(() => this.setState({loading: false}));
     }
 
@@ -156,24 +167,25 @@ class MyCompany extends Component {
                 }
                 <div className='app'>
                     <Sidebar toggled={this.state.sidebarToggled} onToggle={ () => this.setState({ sidebarToggled: !this.state.sidebarToggled }) }/>
-                    <main style={{ paddingBottom: 50 }}>
+                    <main style={{paddingTop: 10}}>
                         <div className="btn-toggle" onClick={() => this.setState({ sidebarToggled: !this.state.sidebarToggled })}>
                             <IoIosMenu size={40} />
                         </div>
-                        <Navbar/>
-                        <header style={{ paddingLeft: 30 }}>
-                            <h1>{ this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h1>
-                        </header>
-                        <Grid style={{ marginTop: -100 }}>
+
+                        <Navbar title={ this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' } />
+
+                        <Grid style={{ marginTop: -60 }}>
                             <form>
                                 <input accept="image/*" style={{ display: 'none' }} id="input-banner" type="file" onChange={ event => this.handleChangeImage(event, 'banner') } />
                                 <input accept="image/*" style={{ display: 'none' }} id="input-logo" type="file" onChange={ event => this.handleChangeImage(event, 'logo') } />
                             </form>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', bottom: -90, paddingRight: 10, zIndex: 1 }}>
                                 <label htmlFor="input-banner">
-                                    <IconButton aria-label="upload picture" component="span">
-                                        <IoIosCamera color='white' size={50} />
-                                    </IconButton>
+                                    <Tooltip title="Cambiar banner">
+                                        <IconButton aria-label="Cambiar banner" component="span">
+                                            <IoIosCamera color='white' size={50} />
+                                        </IconButton>
+                                    </Tooltip>
                                 </label>
                             </div>
                             <Card>
@@ -193,9 +205,11 @@ class MyCompany extends Component {
                                 />
                                 <div style={{ position: 'relative', bottom: 78, right: 78, zIndex: 1 }}>
                                     <label htmlFor="input-logo">
-                                        <IconButton aria-label="upload picture" style={{display: this.state.displayCameraLogo}} component="span">
-                                            <IoIosCamera color='white' size={50} />
-                                        </IconButton>
+                                        <Tooltip title="Cambiar logo">
+                                            <IconButton aria-label="Cambiar logo" style={{display: this.state.displayCameraLogo}} component="span">
+                                                <IoIosCamera color='white' size={50} />
+                                            </IconButton>
+                                        </Tooltip>
                                     </label>
                                 </div>
                             </Grid>
@@ -292,8 +306,8 @@ class MyCompany extends Component {
                                         style={{ marginTop: 0}}
                                         multiline
                                         rows={2}
-                                        value={ this.state.inputSmallDescription }
-                                        onChange={ event => this.setState({inputSmallDescription: event.target.value}) }
+                                        value={ this.state.inputShortDescription }
+                                        onChange={ event => this.setState({inputShortDescription: event.target.value}) }
                                     />
                                 </Grid>
                                 <Button
@@ -303,6 +317,7 @@ class MyCompany extends Component {
                                     variant="contained"
                                     color="primary"
                                     endIcon={<IoMdCreate />}
+                                    style={{marginTop: 30}}
                                 >
                                     Actualizar datos
                                 </Button>
@@ -321,4 +336,13 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(MyCompany));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setAuthSession : (authSession) => dispatch({
+            type: 'SET_AUTH_SESSION',
+            payload: authSession
+        })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MyCompany));

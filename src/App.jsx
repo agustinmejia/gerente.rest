@@ -27,6 +27,19 @@ import MyCompany from "./dashboard/views/mycompany/mycompany";
 // Branches
 import BranchesList from "./dashboard/views/branches/branchesList";
 import BranchesCreate from "./dashboard/views/branches/branchesCreate";
+import BranchesEdit from "./dashboard/views/branches/branchesEdit";
+
+// Products
+import ProductsList from "./dashboard/views/products/productsList";
+import ProductsCreate from "./dashboard/views/products/productsCreate";
+import ProductsEdit from "./dashboard/views/products/productsEdit";
+
+// Cashiers
+import CashiersList from "./dashboard/views/cashiers/cashiersList";
+
+// Sales
+import SalesList from "./dashboard/views/sales/salesList";
+import SalesCreate from "./dashboard/views/sales/salesCreate";
 
 import Error404 from "./dashboard/views/errors/404";
 
@@ -109,29 +122,28 @@ export class App extends Component {
 
             {/* Dashboard */}
 
-            {/* Login */}
-            <GuardedRoute exact path="/login" meta={{ auth: true, routeLogin: true }}>
-              <Login />
-            </GuardedRoute>
-            {/* Register */}
-            <GuardedRoute exact path="/register" meta={{ routeLogin: true }}>
-              <Register />
-            </GuardedRoute>
-            {/* Dashboard */}
-            <GuardedRoute exact path="/dashboard" meta={{ auth: true }}>
-              <Home />
-            </GuardedRoute>
+            {/* Auth */}
+            <GuardedRoute exact path="/login" meta={{ auth: true, routeLogin: true }} render={(props) => <Login {...props}/>} />
+            <GuardedRoute exact path="/register" meta={{ routeLogin: true }} render={(props) => <Register {...props}/>} />
 
             {/* Dashboard */}
-            <GuardedRoute exact path="/dashboard/mycompany" meta={{ auth: true }}>
-              <MyCompany />
-            </GuardedRoute>
-            <GuardedRoute exact path="/dashboard/branches" meta={{ auth: true }}>
-              <BranchesList />
-            </GuardedRoute>
-            <GuardedRoute exact path="/dashboard/branches/create" meta={{ auth: true }}>
-              <BranchesCreate />
-            </GuardedRoute>
+            <GuardedRoute exact path="/dashboard" meta={{ auth: true }} render={(props) => <Home {...props}/>} />
+
+            {/* Dashboard */}
+            <GuardedRoute exact path="/dashboard/mycompany" meta={{ auth: true }} render={(props) => <MyCompany {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/branches" meta={{ auth: true }} render={(props) => <BranchesList {...props}/>} />
+            <GuardedRoute exact path="/dashboard/branches/create" meta={{ auth: true }} render={(props) => <BranchesCreate {...props}/>} />
+            <GuardedRoute exact path="/dashboard/branches/:id/edit" meta={{ auth: true }} render={(props) => <BranchesEdit {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/products" meta={{ auth: true }} render={(props) => <ProductsList {...props}/>} />
+            <GuardedRoute exact path="/dashboard/products/create" meta={{ auth: true }} render={(props) => <ProductsCreate {...props}/>} />
+            <GuardedRoute exact path="/dashboard/products/:id/edit" meta={{ auth: true }} render={(props) => <ProductsEdit {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/cashiers" meta={{ auth: true }} render={(props) => <CashiersList {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/sales" meta={{ auth: true }} render={(props) => <SalesList {...props}/>} />
+            <GuardedRoute exact path="/dashboard/sales/create" meta={{ auth: true }} render={(props) => <SalesCreate {...props}/>} />
 
             {/* Not found */}
             <Route path="*" component={Error404} />

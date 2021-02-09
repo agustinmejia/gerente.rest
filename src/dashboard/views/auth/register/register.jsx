@@ -23,6 +23,7 @@ import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useHistory } from "react-router-dom";
 import { connect } from 'react-redux';
+import { withSnackbar } from 'notistack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import PhoneInput from 'react-phone-input-2'
@@ -100,8 +101,12 @@ function SignUp(props) {
     }, []);
     
     const handleRegistre = async (event) => {
-        setLoading(true);
         event.preventDefault();
+        if(city === 'none'){
+            props.enqueueSnackbar('Debes seleccionar una ciudad!', { variant: 'warning' });
+            return false;
+        }
+        setLoading(true);
         let params = {
             firstName,lastName,companyName,city,phone,email, password
         }
@@ -179,10 +184,10 @@ function SignUp(props) {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="outlined-adornment-password">Ciudad</InputLabel>
+                                    <InputLabel htmlFor="outlined-adornment-city">Ciudad</InputLabel>
                                     <Select
-                                        labelId="demo-simple-select-filled-label"
-                                        id="demo-simple-select-filled"
+                                        labelId="outlined-adornment-city"
+                                        id="select-city"
                                         variant="outlined"
                                         label="Ciudad"
                                         inputProps={{ 'aria-label': 'Ciudad' }}
@@ -295,4 +300,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(SignUp);
+export default connect(null, mapDispatchToProps)(withSnackbar(SignUp));

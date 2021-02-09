@@ -17,14 +17,13 @@ class Home extends Component {
         return (
             <div className='app'>
                 <Sidebar toggled={this.state.sidebarToggled} onToggle={ () => this.setState({ sidebarToggled: !this.state.sidebarToggled }) }/>
-                <main>
+                <main style={{paddingTop: 10}}>
                     <div className="btn-toggle" onClick={() => this.setState({ sidebarToggled: !this.state.sidebarToggled })}>
                         <IoIosMenu size={40} />
                     </div>
-                    <Navbar/>
-                    <header style={{ paddingLeft: 30 }}>
-                        <h1>Bienvenido</h1>
-                    </header>
+
+                    <Navbar title='Bievenido' />
+
                 </main>
             </div>
         );

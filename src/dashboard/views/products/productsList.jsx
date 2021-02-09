@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Avatar,
   Slide
 } from '@material-ui/core';
 
@@ -40,12 +41,13 @@ const transition = React.forwardRef(function Transition(props, ref) {
 const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Nombre' },
-  { id: 'phones', label: 'Telefonos' },
-  { id: 'address', label: 'Dirección' },
+  { id: 'type', label: 'Categoría' },
+  { id: 'price', label: 'Precio' },
+  { id: 'image', label: 'Imagen' },
   { id: 'actions', label: 'Opciones' },
 ];
 
-class BranchesList extends Component {
+class ProductsList extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -54,6 +56,7 @@ class BranchesList extends Component {
             'accept': 'application/json',
             'Authorization': `Bearer ${this.props.authSession.token}`
           },
+          defaultImg: `${API}/images/default-image.png`,
           showDialog: false,
           tableRows: [],
           sidebarToggled: false,
@@ -63,39 +66,39 @@ class BranchesList extends Component {
         }
     }
 
-    createData(id, name, phones, address) {
+    createData(id, name, type, price, image) {
       let tableOptions = (
         <>
-          <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
-            <Tooltip title="Editar sucursal" placement="top">
-              <Fab aria-label="Editar sucursal" size='small'>
+          <Link to={`/dashboard/products/${id}/edit`} style={{marginRight: 10}}>
+            <Tooltip title="Editar productos" placement="top">
+              <Fab aria-label="Editar productos" size='small'>
                 <IoIosCreate size={25} color="#0D9CCE" />
               </Fab>
             </Tooltip>
           </Link>
-          <Tooltip title="Eliminar sucursal" placement="top">
-            <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+          <Tooltip title="Eliminar productos" placement="top">
+            <Fab aria-label="Eliminar productos" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
               <IoIosTrash size={25} color="#F33417" />
             </Fab>
           </Tooltip>
         </>
       )
-      return { id, name, phones, address, actions: tableOptions };
+      return { id, name, type, price, image: <Avatar src={image ? `${API}/storage/${image.replace('.', '-cropped.')}` : this.state.defaultImg} style={{width: 80, height: 80}} />, actions: tableOptions };
     }
 
     componentDidMount(){
-        this.getData()
+        this.getProducts();
     }
 
-    getData(){
-      let { company } = this.props.authSession;
-        fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
+    getProducts(){
+        let { company } = this.props.authSession;
+        fetch(`${API}/api/company/${company.id}/products/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
           let rows = [];
-          if(res.branches){
-            res.branches.map(branch => {
-              rows.push(this.createData(branch.id, branch.name, branch.phones, branch.address));
+          if(res.products){
+            res.products.map(product => {
+                rows.push(this.createData(product.id, product.name, product.type, product.price, product.image));
             });
           }
           this.setState({tableRows: rows});
@@ -104,22 +107,22 @@ class BranchesList extends Component {
     }
 
     hanldeDelete = () => {
-      let options = {
-        headers: this.state.headers
-      }
-      axios.get(`${API}/api/branch/${this.state.deleteId}/delete`, options)
-      .then(response => {
-        if(response.data.branch){
-          this.getData();
-          this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
-        }else{
-          this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
+        let options = {
+            headers: this.state.headers
         }
-      })
-      .catch(error => ({'error': error}))
-      .finally( () => {
-        this.setState({showDialog: false});
-      });
+        axios.get(`${API}/api/product/${this.state.deleteId}/delete`, options)
+        .then(response => {
+            if(response.data.product){
+                this.getProducts();
+                this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
+            }else{
+                this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
+            }
+        })
+        .catch(error => ({'error': error}))
+        .finally( () => {
+            this.setState({showDialog: false});
+        });
     }
 
     render() {
@@ -131,14 +134,15 @@ class BranchesList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Sucursales' />
+                    <Navbar title='Mis productos' />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Link to='/dashboard/branches/create'>
-                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                            <Link to='/dashboard/products/create'>
+                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nuevo</Button>
                             </Link>
                         </div>
+                        
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
                             <Paper >
                               <TableContainer>
@@ -197,20 +201,20 @@ class BranchesList extends Component {
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
                 >
-                  <DialogTitle id="alert-dialog-title">{"Confirmar eliminación"}</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Ésta acción eliminará de forma permanente el registro y no podrás usarlo en el futuro.
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
-                      Cancelar
-                    </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary" autoFocus>
-                      Eliminar
-                    </Button>
-                  </DialogActions>
+                    <DialogTitle id="alert-dialog-title">{"Confirmar eliminación"}</DialogTitle>
+                    <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Ésta acción eliminará de forma permanente el registro y no podrás usarlo en el futuro.
+                            </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                            <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
+                            Cancelar
+                            </Button>
+                            <Button onClick={ this.hanldeDelete } color="secondary" autoFocus>
+                            Eliminar
+                            </Button>
+                    </DialogActions>
                 </Dialog>
             </div>
         );
@@ -223,4 +227,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(BranchesList));
+export default connect(mapStateToProps)(withSnackbar(ProductsList));

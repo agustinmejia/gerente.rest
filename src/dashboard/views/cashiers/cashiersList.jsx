@@ -40,12 +40,12 @@ const transition = React.forwardRef(function Transition(props, ref) {
 const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Nombre' },
-  { id: 'phones', label: 'Telefonos' },
-  { id: 'address', label: 'Dirección' },
+//   { id: 'phones', label: 'Telefonos' },
+//   { id: 'address', label: 'Dirección' },
   { id: 'actions', label: 'Opciones' },
 ];
 
-class BranchesList extends Component {
+class CashiersList extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -63,16 +63,16 @@ class BranchesList extends Component {
         }
     }
 
-    createData(id, name, phones, address) {
+    createData(id, name) {
       let tableOptions = (
         <>
-          <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
+          {/* <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
             <Tooltip title="Editar sucursal" placement="top">
               <Fab aria-label="Editar sucursal" size='small'>
                 <IoIosCreate size={25} color="#0D9CCE" />
               </Fab>
             </Tooltip>
-          </Link>
+          </Link> */}
           <Tooltip title="Eliminar sucursal" placement="top">
             <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
               <IoIosTrash size={25} color="#F33417" />
@@ -80,7 +80,7 @@ class BranchesList extends Component {
           </Tooltip>
         </>
       )
-      return { id, name, phones, address, actions: tableOptions };
+      return { id, name, actions: tableOptions };
     }
 
     componentDidMount(){
@@ -89,13 +89,13 @@ class BranchesList extends Component {
 
     getData(){
       let { company } = this.props.authSession;
-        fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
+        fetch(`${API}/api/company/${company.id}/cashier/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
           let rows = [];
-          if(res.branches){
-            res.branches.map(branch => {
-              rows.push(this.createData(branch.id, branch.name, branch.phones, branch.address));
+          if(res.cashiers){
+            res.cashiers.map(cashier => {
+              rows.push(this.createData(cashier.id, cashier.name));
             });
           }
           this.setState({tableRows: rows});
@@ -104,22 +104,24 @@ class BranchesList extends Component {
     }
 
     hanldeDelete = () => {
-      let options = {
-        headers: this.state.headers
-      }
-      axios.get(`${API}/api/branch/${this.state.deleteId}/delete`, options)
-      .then(response => {
-        if(response.data.branch){
-          this.getData();
-          this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
-        }else{
-          this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
-        }
-      })
-      .catch(error => ({'error': error}))
-      .finally( () => {
-        this.setState({showDialog: false});
-      });
+    //   let options = {
+    //     headers: this.state.headers
+    //   }
+    //   axios.get(`${API}/api/branch/${this.state.deleteId}/delete`, options)
+    //   .then(response => {
+    //     if(response.data.branch){
+    //       this.getData();
+    //       this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
+    //     }else{
+    //       this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
+    //     }
+    //   })
+    //   .catch(error => ({'error': error}))
+    //   .finally( () => {
+    //     this.setState({showDialog: false});
+    //   });
+
+      this.setState({showDialog: false});
     }
 
     render() {
@@ -131,7 +133,7 @@ class BranchesList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Sucursales' />
+                    <Navbar title='Cajas' />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -223,4 +225,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(BranchesList));
+export default connect(mapStateToProps)(withSnackbar(CashiersList));
