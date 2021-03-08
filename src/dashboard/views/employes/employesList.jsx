@@ -50,7 +50,7 @@ const tableColumns = [
   { id: 'actions', label: 'Opciones' },
 ];
 
-class CashiersList extends Component {
+class EmployesList extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -145,12 +145,12 @@ class CashiersList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Cajas' />
+                    <Navbar title='Empleados' />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Link to='/dashboard/cashiers/create'>
-                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                            <Link to='/dashboard/employes/create'>
+                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nuevo</Button>
                             </Link>
                         </div>
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
@@ -304,4 +304,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(CashiersList));
+export default connect(mapStateToProps)(withSnackbar(EmployesList));

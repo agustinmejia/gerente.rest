@@ -110,7 +110,7 @@ class SalesCreate extends Component {
             paymentType: false,
             inputObservations: '',
             // formCustomer
-            cashier_id: null,
+            cashierId: null,
             showDialogCustomer: false,
             inputFirstName: '',
             inputFirstNameError: false,
@@ -186,9 +186,9 @@ class SalesCreate extends Component {
             .then(res => res.json())
             .then(res => {
                 if(res.cashier){
-                    this.setState({cashier_id: res.cashier.id});
+                    this.setState({cashierId: res.cashier.id});
                 }else{
-                    this.setState({cashier_id: 0});
+                    this.setState({cashierId: 0});
                 }
             })
             .catch(error => ({'error': error}));
@@ -453,7 +453,7 @@ class SalesCreate extends Component {
         })
         .then(res => {
             if(res.data.cashier){
-                this.setState({cashier_id: res.data.cashier.id});
+                this.setState({cashierId: res.data.cashier.id});
                 this.props.enqueueSnackbar('Caja aperturada correctamente', { variant: 'success' });
             }else{
                 this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor', { variant: 'error' });
@@ -466,7 +466,7 @@ class SalesCreate extends Component {
     }
 
     handleSubmitSale(){
-        if(this.state.cashier_id <= 0){
+        if(this.state.cashierId <= 0){
             this.props.enqueueSnackbar('Debes abrir caja primero', { variant: 'error' });
             return
         }
@@ -476,7 +476,7 @@ class SalesCreate extends Component {
                     branch_id: this.props.authSession.currentBranch,
                     customer_id: this.state.selectCustomerId,
                     user_id: this.props.authSession.user.id,
-                    cashier_id: this.state.cashier_id,
+                    cashier_id: this.state.cashierId,
                     payment_type: this.state.paymentType ? 1 : 2,
                     sale_type: this.state.radioSaleType,
                     total: this.state.inputSaleAmount,
@@ -562,7 +562,7 @@ class SalesCreate extends Component {
 
                         </Grid>
 
-                        { this.state.cashier_id === 0 &&
+                        { this.state.cashierId === 0 &&
                             <Alert severity="error">
                                 <AlertTitle>Error</AlertTitle>
                                 Debes abrir caja para registrar tus ventas realizadas.
@@ -779,7 +779,7 @@ class SalesCreate extends Component {
                                                 color="primary"
                                                 fullWidth
                                                 size="large"
-                                                disabled={this.state.cashier_id == 0 ? true : false}
+                                                disabled={this.state.cashierId == 0 ? true : false}
                                                 endIcon={<IoIosCart>Vender</IoIosCart>}
                                                 onClick={ (e) => this.handleConfirm() }
                                             >
@@ -979,7 +979,7 @@ class SalesCreate extends Component {
                                         <Button onClick={() => this.setState({showDialogSaleConfirm: false}) } color="secondary">
                                             Cancelar
                                         </Button>
-                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } color="primary" disabled={ this.state.cashier_id == 0 ? true : false }>
+                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } color="primary" disabled={ this.state.cashierId == 0 ? true : false }>
                                             Aceptar
                                         </Button>
                                     </DialogActions>
