@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
   Grid,
-  Box,
   Button,
-  IconButton,
   Tooltip,
   Fab,
   Paper,
@@ -15,7 +12,6 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -23,10 +19,10 @@ import {
   DialogTitle,
   Slide,
   Chip,
-  Typography
+  Avatar
 } from '@material-ui/core';
 
-import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash, IoMdKey, IoIosLock, IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -45,8 +41,8 @@ const transition = React.forwardRef(function Transition(props, ref) {
 
 const tableColumns = [
   { id: 'id', label: 'ID' },
-  { id: 'name', label: 'Caja' },
-  { id: 'status', label: 'Estado' },
+  { id: 'name', label: 'Información' },
+  { id: 'branch', label: 'Sucursal' },
   { id: 'actions', label: 'Opciones' },
 ];
 
@@ -68,31 +64,37 @@ class EmployesList extends Component {
         }
     }
 
-    createData(id, name, user, status, opening_amount, closing_amount) {
+    createData(id, name, user, branch) {
       let tableOptions = (
         <>
-          {/* <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
-            <Tooltip title="Editar sucursal" placement="top">
-              <Fab aria-label="Editar sucursal" size='small'>
+          <Link to={`/dashboard/employes/${id}/edit`} style={{marginRight: 10}}>
+            <Tooltip title="Editar empleado" placement="top">
+              <Fab aria-label="Editar empleado" size='small'>
                 <IoIosCreate size={25} color="#0D9CCE" />
               </Fab>
             </Tooltip>
-          </Link> */}
-          { status == 1 &&
-            <Tooltip title="Eliminar sucursal" placement="top">
-              <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
-                <IoIosTrash size={25} color="#F33417" />
-              </Fab>
-            </Tooltip>
-          }
+          </Link>
+          <Tooltip title="Eliminar empleado" placement="top">
+            <Fab aria-label="Eliminar empleado" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+              <IoIosTrash size={25} color="#F33417" />
+            </Fab>
+          </Tooltip>
         </>
       )
+
+      let rol = user.roles.length ? user.roles[0].name : 'no definido';
       let title = <>
-                    <b>{name}</b><br/>
-                    <span>Cajero: {user}</span>
+                    <Grid container wrap="nowrap" spacing={2}>
+                      <Grid item>
+                        <Avatar alt={user.name} src={user.avatar ? `${API}/storage/${user.avatar.replace('.', '-cropped.')}` : user.name} />
+                      </Grid>
+                      <Grid item xs zeroMinWidth>
+                        <b>{name}</b><br/>
+                        <Chip label={rol} size="small" />
+                      </Grid>
+                    </Grid>
                   </>
-      let iconStatus = status == 1 ? <Chip label="Abierta" color='primary' icon={<IoMdKey size={15} />} /> : <Chip label="Cerrada" icon={<IoIosLock size={18} />} />
-      return { id, name: title, status: iconStatus, opening_amount, closing_amount, actions: tableOptions };
+      return { id, name: title, branch, actions: tableOptions };
     }
 
     componentDidMount(){
@@ -101,13 +103,13 @@ class EmployesList extends Component {
 
     getData(){
       let { company } = this.props.authSession;
-        fetch(`${API}/api/company/${company.id}/cashier/list`, {headers: this.state.headers})
+        fetch(`${API}/api/company/${company.id}/employes/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
           let rows = [];
-          if(res.cashiers){
-            res.cashiers.map(cashier => {
-              rows.push(this.createData(cashier.id, cashier.name, cashier.user.name, cashier.status, cashier.opening_amount, cashier.closing_amount));
+          if(res.employes){
+            res.employes.map(employe => {
+              rows.push(this.createData(employe.id, `${employe.person.first_name} ${employe.person.last_name}`, employe.user, employe.branch.name));
             });
           }
           this.setState({tableRows: rows});
@@ -116,22 +118,22 @@ class EmployesList extends Component {
     }
 
     hanldeDelete = () => {
-    //   let options = {
-    //     headers: this.state.headers
-    //   }
-    //   axios.get(`${API}/api/branch/${this.state.deleteId}/delete`, options)
-    //   .then(response => {
-    //     if(response.data.branch){
-    //       this.getData();
-    //       this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
-    //     }else{
-    //       this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
-    //     }
-    //   })
-    //   .catch(error => ({'error': error}))
-    //   .finally( () => {
-    //     this.setState({showDialog: false});
-    //   });
+      let options = {
+        headers: this.state.headers
+      }
+      axios.get(`${API}/api/employe/${this.state.deleteId}/delete`, options)
+      .then(response => {
+        if(response.data.employe){
+          this.getData();
+          this.props.enqueueSnackbar('Empleado eliminada correctamente!', { variant: 'success' });
+        }else{
+          this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
+        }
+      })
+      .catch(error => ({'error': error}))
+      .finally( () => {
+        this.setState({showDialog: false});
+      });
 
       this.setState({showDialog: false});
     }
@@ -145,7 +147,7 @@ class EmployesList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Empleados' />
+                    <Navbar title={<h1 style={{marginLeft: 20}}> Empleados</h1>} />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -159,7 +161,6 @@ class EmployesList extends Component {
                                 <Table stickyHeader aria-label="sticky table">
                                   <TableHead>
                                     <TableRow>
-                                      <TableCell />
                                       {tableColumns.map((column) => (
                                         <TableCell
                                           key={column.id}
@@ -174,7 +175,16 @@ class EmployesList extends Component {
                                   <TableBody>
                                     {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
                                       return (
-                                        <Row key={row.id} row={row} />
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                          {tableColumns.map((column) => {
+                                            const value = row[column.id];
+                                            return (
+                                              <TableCell key={column.id} align={column.align}>
+                                                {column.format && typeof value === 'number' ? column.format(value) : value}
+                                              </TableCell>
+                                            );
+                                          })}
+                                        </TableRow>
                                       );
                                     })}
                                   </TableBody>
@@ -223,60 +233,6 @@ class EmployesList extends Component {
     }
 }
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-  // const classes = useRowStyles();
-
-  return (
-    <React.Fragment>
-      <TableRow hover role="checkbox" tabIndex={-1}>
-        <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <IoIosArrowDropupCircle /> : <IoIosArrowDropdownCircle />}
-          </IconButton>
-        </TableCell>
-        {tableColumns.map((column) => {
-          const value = row[column.id];
-          return (
-            <TableCell key={column.id} align={column.align}>
-              {column.format && typeof value === 'number' ? column.format(value) : value}
-            </TableCell>
-          );
-        })}
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              <Typography variant="h6" gutterBottom component="div">
-                Detalle de caja
-              </Typography>
-              <Table size="small" aria-label="purchases" style={{marginBottom: 30}}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Monto de apertura</TableCell>
-                    <TableCell>Ingresos</TableCell>
-                    <TableCell>Egresos</TableCell>
-                    <TableCell>Monto de cierre</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row">{row.opening_amount}</TableCell>
-                    <TableCell component="th" scope="row">{row.closing_amount}</TableCell>
-                    <TableCell component="th" scope="row">0.00</TableCell>
-                    <TableCell component="th" scope="row">0.00</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
 
 // Row.propTypes = {
 //   row: PropTypes.shape({

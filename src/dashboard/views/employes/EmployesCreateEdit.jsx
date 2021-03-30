@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
     Grid,
-    Button,
     TextField,
     Select,
     MenuItem,
@@ -11,10 +10,12 @@ import {
     CircularProgress,
     CardMedia,
     Tooltip,
-    IconButton
+    IconButton,
+    OutlinedInput,
+    InputAdornment,
+    Typography
 }from '@material-ui/core';
-import { IoIosMenu, IoIosCheckmarkCircle, IoIosArrowDropleft, IoIosCamera } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { IoIosMenu, IoIosCamera, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -23,10 +24,11 @@ import axios from "axios";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
+import { FormButtons } from "../../components/forms";
 
 const { API } = env;
 
-class EmployesCreate extends Component {
+class EmployesCreateEdit extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -38,26 +40,69 @@ class EmployesCreate extends Component {
             sidebarToggled: false,
             loading: false,
             branches: [],
-            users: [],
+            roles: [],
+            id: this.props.match.params ? this.props.match.params.id : null,
             firstName: '',
             lastName: '',
             ci: '',
             phone: '',
             address: '',
             branchId: 'none',
-            userId: 'none',
+            roleId: 'none',
+            email: '',
+            password: '',
             picture: `${API}/images/user.svg`,
             filePicture: null,
             displayCameraPicture: false,
+            showPassword: false
         }
     }
 
     componentDidMount(){
+        // If edit get data employe
+        let { id } = this.state;
+        if(id){
+            this.setState({loading: true})
+            fetch(`${API}/api/employe/${id}`, {headers: this.state.headers})
+            .then(res => res.json())
+            .then(res => {
+                if(res.employe){
+                    this.setState({
+                        firstName: res.employe.person.first_name,
+                        lastName: res.employe.person.last_name,
+                        ci: res.employe.person.ci_nit ? res.employe.person.ci_nit : '',
+                        phone: res.employe.person.phone,
+                        address: res.employe.person.address ? res.employe.person.address : '',
+                        branchId: res.employe.branch.id,
+                        roleId: res.employe.user.roles[0].id,
+                        email: res.employe.user.email,
+                        picture: res.employe.user.avatar ? `${API}/storage/${res.employe.user.avatar}` : this.state.picture
+                    });
+                }
+            })
+            .catch(error => ({'error': error}))
+            .then(() => this.setState({loading: false}));
+        }
+
+        // Get branches company
         let { company } = this.props.authSession;
         fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
-            this.setState({branches: res.branches});
+            this.setState({branches: res.branches}, () => {
+                // Si solo hay una sucursal la seleccionamos por defecto
+                if(res.branches.length == 1){
+                    this.setState({branchId: res.branches[0].id});
+                }
+            });
+        })
+        .catch(error => ({'error': error}));
+
+        // Get roles list
+        fetch(`${API}/api/roles/list`, {headers: this.state.headers})
+        .then(res => res.json())
+        .then(res => {
+            this.setState({roles: res.roles});
         })
         .catch(error => ({'error': error}));
     }
@@ -70,28 +115,46 @@ class EmployesCreate extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        if(this.state.branchId === 'none' && this.state.userId === 'none'){
-            this.props.enqueueSnackbar('Debes seleccionar una sucursal y un empleado', { variant: 'warning' });
+        if(this.state.branchId === 'none' || this.state.roleId === 'none'){
+            this.props.enqueueSnackbar('Debes seleccionar una sucursal y un rol', { variant: 'warning' });
+            return false;
+        }
+
+        if(this.state.password.length < 6 && !this.state.id){
+            this.props.enqueueSnackbar('Tu contraseña debe tener al menos 6 letras o números', { variant: 'warning' });
             return false;
         }
 
         this.setState({loading: true});
-        let params = {
-            first_name: this.state.firstName,
-            branch_id: this.state.branchId
-        }
+        let { company } = this.props.authSession;
+        let formData = new FormData();
+        let { id, filePicture, firstName, lastName, ci, phone, address, branchId, roleId, email, password } = this.state;
+
+        formData.append('image', filePicture);
+        formData.append("first_name", firstName);
+        formData.append("last_name", lastName);
+        formData.append("ci", ci);
+        formData.append("phone", phone);
+        formData.append("address", address);
+        formData.append("branch_id", branchId);
+        formData.append("role_id", roleId);
+        formData.append("email", email);
+        formData.append("password", password);
+
+        // Change URL for update or create
+        let url = this.state.id ? `${API}/api/employe/${id}/update` : `${API}/api/company/${company.id}/employes/create`;
         axios({
             method: 'post',
-            url: `${API}/api/branch/create`,
-            data: params,
+            url,
+            data: formData,
             headers: this.state.headers
         })
         .then(res => {
-            if(res.data.branch){
-                this.props.enqueueSnackbar('Sucursal registrada correctamente!', { variant: 'success' });
-                // console.log(res.data)
+            let { data } = res;
+            if(data.employe){
+                this.props.enqueueSnackbar(`Empleado ${this.state.id ? 'editado' : 'registrado'} correctamente.`, { variant: 'success' });
             }else{
-                this.props.enqueueSnackbar('Ocurrió un error inesparado, intente nuevamente!', { variant: 'error' })
+                this.props.enqueueSnackbar(data.error, { variant: 'error' });
             }
         })
         .catch((err) => this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor!', { variant: 'error' }))
@@ -102,7 +165,7 @@ class EmployesCreate extends Component {
         return (
             <>
                 { this.state.loading &&
-                    <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <Backdrop open={true} style={{ zIndex: 20 }}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 }
@@ -113,7 +176,7 @@ class EmployesCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Nuevo empleado' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.id ? 'Editar' : 'Nuevo' } empleado</h1>} />
                         
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
@@ -121,7 +184,7 @@ class EmployesCreate extends Component {
                                     <Grid item xs={12} sm={2}>
                                         <Grid container style={{ cursor: 'pointer', width: 250, height: 150 }} onMouseOver={ event => this.setState({displayCameraPicture: 'flex'})} onMouseLeave={ event => this.setState({displayCameraPicture: 'none'})}>
                                             <CardMedia
-                                                style={{ width: 150, height: 150, border: '3px solid white' }}
+                                                style={{ width: 150, height: 150, borderRadius: 75, border: '3px solid white' }}
                                                 image={ this.state.picture }
                                                 title="Foto de perfil"
                                             />
@@ -166,24 +229,24 @@ class EmployesCreate extends Component {
                                             </Grid>
                                             <Grid item xs={12} sm={6}>
                                                 <FormControl fullWidth variant="outlined">
-                                                    <InputLabel htmlFor="outlined-adornment-password">Empleado</InputLabel>
+                                                    <InputLabel htmlFor="outlined-adornment-password">Rol</InputLabel>
                                                     <Select
                                                         labelId="demo-simple-select-filled-label"
                                                         id="demo-simple-select-filled"
                                                         variant="outlined"
-                                                        label="Empleado"
-                                                        inputProps={{ 'aria-label': 'Empleado' }}
+                                                        label="Rol"
+                                                        inputProps={{ 'aria-label': 'Rol' }}
                                                         required
                                                         fullWidth
-                                                        value={ this.state.userId }
-                                                        onChange={ event => this.setState({userId: event.target.value}) }
+                                                        value={ this.state.roleId }
+                                                        onChange={ event => this.setState({roleId: event.target.value}) }
                                                         >
                                                             <MenuItem disabled key={0} value="none">
-                                                                <em>Selecciona al empleado</em>
+                                                                <em>Selecciona su rol</em>
                                                             </MenuItem>
                                                             {
-                                                                this.state.users.map(user => 
-                                                                    <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
+                                                                this.state.roles.map(role => 
+                                                                    <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
                                                                 )
                                                             }
                                                     </Select>
@@ -221,7 +284,7 @@ class EmployesCreate extends Component {
                                             <Grid item xs={12} sm={6}>
                                                 <TextField
                                                     variant="outlined"
-                                                    required
+                                                    // required
                                                     fullWidth
                                                     id="input-ci"
                                                     label="CI"
@@ -261,38 +324,62 @@ class EmployesCreate extends Component {
                                                     onChange={ event => this.setState({address: event.target.value}) }
                                                 />
                                             </Grid>
+                                            <div style={{margin:10, marginTop: 20}}>
+                                                <Grid container alignItems="center">
+                                                    <Grid item xs>
+                                                        <Typography gutterBottom variant="h6">Datos de inicio de sesión</Typography>
+                                                    </Grid>
+                                                </Grid>
+                                                <Typography color="textSecondary" variant="body2">
+                                                    Debe proporcionar un correo electrónico y contraseña para que su empleado pueda ingresar al sistema y hacer uso del mismo.
+                                                </Typography>
+                                            </div>
+                                            <Grid item xs={6}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    required
+                                                    fullWidth
+                                                    id="email"
+                                                    label="Email"
+                                                    name="email"
+                                                    helperText="Email con el que su empleado podrá ingresar al sistema"
+                                                    value={ this.state.email }
+                                                    onChange={ event => this.setState({email: event.target.value}) }
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
+                                                    <OutlinedInput
+                                                        id="outlined-adornment-password"
+                                                        type={ this.state.showPassword ? 'text' : 'password'}
+                                                        label="Contraseña"
+                                                        fullWidth
+                                                        required={ this.state.id ? false : true }
+                                                        value={ this.state.password }
+                                                        onChange={ event => this.setState({password: event.target.value}) }
+                                                        inputProps={{ minLength: '6', maxLength: '20' }}
+                                                        endAdornment={
+                                                        <InputAdornment position="end">
+                                                            <IconButton
+                                                                aria-label="toggle password visibility"
+                                                                onClick={ () => this.setState({showPassword: !this.state.showPassword}) }
+                                                                edge="end"
+                                                            >
+                                                            { this.state.showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
+                                                            </IconButton>
+                                                        </InputAdornment>
+                                                        }
+                                                    />
+                                                    {
+                                                        this.state.id && <small style={{marginTop: 3, marginLeft: 14, color: '#757575'}}>Deja la contraseña en blanco para mantener la misma.</small>
+                                                    }
+                                                </FormControl>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                {/* <div style={{ paddingTop: 100 }}>
-                                    <Grid container spacing={2} direction="row" justify="flex-end" style={{position: 'fixed', bottom: 0, right: 0, backgroundColor: 'white', padding: 20, zIndex: 10}}>
-                                        <Grid item xs={4} sm={3}>
-                                            <Link to='/dashboard/cashiers'>
-                                                <Button
-                                                    fullWidth
-                                                    size="large"
-                                                    variant="contained"
-                                                    startIcon={ <IoIosArrowDropleft/> }
-                                                >
-                                                    Volver
-                                                </Button>
-                                            </Link> 
-                                        </Grid>
-                                        <Grid item xs={4} sm={3}>
-                                            <Button
-                                                type="submit"
-                                                fullWidth
-                                                size="large"
-                                                variant="contained"
-                                                color="primary"
-                                                endIcon={ <IoIosCheckmarkCircle/> }
-                                            >
-                                                Guardar
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </div> */}
-                                <FormButtons back='/dashboard/employes' />
+                                <FormButtons back='/dashboard/employes' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
                         </div>
                     </main>
@@ -302,43 +389,10 @@ class EmployesCreate extends Component {
     }
 }
 
-const FormButtons = (props) => {
-    return(
-        <div style={{ paddingTop: 100 }}>
-            <Grid container spacing={2} direction="row" justify="flex-end" style={{position: 'fixed', bottom: 0, right: 0, backgroundColor: 'white', padding: 20, zIndex: 10}}>
-                <Grid item xs={4} sm={3}>
-                    <Link to={ props.back }>
-                        <Button
-                            fullWidth
-                            size="large"
-                            variant="contained"
-                            startIcon={ <IoIosArrowDropleft/> }
-                        >
-                            Volver
-                        </Button>
-                    </Link> 
-                </Grid>
-                <Grid item xs={4} sm={3}>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        size="large"
-                        variant="contained"
-                        color="primary"
-                        endIcon={ <IoIosCheckmarkCircle/> }
-                    >
-                        Guardar
-                    </Button>
-                </Grid>
-            </Grid>
-        </div>
-    );
-}
-
 const mapStateToProps = (state) => {
     return {
         authSession: state.authSession,
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(EmployesCreate));
+export default connect(mapStateToProps)(withSnackbar(EmployesCreateEdit));

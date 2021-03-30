@@ -123,7 +123,7 @@ class BranchesEdit extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Edita sucursal' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> Editar sucursal</h1>} />
 
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >

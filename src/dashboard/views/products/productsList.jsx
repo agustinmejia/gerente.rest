@@ -134,7 +134,7 @@ class ProductsList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Mis productos' />
+                    <Navbar title={<h1 style={{marginLeft: 20}}> Mis productos</h1>} />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

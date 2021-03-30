@@ -22,7 +22,7 @@ class Home extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Bievenido' />
+                    <Navbar title={<h1 style={{marginLeft: 20}}> Bienvenido</h1>} />
 
                 </main>
             </div>

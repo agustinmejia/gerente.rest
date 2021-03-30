@@ -36,7 +36,7 @@ class BranchesCreate extends Component {
             sidebarToggled: false,
             loading: false,
             cities: [],
-            ownerId: 0,
+            ownerId: this.props.authSession.company.owner_id,
             name: '',
             city: 'none',
             location: '',
@@ -52,10 +52,6 @@ class BranchesCreate extends Component {
             this.setState({cities: res.cities});
         })
         .catch(error => ({'error': error}));
-
-        if(this.props.authSession.user){
-            this.setState({ownerId: this.props.authSession.user.owner.id})
-        }
     }
 
     handleApiLoaded = (map, maps) => {
@@ -111,7 +107,7 @@ class BranchesCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Nueva sucursal' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> Nueva sucursal</h1>} />
                         
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
@@ -207,7 +203,7 @@ class BranchesCreate extends Component {
                                                 >
                                                     Volver
                                                 </Button>
-                                            </Link> 
+                                            </Link>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <Button

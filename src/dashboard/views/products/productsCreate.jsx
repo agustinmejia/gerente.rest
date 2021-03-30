@@ -41,6 +41,7 @@ class ProductsCreate extends Component {
             sidebarToggled: false,
             loading: false,
             categories: [],
+            ownerId: this.props.authSession.company.owner_id,
             inputName: '',
             inputType: '',
             inputPrice: '',
@@ -68,10 +69,6 @@ class ProductsCreate extends Component {
             }
         })
         .catch(error => ({'error': error}));
-
-        if(this.props.authSession.user){
-            this.setState({ownerId: this.props.authSession.user.owner.id})
-        }
     }
 
     hanldeImage = e => {
@@ -92,10 +89,10 @@ class ProductsCreate extends Component {
         if(this.state.inputNameCategory){
             this.setState({loading: true, showDialogCreateCategory: false})
             event.preventDefault();
-            let { user } = this.props.authSession;
+
             let formData = new FormData();
             formData.append('image', this.state.fileImageCategory);
-            formData.append("owner_id", user.owner.id);
+            formData.append("owner_id", this.state.ownerId);
             formData.append("name", this.state.inputNameCategory);
             formData.append("description", this.state.inputDescriptionCategory);
 
@@ -146,9 +143,8 @@ class ProductsCreate extends Component {
 
         this.setState({loading: true});
 
-        let { user } = this.props.authSession;
         let formData = new FormData();
-        formData.append("owner_id", user.owner.id);
+        formData.append("owner_id", this.state.ownerId);
         formData.append("product_category_id", this.state.selectCategoryId);
         formData.append("name", this.state.inputName);
         formData.append("type", this.state.inputType);
@@ -199,7 +195,7 @@ class ProductsCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Nuevo producto' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> Nuevo producto</h1>} />
 
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >

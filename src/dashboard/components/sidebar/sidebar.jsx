@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { IoIosHome, IoIosBriefcase, IoIosLock, IoIosArrowDropright, IoIosArrowDropleft, IoMdBasket, IoIosCash } from "react-icons/io";
+import { IoIosHome, IoIosBriefcase, IoIosLock, IoIosArrowDropright, IoIosArrowDropleft, IoMdCart, IoIosCash } from "react-icons/io";
 import { IconButton } from '@material-ui/core';
 import "../../style.scss";
 
@@ -46,13 +46,14 @@ const Sidebar = props => {
                             <MenuItem><Link to="/dashboard/sales">Ventas</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/employes">Empleados</Link></MenuItem>
                         </SubMenu>
-                        <SubMenu icon={ <IoIosCash size={25} /> } title={<b>Ingresos/Egresos</b>}>
+                        {/* <SubMenu icon={ <IoIosCash size={25} /> } title={<b>Ingresos/Egresos</b>}>
                             <MenuItem><Link to="/dashboard/cashiers">Cajas</Link></MenuItem>
-                        </SubMenu>
-                        <MenuItem icon={ <IoMdBasket size={25} /> } ><Link to="/dashboard/sales/create">{<b>Vender</b>}</Link></MenuItem>
-                        <SubMenu icon={ <IoIosLock size={25} /> } title={<b>Seguridad</b>}>
+                        </SubMenu> */}
+                        <MenuItem icon={ <IoIosCash size={25} /> } ><Link to="/dashboard/cashiers">{<b>Cajas</b>}</Link></MenuItem>
+                        <MenuItem icon={ <IoMdCart size={25} /> } ><Link to="/dashboard/sales/create">{<b>Vender</b>}</Link></MenuItem>
+                        {/* <SubMenu icon={ <IoIosLock size={25} /> } title={<b>Seguridad</b>}>
                             <MenuItem><Link to="/dashboard">Usuarios</Link></MenuItem>
-                        </SubMenu>
+                        </SubMenu> */}
                     </Menu>
                 </SidebarContent>
                 <SidebarFooter>

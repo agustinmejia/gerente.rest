@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     Grid,
-    Button,
+    Button
 }from '@material-ui/core';
+import { Link } from "react-router-dom";
 import { IoIosCheckmarkCircle, IoIosArrowDropleft } from "react-icons/io";
 
-export default FormButtons = (props) => {
+export const FormButtons = (props) => {
     return(
         <div style={{ paddingTop: 100 }}>
             <Grid container spacing={2} direction="row" justify="flex-end" style={{position: 'fixed', bottom: 0, right: 0, backgroundColor: 'white', padding: 20, zIndex: 10}}>
@@ -19,7 +20,7 @@ export default FormButtons = (props) => {
                         >
                             Volver
                         </Button>
-                    </Link> 
+                    </Link>
                 </Grid>
                 <Grid item xs={4} sm={3}>
                     <Button
@@ -30,7 +31,7 @@ export default FormButtons = (props) => {
                         color="primary"
                         endIcon={ <IoIosCheckmarkCircle/> }
                     >
-                        Guardar
+                    { props.titleSuccess }
                     </Button>
                 </Grid>
             </Grid>

@@ -55,7 +55,7 @@ class CashiersCreate extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        if(this.state.branchId === 'none' && this.state.userId === 'none'){
+        if(this.state.branchId === 'none' || this.state.userId === 'none'){
             this.props.enqueueSnackbar('Debes seleccionar una sucursal y un empleado', { variant: 'warning' });
             return false;
         }
@@ -99,7 +99,7 @@ class CashiersCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Nueva caja' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> Nueva caja</h1>} />
                         
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >

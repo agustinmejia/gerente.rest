@@ -49,7 +49,8 @@ import {
     ToggleButton
 } from '@material-ui/lab';
 
-import { IoIosMenu, IoIosAddCircleOutline, IoIosCreate, IoIosList, IoIosKeypad, IoIosCart, IoIosTrash, IoIosHome } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircleOutline, IoIosCreate, IoIosList, IoIosKeypad, IoIosCart, IoIosTrash } from "react-icons/io";
+import { FaRegEdit } from "react-icons/fa";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -57,7 +58,6 @@ import axios from "axios";
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import BranchSelect from "../../components/branchSelect/branchSelect";
 import { env } from '../../../config/env';
 
 const { API } = env;
@@ -85,7 +85,6 @@ class SalesCreate extends Component {
                 'accept': 'application/json',
                 'Authorization': `Bearer ${this.props.authSession.token}`
             },
-            changeBranch: false,
             sidebarToggled: false,
             tabActive: 0,
             productsCategories: [],
@@ -111,6 +110,7 @@ class SalesCreate extends Component {
             inputObservations: '',
             // formCustomer
             cashierId: null,
+            branch: this.props.authSession.branch,
             showDialogCustomer: false,
             inputFirstName: '',
             inputFirstNameError: false,
@@ -178,11 +178,11 @@ class SalesCreate extends Component {
     }
 
     getCashiers(){
-        let branchId = this.props.authSession.currentBranch;
+        let { branch } = this.state;
         let { user } = this.props.authSession;
 
-        if(branchId && user.id){
-            fetch(`${API}/api/branch/${branchId}/cashier/user/${user.id}`, {headers: this.state.headers})
+        if(branch && user.id){
+            fetch(`${API}/api/branch/${branch.id}/cashier/user/${user.id}`, {headers: this.state.headers})
             .then(res => res.json())
             .then(res => {
                 if(res.cashier){
@@ -328,9 +328,9 @@ class SalesCreate extends Component {
 
         this.setState({loading: true, showDialogCustomer: false});
 
-        let { user } = this.props.authSession;
+        let { company } = this.props.authSession;
         let params = {
-            owner_id: user.owner.id,
+            owner_id: company.owner_id,
             first_name: this.state.inputFirstName,
             last_name: this.state.inputLastName,
             ci_nit: this.state.inputCI,
@@ -447,7 +447,7 @@ class SalesCreate extends Component {
 
         axios({
             method: 'post',
-            url: `${API}/api/branch/${this.props.authSession.currentBranch}/cashier/create`,
+            url: `${API}/api/branch/${this.state.branch.id}/cashier/create`,
             data: JSON.stringify(params),
             headers: this.state.headers
         })
@@ -473,7 +473,7 @@ class SalesCreate extends Component {
         if(!this.state.formSaleSending && this.state.saleDetails.length){
             this.setState({formSaleSending: true, loadingAlt: true}, async () => {
                 let params = {
-                    branch_id: this.props.authSession.currentBranch,
+                    branch_id: this.state.branch.id,
                     customer_id: this.state.selectCustomerId,
                     user_id: this.props.authSession.user.id,
                     cashier_id: this.state.cashierId,
@@ -534,16 +534,24 @@ class SalesCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Vender' />
+                        <Navbar
+                            title={
+                                <>
+                                    <h1 style={{marginLeft: 20}}> Caja 001 </h1>
+                                    <div style={{marginTop: -5, marginBottom: 10}}>
+                                        <h4 style={{color: '#858585'}}>
+                                            { this.state.branch.name }
+                                            <Tooltip title="Cambiar de sucursal" placement="bottom" style={{marginTop: -5, marginLeft: 5}}>
+                                                <IconButton aria-label="Cambiar de sucursal" color='primary'>
+                                                    <FaRegEdit />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </h4>
+                                    </div>
+                                </>}
+                        />
 
                         <Grid container direction="row" justify="flex-end" alignItems="center" style={{ marginTop: 10, marginBottom: 10 }}>
-                            
-                            {/* Change branch */}
-                            {/* <Tooltip title="Cambiar sucursal actual" placement="bottom">
-                                <IconButton color="primary" style={{ marginLeft: 5 }} aria-label="Cambiar sucursal actual" onClick={ (e) => this.setState({changeBranch: true}) }>
-                                    <IoIosHome size={30} />
-                                </IconButton>
-                            </Tooltip> */}
 
                             {/* Products show type */}
                             <ToggleButtonGroup
@@ -564,7 +572,7 @@ class SalesCreate extends Component {
 
                         { this.state.cashierId === 0 &&
                             <Alert severity="error">
-                                <AlertTitle>Error</AlertTitle>
+                                <AlertTitle>Advertencia</AlertTitle>
                                 Debes abrir caja para registrar tus ventas realizadas.
                                 <Button variant="outlined" color="secondary" onClick={ e => this.setState({showDialogCashier: true}) } style={{marginLeft: 10}}>
                                     Abrir caja
@@ -1146,11 +1154,6 @@ class SalesCreate extends Component {
                                 </DialogActions>
                             </Dialog>
                         </div>
-
-                        {/* Form customer */}
-                        {
-                            (this.state.changeBranch || !this.props.authSession.currentBranch) && <BranchSelect />
-                        }
                     </main>
                 </div>
             </>

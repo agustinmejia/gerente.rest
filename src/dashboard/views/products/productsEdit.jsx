@@ -58,14 +58,14 @@ class ProductsEdit extends Component {
 
     componentDidMount(){
         if(this.props.authSession){
-            let { company, user } = this.props.authSession;
+            let { company } = this.props.authSession;
             fetch(`${API}/api/company/${company.id}/product_category/list`, {headers: this.state.headers})
             .then(res => res.json())
             .then(res => {
                 this.setState({categories: res.categories});
             })
             .catch(error => ({'error': error}));
-            this.setState({ownerId: user.owner.id})
+            this.setState({ownerId: company.owner_id})
         }
 
         // Get branch info
@@ -104,10 +104,10 @@ class ProductsEdit extends Component {
         if(this.state.inputNameCategory){
             this.setState({loading: true, showDialogCreateCategory: false})
             event.preventDefault();
-            let { owner } = this.props.authSession.user;
+            let { company } = this.props.authSession;
             let formData = new FormData();
             formData.append('image', this.state.fileImageCategory);
-            formData.append("owner_id", owner.id);
+            formData.append("owner_id", company.owner_id);
             formData.append("name", this.state.inputNameCategory);
             formData.append("description", this.state.inputDescriptionCategory);
 
@@ -194,7 +194,7 @@ class ProductsEdit extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title='Editar producto' />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> Editar producto</h1>} />
 
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >

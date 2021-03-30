@@ -50,7 +50,7 @@ class Navbar extends Component {
             <header style={{ marginBottom: 0 }}>
                 <Grid container>
                     <Grid item md={10} xs={8} >
-                        <h1 style={{marginLeft: 20}}> { this.props.title }</h1>
+                        { this.props.title }
                     </Grid>
                     <Grid item md={2} xs={4} style={{ display: 'flex', justifyContent: 'flex-end' }} >
                         <div>

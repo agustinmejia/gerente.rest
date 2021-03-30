@@ -172,7 +172,7 @@ class MyCompany extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={ this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' } />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h1>} />
 
                         <Grid style={{ marginTop: -60 }}>
                             <form>

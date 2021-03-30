@@ -31,7 +31,6 @@ import { withSnackbar } from 'notistack';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import BranchSelect from "../../components/branchSelect/branchSelect";
 import { env } from '../../../config/env';
 
 const { API } = env;
@@ -57,8 +56,7 @@ class salesList extends Component {
         'accept': 'application/json',
         'Authorization': `Bearer ${this.props.authSession.token}`
       },
-      changeBranch: false,
-      branch_id: this.props.authSession.currentBranch,
+      branchId: this.props.authSession.branch.id,
       defaultImg: `${API}/images/default-image.png`,
       showDialog: false,
       tableRows: [],
@@ -85,15 +83,8 @@ class salesList extends Component {
   }
 
   componentDidMount(){
-    if(this.state.branch_id){
+    if(this.state.branchId){
       this.getSales();
-    }
-  }
-
-  componentDidUpdate(){
-    if(this.props.authSession.currentBranch && !this.state.branch_id){
-      this.getSales();
-      this.setState({branch_id: this.props.authSession.currentBranch});
     }
   }
 
@@ -119,7 +110,7 @@ class salesList extends Component {
   }
 
   getSales(){
-      fetch(`${API}/api/branch/${this.props.authSession.currentBranch}/sales`, {headers: this.state.headers})
+      fetch(`${API}/api/branch/${this.props.authSession.branch.id}/sales`, {headers: this.state.headers})
       .then(res => res.json())
       .then(res => {
         let rows = [];
@@ -164,7 +155,7 @@ class salesList extends Component {
                       <IoIosMenu size={40} />
                   </div>
 
-                  <Navbar title='Mis ventas del día' />
+                  <Navbar title={<h1 style={{marginLeft: 20}}> Mis ventas del día</h1>} />
 
                   <Grid style={{marginTop: 20}}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -192,7 +183,7 @@ class salesList extends Component {
                               />
                               <Divider orientation="vertical" style={{ height: 30, margin: 10, marginRight: 20 }} />
                               <Tooltip title="Cambiar sucursal actual" placement="top" style={{ marginLeft: 10 }}>
-                                <IconButton color="primary" aria-label="Cambiar sucursal actual" onClick={ (e) => this.setState({changeBranch: true}) }>
+                                <IconButton color="primary" aria-label="Cambiar sucursal actual" onClick={ (e) => console.log('hi') }>
                                   <IoIosHome size={25} />
                                 </IconButton>
                               </Tooltip>
@@ -272,11 +263,6 @@ class salesList extends Component {
                     </Button>
                   </DialogActions>
               </Dialog>
-
-              {/* Form customer */}
-              {
-                (this.state.changeBranch || !this.props.authSession.currentBranch) && <BranchSelect />
-              }
           </div>
       );
   }

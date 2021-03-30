@@ -126,7 +126,7 @@ function SignUp(props) {
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(register));
             history.push("/dashboard");
         }else{
-            console.log(register)
+            props.enqueueSnackbar(register.error, { variant: 'error' });
         }
     }
 
@@ -234,7 +234,7 @@ function SignUp(props) {
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                    <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
                                     <OutlinedInput
                                         id="outlined-adornment-password"
                                         type={ showPassword ? 'text' : 'password'}

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
   Grid,
   Box,
@@ -26,10 +25,9 @@ import {
   Typography
 } from '@material-ui/core';
 
-import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash, IoMdKey, IoIosLock, IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
+import { IoIosMenu, IoIosTrash, IoMdKey, IoIosArrowDropdownCircle, IoIosArrowDropupCircle, IoIosLock } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
-import axios from "axios";
 import { withSnackbar } from 'notistack';
 
 // Components
@@ -46,7 +44,7 @@ const transition = React.forwardRef(function Transition(props, ref) {
 const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Caja' },
-  { id: 'status', label: 'Estado' },
+  { id: 'iconStatus', label: 'Estado' },
   { id: 'actions', label: 'Opciones' },
 ];
 
@@ -60,6 +58,7 @@ class CashiersList extends Component {
             'Authorization': `Bearer ${this.props.authSession.token}`
           },
           showDialog: false,
+          cashiers: [],
           tableRows: [],
           sidebarToggled: false,
           page: 0,
@@ -68,7 +67,7 @@ class CashiersList extends Component {
         }
     }
 
-    createData(id, name, user, status, opening_amount, closing_amount) {
+    createData(id, name, user, status, opening_amount, closing_amount, missing_amount, details) {
       let tableOptions = (
         <>
           {/* <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
@@ -78,9 +77,18 @@ class CashiersList extends Component {
               </Fab>
             </Tooltip>
           </Link> */}
-          { status == 1 &&
-            <Tooltip title="Eliminar sucursal" placement="top">
-              <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+          { status == 1 && details.length > 0 &&
+            <Link to={`/dashboard/cashiers/${id}/close`}>
+              <Tooltip title="Cerrar caja" placement="top">
+                <Fab aria-label="Cerrar caja" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+                  <IoIosLock size={25} color="#138D75" />
+                </Fab>
+              </Tooltip>
+            </Link>
+          }
+          { status == 1 && details.length == 0 &&
+            <Tooltip title="Eliminar caja" placement="top">
+              <Fab aria-label="Eliminar caja" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
                 <IoIosTrash size={25} color="#F33417" />
               </Fab>
             </Tooltip>
@@ -89,10 +97,10 @@ class CashiersList extends Component {
       )
       let title = <>
                     <b>{name}</b><br/>
-                    <span>Cajero: {user}</span>
+                    <small>Abierta por <b>{user}</b></small>
                   </>
       let iconStatus = status == 1 ? <Chip label="Abierta" color='primary' icon={<IoMdKey size={15} />} /> : <Chip label="Cerrada" icon={<IoIosLock size={18} />} />
-      return { id, name: title, status: iconStatus, opening_amount, closing_amount, actions: tableOptions };
+      return { id, name: title, iconStatus, status, opening_amount, closing_amount, missing_amount, details, actions: tableOptions };
     }
 
     componentDidMount(){
@@ -107,10 +115,10 @@ class CashiersList extends Component {
           let rows = [];
           if(res.cashiers){
             res.cashiers.map(cashier => {
-              rows.push(this.createData(cashier.id, cashier.name, cashier.user.name, cashier.status, cashier.opening_amount, cashier.closing_amount));
+              rows.push(this.createData(cashier.id, cashier.name, cashier.user.name, cashier.status, cashier.opening_amount, cashier.closing_amount, cashier.missing_amount, cashier.details));
             });
           }
-          this.setState({tableRows: rows});
+          this.setState({tableRows: rows, cashiers: res.cashiers});
         })
         .catch(error => ({'error': error}));
     }
@@ -145,14 +153,14 @@ class CashiersList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title='Cajas' />
+                    <Navbar title={<h1 style={{marginLeft: 20}}> Cajas</h1>} />
 
                     <Grid style={{marginTop: 20}}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Link to='/dashboard/cashiers/create'>
                                 <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nueva</Button>
                             </Link>
-                        </div>
+                        </div> */}
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
                             <Paper >
                               <TableContainer>
@@ -226,7 +234,18 @@ class CashiersList extends Component {
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
-  // const classes = useRowStyles();
+
+  // Calcular ingresos y gastos
+  var opening_amount = parseFloat(row.opening_amount);
+  var income = 0;
+  var expenses = 0;
+  row.details.map(detail => {
+    if(detail.type == 1){
+      income += parseFloat(detail.amount);
+    }else if(detail.type == 2){
+      expenses += parseFloat(detail.amount);
+    }
+  });
 
   return (
     <React.Fragment>
@@ -259,14 +278,16 @@ function Row(props) {
                     <TableCell>Ingresos</TableCell>
                     <TableCell>Egresos</TableCell>
                     <TableCell>Monto de cierre</TableCell>
+                    <TableCell>Faltante</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   <TableRow>
-                    <TableCell component="th" scope="row">{row.opening_amount}</TableCell>
-                    <TableCell component="th" scope="row">{row.closing_amount}</TableCell>
-                    <TableCell component="th" scope="row">0.00</TableCell>
-                    <TableCell component="th" scope="row">0.00</TableCell>
+                    <TableCell component="th" scope="row">{ opening_amount }</TableCell>
+                    <TableCell component="th" scope="row">{ income.toFixed(2) }</TableCell>
+                    <TableCell component="th" scope="row">{ expenses.toFixed(2) }</TableCell>
+                    <TableCell component="th" scope="row"><b>{ (income - expenses + opening_amount).toFixed(2) }</b></TableCell>
+                    <TableCell component="th" scope="row">{ row.status == 2 ? <b style={{color: row.missing_amount == 0 ? 'black' :'red'}}>{row.missing_amount}</b> : 'no definido' }</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -277,26 +298,6 @@ function Row(props) {
     </React.Fragment>
   );
 }
-
-// Row.propTypes = {
-//   row: PropTypes.shape({
-//     calories: PropTypes.number.isRequired,
-//     carbs: PropTypes.number.isRequired,
-//     fat: PropTypes.number.isRequired,
-//     history: PropTypes.arrayOf(
-//       PropTypes.shape({
-//         amount: PropTypes.number.isRequired,
-//         customerId: PropTypes.string.isRequired,
-//         date: PropTypes.string.isRequired,
-//       }),
-//     ).isRequired,
-//     name: PropTypes.string.isRequired,
-//     price: PropTypes.number.isRequired,
-//     protein: PropTypes.number.isRequired,
-//   }).isRequired,
-// };
-
-
 
 const mapStateToProps = (state) => {
     return {
