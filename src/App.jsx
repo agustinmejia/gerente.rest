@@ -31,13 +31,11 @@ import BranchesEdit from "./dashboard/views/branches/branchesEdit";
 
 // Products
 import ProductsList from "./dashboard/views/products/productsList";
-import ProductsCreate from "./dashboard/views/products/productsCreate";
-import ProductsEdit from "./dashboard/views/products/productsEdit";
+import ProductsCreateEdit from "./dashboard/views/products/productsCreateEdit";
 
 // Cashiers
 import CashiersList from "./dashboard/views/cashiers/cashiersList";
 import CashiersClose from "./dashboard/views/cashiers/cashiersClose";
-// import CashiersCreate from "./dashboard/views/cashiers/cashiersCreate";
 
 // Sales
 import SalesList from "./dashboard/views/sales/salesList";
@@ -143,12 +141,11 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/branches/:id/edit" meta={{ auth: true }} render={(props) => <BranchesEdit {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/products" meta={{ auth: true }} render={(props) => <ProductsList {...props}/>} />
-            <GuardedRoute exact path="/dashboard/products/create" meta={{ auth: true }} render={(props) => <ProductsCreate {...props}/>} />
-            <GuardedRoute exact path="/dashboard/products/:id/edit" meta={{ auth: true }} render={(props) => <ProductsEdit {...props}/>} />
+            <GuardedRoute exact path="/dashboard/products/create" meta={{ auth: true }} render={(props) => <ProductsCreateEdit {...props}/>} />
+            <GuardedRoute exact path="/dashboard/products/:id/edit" meta={{ auth: true }} render={(props) => <ProductsCreateEdit {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/cashiers" meta={{ auth: true }} render={(props) => <CashiersList {...props}/>} />
             <GuardedRoute exact path="/dashboard/cashiers/:id/close" meta={{ auth: true }} render={(props) => <CashiersClose {...props}/>} />
-            {/* <GuardedRoute exact path="/dashboard/cashiers/create" meta={{ auth: true }} render={(props) => <CashiersCreate {...props}/>} /> */}
 
             <GuardedRoute exact path="/dashboard/sales" meta={{ auth: true }} render={(props) => <SalesList {...props}/>} />
             <GuardedRoute exact path="/dashboard/sales/create" meta={{ auth: true }} render={(props) => <SalesCreate {...props}/>} />

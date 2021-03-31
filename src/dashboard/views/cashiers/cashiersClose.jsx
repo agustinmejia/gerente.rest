@@ -234,7 +234,7 @@ class CashiersClose extends Component {
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ this.state.missingAmount.toFixed(2) }  <small style={{fontSize: 12}}>Bs.</small></Typography>
                                                     </Grid>
                                                 </Grid>
-                                                <Grid item xs={12} sm={12} style={{paddingTop: 30, paddingBottom: 50}}>
+                                                <Grid item xs={12} sm={12} style={{paddingTop: 30, paddingBottom: 20}}>
                                                     { this.state.realAmount == 0 &&
                                                         <Alert severity="info">
                                                             <AlertTitle>Información!</AlertTitle>
@@ -273,7 +273,9 @@ class CashiersClose extends Component {
                                                     >
                                                         Cerrar caja
                                                     </Button>
-
+                                                </Grid>
+                                                <Grid item md={12} style={{ textAlign: 'center' }}>
+                                                    <Link to='/dashboard/cashiers' style={{ textDecoration: 'underline' }}>Volver</Link>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
@@ -313,7 +315,7 @@ class CashiersClose extends Component {
                                     <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
                                         Cancelar
                                     </Button>
-                                    <Button onClick={ this.handleSubmit } color="secondary" autoFocus>
+                                    <Button onClick={ this.handleSubmit } color="secondary">
                                         Si, cerrar caja!
                                     </Button>
                                 </DialogActions>

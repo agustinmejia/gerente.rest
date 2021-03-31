@@ -207,7 +207,7 @@ class BranchesList extends Component {
                     <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary" autoFocus>
+                    <Button onClick={ this.hanldeDelete } color="secondary">
                       Eliminar
                     </Button>
                   </DialogActions>

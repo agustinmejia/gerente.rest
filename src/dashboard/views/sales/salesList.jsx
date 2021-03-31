@@ -79,7 +79,7 @@ class salesList extends Component {
             </Tooltip>
           </>
       )
-      return { id, customer, type, total, actions: tableOptions };
+      return { id, customer, type: `${type.charAt(0).toUpperCase()}${type.slice(1)}`, total, actions: tableOptions };
   }
 
   componentDidMount(){
@@ -258,7 +258,7 @@ class salesList extends Component {
                     <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary" autoFocus>
+                    <Button onClick={ this.hanldeDelete } color="secondary">
                       Eliminar
                     </Button>
                   </DialogActions>

@@ -161,7 +161,7 @@ class MyCompany extends Component {
         return (
             <>
                 { this.state.loading &&
-                    <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <Backdrop open={true} style={{ zIndex: 20 }}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 }

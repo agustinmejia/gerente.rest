@@ -59,6 +59,28 @@ class EmployesCreateEdit extends Component {
     }
 
     componentDidMount(){
+        // Get branches company
+        let { company } = this.props.authSession;
+        fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
+        .then(res => res.json())
+        .then(res => {
+            this.setState({branches: res.branches}, () => {
+                // Si solo hay una sucursal la seleccionamos por defecto
+                if(res.branches.length == 1){
+                    this.setState({branchId: res.branches[0].id});
+                }
+            });
+        })
+        .catch(error => ({'error': error}));
+
+        // Get roles list
+        fetch(`${API}/api/roles/list`, {headers: this.state.headers})
+        .then(res => res.json())
+        .then(res => {
+            this.setState({roles: res.roles});
+        })
+        .catch(error => ({'error': error}));
+
         // If edit get data employe
         let { id } = this.state;
         if(id){
@@ -83,28 +105,6 @@ class EmployesCreateEdit extends Component {
             .catch(error => ({'error': error}))
             .then(() => this.setState({loading: false}));
         }
-
-        // Get branches company
-        let { company } = this.props.authSession;
-        fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
-        .then(res => res.json())
-        .then(res => {
-            this.setState({branches: res.branches}, () => {
-                // Si solo hay una sucursal la seleccionamos por defecto
-                if(res.branches.length == 1){
-                    this.setState({branchId: res.branches[0].id});
-                }
-            });
-        })
-        .catch(error => ({'error': error}));
-
-        // Get roles list
-        fetch(`${API}/api/roles/list`, {headers: this.state.headers})
-        .then(res => res.json())
-        .then(res => {
-            this.setState({roles: res.roles});
-        })
-        .catch(error => ({'error': error}));
     }
 
     hanldeImage = e => {
@@ -142,7 +142,7 @@ class EmployesCreateEdit extends Component {
         formData.append("password", password);
 
         // Change URL for update or create
-        let url = this.state.id ? `${API}/api/employe/${id}/update` : `${API}/api/company/${company.id}/employes/create`;
+        let url = id ? `${API}/api/employe/${id}/update` : `${API}/api/company/${company.id}/employes/create`;
         axios({
             method: 'post',
             url,

@@ -20,6 +20,7 @@ import axios from "axios";
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { FormButtons } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API } = env;
@@ -112,7 +113,7 @@ class BranchesEdit extends Component {
         return (
             <>
                 { this.state.loading &&
-                    <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <Backdrop open={true} style={{ zIndex: 20 }}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 }
@@ -207,34 +208,7 @@ class BranchesEdit extends Component {
                                     >
                                     </GoogleMapReact>
                                 </div>
-                                <div style={{ paddingTop: 50 }}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={6}>
-                                            <Link to='/dashboard/branches'>
-                                                <Button
-                                                    fullWidth
-                                                    size="large"
-                                                    variant="contained"
-                                                    startIcon={ <IoIosArrowDropleft/> }
-                                                >
-                                                    Volver
-                                                </Button>
-                                            </Link> 
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Button
-                                                type="submit"
-                                                fullWidth
-                                                size="large"
-                                                variant="contained"
-                                                color="primary"
-                                                endIcon={ <IoIosCheckmarkCircle/> }
-                                            >
-                                                Actualizar
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </div>
+                                <FormButtons back='/dashboard/branches' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
                         </div>
                     </main>

@@ -25,11 +25,12 @@ import axios from "axios";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import ProductsCategories from "../../components/productsCategories/productsCategories";
+import { FormButtons } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API } = env;
 
-class ProductsCreate extends Component {
+class ProductsCreateEdit extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -41,7 +42,7 @@ class ProductsCreate extends Component {
             sidebarToggled: false,
             loading: false,
             categories: [],
-            ownerId: this.props.authSession.company.owner_id,
+            id: this.props.match.params.id,
             inputName: '',
             inputType: '',
             inputPrice: '',
@@ -69,6 +70,26 @@ class ProductsCreate extends Component {
             }
         })
         .catch(error => ({'error': error}));
+
+        // If edit get data product
+        if(this.state.id){
+            this.setState({loading: true});
+            fetch(`${API}/api/product/${this.state.id}`, {headers: this.state.headers})
+            .then(res => res.json())
+            .then(res => {
+                let { product } = res;
+                this.setState({
+                    inputName: product.name,
+                    inputType: product.type,
+                    inputPrice: product.price,
+                    selectCategoryId: product.product_category_id,
+                    inputShortDescription: product.short_description ? product.short_description : '',
+                    image: product.image ? `${API}/storage/${product.image.replace('.', '-medium.')}`: `${API}/images/default-image.png`
+                });
+            })
+            .catch(error => ({'error': error}))
+            .then(() => this.setState({loading: false}));
+        }
     }
 
     hanldeImage = e => {
@@ -90,15 +111,18 @@ class ProductsCreate extends Component {
             this.setState({loading: true, showDialogCreateCategory: false})
             event.preventDefault();
 
+            let { fileImageCategory, ownerId, inputNameCategory, inputDescriptionCategory } = this.state;
+            let { company } = this.props.authSession;
+
             let formData = new FormData();
-            formData.append('image', this.state.fileImageCategory);
-            formData.append("owner_id", this.state.ownerId);
-            formData.append("name", this.state.inputNameCategory);
-            formData.append("description", this.state.inputDescriptionCategory);
+            formData.append('image', fileImageCategory);
+            formData.append("owner_id", ownerId);
+            formData.append("name", inputNameCategory);
+            formData.append("description", inputDescriptionCategory);
 
             axios({
                 method: 'post',
-                url: `${API}/api/product_category/create`,
+                url: `${API}/api/company/${company.id}/product_category/create`,
                 data: formData,
                 headers: this.state.headers
             })
@@ -142,25 +166,30 @@ class ProductsCreate extends Component {
         }
 
         this.setState({loading: true});
+        let { company } = this.props.authSession;
+        let { id, selectCategoryId, inputName, inputType, inputPrice, inputShortDescription, fileImage } = this.state;
 
         let formData = new FormData();
-        formData.append("owner_id", this.state.ownerId);
-        formData.append("product_category_id", this.state.selectCategoryId);
-        formData.append("name", this.state.inputName);
-        formData.append("type", this.state.inputType);
-        formData.append("price", this.state.inputPrice);
-        formData.append("short_description", this.state.inputShortDescription);
-        formData.append('image', this.state.fileImage);
+        formData.append("product_category_id", selectCategoryId);
+        formData.append("name", inputName);
+        formData.append("type", inputType);
+        formData.append("price", inputPrice);
+        formData.append("short_description", inputShortDescription);
+        formData.append('image', fileImage);
+
+        // Change URL for update or create
+        let url = id ? `${API}/api/product/${id}/update` : `${API}/api/company/${company.id}/product/create`;
 
         axios({
             method: 'post',
-            url: `${API}/api/product/create`,
+            url,
             data: formData,
             headers: this.state.headers
         })
         .then(res => {
+            console.log(res.data)
             if(res.data.product){
-                this.props.enqueueSnackbar('Producto registrado correctamente!', { variant: 'success' });
+                this.props.enqueueSnackbar(`Producto ${this.state.id ? 'editado' : 'registrado'} correctamente!`, { variant: 'success' });
                 if(this.state.resetForm){
                     this.setState({
                         inputName: '',
@@ -184,7 +213,7 @@ class ProductsCreate extends Component {
         return (
             <>
                 { this.state.loading &&
-                    <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <Backdrop open={true} style={{ zIndex: 20 }}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 }
@@ -195,7 +224,7 @@ class ProductsCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> Nuevo producto</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.id ? 'Editar' : 'Nuevo' } producto</h1>} />
 
                         <div style={{marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
@@ -311,40 +340,16 @@ class ProductsCreate extends Component {
                                         </div>
                                     </Grid>
                                 </Grid>
-                                <FormControlLabel
-                                    control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})}
-                                    color="primary" />}
-                                    label="Limpiar campos"
-                                    style={{ marginBottom: 20 }}
-                                />
-                                <div style={{ paddingTop: 50 }}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={6}>
-                                            <Link to='/dashboard/products'>
-                                                <Button
-                                                    fullWidth
-                                                    size="large"
-                                                    variant="contained"
-                                                    startIcon={ <IoIosArrowDropleft/> }
-                                                >
-                                                    Volver
-                                                </Button>
-                                            </Link> 
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Button
-                                                type="submit"
-                                                fullWidth
-                                                size="large"
-                                                variant="contained"
-                                                color="primary"
-                                                endIcon={ <IoIosCheckmarkCircle/> }
-                                            >
-                                                Guardar
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </div>
+                                {
+                                    !this.state.id &&
+                                    <FormControlLabel
+                                        control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})}
+                                        color="primary" />}
+                                        label="Limpiar campos"
+                                        style={{ marginBottom: 20 }}
+                                    />
+                                }
+                                <FormButtons back='/dashboard/products' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
                         </div>
 
@@ -375,4 +380,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(ProductsCreate));
+export default connect(mapStateToProps)(withSnackbar(ProductsCreateEdit));

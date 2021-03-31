@@ -522,7 +522,7 @@ class SalesCreate extends Component {
         return (
             <>
                 { this.state.loading &&
-                    <Backdrop open={true} style={{ zIndex: 2 }}>
+                    <Backdrop open={true} style={{ zIndex: 20 }}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
                 }
@@ -701,23 +701,23 @@ class SalesCreate extends Component {
 
                                         {/* Type sale */}
                                         <Grid item sm={12} style={{marginTop: 10}}>
-                                            <RadioGroup row aria-label="position" name="position" defaultValue="table">
+                                            <RadioGroup row aria-label="position" name="position" defaultValue="mesa">
                                                 <FormControlLabel
-                                                    value="table"
+                                                    value="mesa"
                                                     control={<Radio color="primary" />}
                                                     label="Mesa"
                                                     labelPlacement="end"
                                                     onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
                                                 />
                                                 <FormControlLabel
-                                                    value="takeaway"
+                                                    value="para llevar"
                                                     control={<Radio color="primary" />}
                                                     label="Para llevar"
                                                     labelPlacement="end"
                                                     onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
                                                 />
                                                 <FormControlLabel
-                                                    value="delivery"
+                                                    value="domicilio"
                                                     control={<Radio color="primary" />}
                                                     label="Domicilio"
                                                     labelPlacement="end"
@@ -895,9 +895,9 @@ class SalesCreate extends Component {
                                 style={{marginTop: 50, marginBottom: 50}}
                             >
                                 <div style={{marginBottom: 10}}>
-                                    <img src="/img/dashboard/cart-empty.png" style={{width: 150}}/>
+                                    <img src="/img/dashboard/cart-empty.png" style={{width: 200}}/>
                                 </div>
-                                <Typography variant='subtitle1'>Cesta de productos vacía</Typography>
+                                <Typography variant='h5'>Cesta de productos vacía</Typography>
                             </Grid>
                         }
 
