@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
     Grid,
-    Button,
     TextField,
     Select,
     MenuItem,
@@ -10,8 +9,7 @@ import {
     Backdrop,
     CircularProgress
 }from '@material-ui/core';
-import { IoIosMenu, IoIosCheckmarkCircle, IoIosArrowDropleft } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { IoIosMenu } from "react-icons/io";
 import GoogleMapReact from 'google-map-react';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';

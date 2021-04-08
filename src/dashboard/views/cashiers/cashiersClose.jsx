@@ -2,26 +2,19 @@ import React, { Component } from 'react';
 import {
     Grid,
     Button,
-    Tooltip,
-    Fab,
     Paper,
-    Collapse,
-    Chip,
     Typography,
     TextField,
-    Divider,
     Backdrop,
     CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Slide
 } from '@material-ui/core';
 
 import {
-    Autocomplete,
     Alert,
     AlertTitle
 } from '@material-ui/lab';
@@ -333,7 +326,7 @@ const Bill = (props) => {
     return(
         <Grid container spacing={2} style={{flexDirection: 'row'}}>
             <Grid item style={{ width: '30%'}}>
-                <img src={`/img/bills/${ props.name }.png`} style={{width: 100}}/>
+                <img src={`/img/bills/${ props.name }.png`} alt={ props.name } style={{width: 100}}/>
             </Grid>
             <Grid item style={{ width: '30%' }}>
                 <TextField

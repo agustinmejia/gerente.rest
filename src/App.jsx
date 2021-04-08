@@ -45,6 +45,9 @@ import SalesCreate from "./dashboard/views/sales/salesCreate";
 import EmployesList from "./dashboard/views/employes/employesList";
 import EmployesCreateEdit from "./dashboard/views/employes/EmployesCreateEdit";
 
+// Tickets
+import Tickets from "./dashboard/views/tickets/tickets";
+
 import Error404 from "./dashboard/views/errors/404";
 
 import { connect } from 'react-redux';
@@ -153,6 +156,8 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/employes" meta={{ auth: true }} render={(props) => <EmployesList {...props}/>} />
             <GuardedRoute exact path="/dashboard/employes/create" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />
             <GuardedRoute exact path="/dashboard/employes/:id/edit" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/tickets" meta={{ auth: true }} render={(props) => <Tickets {...props}/>} />
 
             {/* Not found */}
             <Route path="*" component={Error404} />

@@ -1,0 +1,29 @@
+.parpadea {
+    animation-name: parpadeo;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+    -webkit-animation-name:parpadeo;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+}
+  
+@-moz-keyframes parpadeo{  
+    0% {  background-color: transparent; }
+    30% { background-color: #E74C3C; }
+    90% { background-color: transparent; }
+}
+  
+@-webkit-keyframes parpadeo {  
+    0% {  background-color: transparent; }
+    30% { background-color: #E74C3C; }
+    90% { background-color: transparent; }
+}
+  
+@keyframes parpadeo {  
+    0% {  background-color: transparent; }
+    30% { background-color: #E74C3C; }
+    90% { background-color: transparent; }
+}

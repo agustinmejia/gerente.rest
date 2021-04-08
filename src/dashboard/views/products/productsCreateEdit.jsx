@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
     Grid,
-    Button,
     TextField,
     Backdrop,
     CircularProgress,
@@ -15,8 +14,7 @@ import {
     FormControlLabel,
     Checkbox
 }from '@material-ui/core';
-import { IoIosMenu, IoIosCheckmarkCircle, IoIosArrowDropleft, IoIosCamera, IoIosAddCircleOutline } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { IoIosMenu, IoIosCamera, IoIosAddCircleOutline } from "react-icons/io";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";

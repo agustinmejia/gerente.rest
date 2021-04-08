@@ -193,7 +193,7 @@ a:focus, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:acti
 	display: table;
 	width: 100%;
 	padding: 0;
-	background: url(https://cdn.pixabay.com/photo/2016/11/21/16/02/bar-1846137_960_720.jpg) center center no-repeat;
+	background: url("../img/background.jpeg") center center no-repeat;
 	background-color: #e5e5e5;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;

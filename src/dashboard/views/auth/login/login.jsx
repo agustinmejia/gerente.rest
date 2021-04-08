@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh',
     },
     image: {
-        backgroundImage: 'url(https://cdn.pixabay.com/photo/2016/11/21/16/02/bar-1846137_960_720.jpg)',
+        backgroundImage: 'url(../img/background.jpeg)',
         backgroundRepeat: 'no-repeat',
         backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
         backgroundSize: 'cover',
