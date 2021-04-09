@@ -43,7 +43,7 @@ const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Información' },
   { id: 'branch', label: 'Sucursal' },
-  { id: 'actions', label: 'Opciones' },
+  { id: 'actions', label: 'Opciones', align: 'right' },
 ];
 
 class EmployesList extends Component {

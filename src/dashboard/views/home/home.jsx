@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { IoIosMenu } from "react-icons/io";
 
+import { connect } from 'react-redux';
+import { withSnackbar } from 'notistack';
+
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
@@ -11,6 +14,10 @@ class Home extends Component {
         this.state = {
             sidebarToggled: false,
         }
+    }
+
+    componentDidMount(){
+        // let { user } = this.props.authSession;
     }
 
     render() {
@@ -30,4 +37,10 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+        authSession: state.authSession,
+    }
+}
+
+export default connect(mapStateToProps)(withSnackbar(Home));

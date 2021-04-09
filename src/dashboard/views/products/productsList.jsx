@@ -43,6 +43,7 @@ import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
 
 const { API } = env;
+const defaultImg = `${API}/images/default-image.png`;
 
 const transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -53,7 +54,7 @@ const tableColumns = [
   { id: 'details', label: 'Detalles' },
   { id: 'price', label: 'Precio' },
   { id: 'stock', label: 'Stock' },
-  { id: 'actions', label: 'Opciones' },
+  { id: 'actions', label: 'Opciones', align: 'right' },
 ];
 
 class ProductsList extends Component {
@@ -65,7 +66,6 @@ class ProductsList extends Component {
             'accept': 'application/json',
             'Authorization': `Bearer ${this.props.authSession.token}`
           },
-          defaultImg: `${API}/images/default-image.png`,
           showDialogDelete: false,
           showDialogStock: false,
           loading: false,
@@ -89,7 +89,7 @@ class ProductsList extends Component {
         <>
           <Grid container spacing={2}>
             <Grid item>
-              <Avatar src={image ? `${API}/storage/${image.replace('.', '-cropped.')}` : this.state.defaultImg} style={{width: 80, height: 80}} />
+              <Avatar src={image ? `${API}/storage/${image.replace('.', '-cropped.')}` : defaultImg} style={{width: 80, height: 80}} />
             </Grid>
             <Grid item xs={12} sm container>
               <Grid item xs container direction="column" spacing={2}>
@@ -363,7 +363,7 @@ class ProductsList extends Component {
                                 <React.Fragment>
                                   <Grid container wrap="nowrap" spacing={2}>
                                     <Grid item>
-                                      <Avatar src={option.image ? `${API}/storage/${option.image.replace('.', '-cropped.')}` : this.state.defaultImg} />
+                                      <Avatar src={option.image ? `${API}/storage/${option.image.replace('.', '-cropped.')}` : defaultImg} />
                                     </Grid>
                                     <Grid item xs>
                                         <b>{ option.name }</b>

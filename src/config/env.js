@@ -3,6 +3,7 @@ export const env = {
     appDescription: "",
     autor: "@AgustinMejiaM",
     API: "http://localhost:8000",
+    SOCKET_IO: "http://127.0.0.1:3001",
     location: {
         latitude: -14.834821,
         longitude: -64.904159,

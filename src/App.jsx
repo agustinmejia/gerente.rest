@@ -39,6 +39,7 @@ import CashiersClose from "./dashboard/views/cashiers/cashiersClose";
 
 // Sales
 import SalesList from "./dashboard/views/sales/salesList";
+import SalesKitchenList from "./dashboard/views/sales/salesKitchenList";
 import SalesCreate from "./dashboard/views/sales/salesCreate";
 
 // Employes
@@ -151,6 +152,7 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/cashiers/:id/close" meta={{ auth: true }} render={(props) => <CashiersClose {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/sales" meta={{ auth: true }} render={(props) => <SalesList {...props}/>} />
+            <GuardedRoute exact path="/dashboard/kitchen" meta={{ auth: true }} render={(props) => <SalesKitchenList {...props}/>} />
             <GuardedRoute exact path="/dashboard/sales/create" meta={{ auth: true }} render={(props) => <SalesCreate {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/employes" meta={{ auth: true }} render={(props) => <EmployesList {...props}/>} />

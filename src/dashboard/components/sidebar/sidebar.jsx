@@ -52,6 +52,7 @@ const Sidebar = props => {
                         <MenuItem icon={ <IoIosCash size={25} /> } ><Link to="/dashboard/cashiers">{<b>Cajas</b>}</Link></MenuItem>
                         <MenuItem icon={ <IoMdCart size={25} /> } ><Link to="/dashboard/sales/create">{<b>Vender</b>}</Link></MenuItem>
                         <SubMenu icon={ <IoIosBulb size={25} /> } title={<b>Complementos</b>}>
+                            <MenuItem><Link to="/dashboard/kitchen">Cocina</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/tickets" target="_blank">Tickets</Link></MenuItem>
                         </SubMenu>
                     </Menu>

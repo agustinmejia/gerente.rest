@@ -20,31 +20,38 @@ import {
   DialogContentText,
   DialogTitle,
   Fab,
-  Slide
+  Slide,
+  Chip,
+  Typography
 } from '@material-ui/core';
 
-import { IoIosMenu, IoIosAddCircle, IoIosTrash, IoIosSearch, IoIosHome } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircle, IoIosTrash, IoIosSearch, IoIosHome, IoMdThumbsUp } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
+import axios from "axios";
 import { withSnackbar } from 'notistack';
+import moment from 'moment';
+import 'moment/locale/es';
+import { io } from "socket.io-client";
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, SOCKET_IO } = env;
+const socket = io(SOCKET_IO);
 
 const transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const tableColumns = [
-    { id: 'id', label: 'Nro' },
+    { id: 'number', label: 'Nro' },
     { id: 'customer', label: 'Cliente' },
-    { id: 'type', label: 'Tipo' },
     { id: 'total', label: 'Total' },
-    { id: 'actions', label: 'Opciones' },
+    { id: 'status', label: 'Estado' },
+    { id: 'actions', label: 'Opciones', align: 'right', align: 'right' },
 ];
 
 class salesList extends Component {
@@ -69,61 +76,109 @@ class salesList extends Component {
     }
   }
 
-  createData(id, customer, type, total) {
-      let tableOptions = (
-          <>
-            <Tooltip title="Eliminar venta" placement="top">
-                <Fab aria-label="Eliminar venta" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
-                    <IoIosTrash size={25} color="#F33417" />
-                </Fab>
-            </Tooltip>
-          </>
-      )
-      return { id, customer, type: `${type.charAt(0).toUpperCase()}${type.slice(1)}`, total, actions: tableOptions };
-  }
-
   componentDidMount(){
     if(this.state.branchId){
       this.getSales();
     }
+
+    socket.on(`sales branch ${this.state.branchId}`, data => {
+      this.getSales();
+    });
   }
 
-  filter = e => {
-    let {value} = e.target
-    this.setState({inputFilter: value});
-    let rows = [];
-    if(value){
-      this.state.salesLis.map(sale => {
-        let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`;
-        let sale_number = sale.sale_number.toString();
-        if(customer.toLowerCase().search(value.toLowerCase()) >= 0 || sale_number.search(value) >= 0){
-          rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
+  createData(id, number, customer, type, status, total, hour) {
+    let detail = (
+      <>
+        <Typography>{customer}</Typography>
+        <small>{moment(hour).fromNow()}</small>
+      </>
+    );
+    let tableOptions = (
+        <>
+        { status.id == 3 &&
+          <Tooltip title="Pedido entregada" placement="top">
+            <Fab aria-label="Pedido entregada" size='small' onClick={ () => this.handleStatus(id, 5) } style={{marginRight: 10}}>
+              <IoMdThumbsUp size={25} color="#3C85E7" />
+            </Fab>
+          </Tooltip>
         }
-      });
-    }else{
-      this.state.salesLis.map(sale => {
-        let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
-        rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
+          <Tooltip title="Eliminar venta" placement="top">
+              <Fab aria-label="Eliminar venta" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+                  <IoIosTrash size={25} color="#F33417" />
+              </Fab>
+          </Tooltip>
+        </>
+    );
+
+    return { number, customer: detail, total, status: <Chip size="small" label={status.name} style={{ backgroundColor: status.color , color: 'white' }} />, actions: tableOptions };
+  }
+
+  // filter = e => {
+  //   let {value} = e.target
+  //   this.setState({inputFilter: value});
+  //   let rows = [];
+  //   if(value){
+  //     this.state.salesLis.map(sale => {
+  //       let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`;
+  //       let sale_number = sale.sale_number.toString();
+  //       if(customer.toLowerCase().search(value.toLowerCase()) >= 0 || sale_number.search(value) >= 0){
+  //         rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
+  //       }
+  //     });
+  //   }else{
+  //     this.state.salesLis.map(sale => {
+  //       let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
+  //       rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
+  //     });
+  //   }
+  //   this.setState({tableRows: rows});
+  // }
+
+  getSales(){
+    fetch(`${API}/api/branch/${this.props.authSession.branch.id}/sales`, {headers: this.state.headers})
+    .then(res => res.json())
+    .then(res => {
+      this.renderRowTable(res.sales);
+    })
+    .catch(error => ({'error': error}));
+  }
+
+  renderRowTable(sales){
+    let rows = [];
+    if(sales){
+      this.setState({salesLis: sales});
+      sales.map(sale => {
+          let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
+          rows.push(this.createData(sale.id, sale.sale_number, customer, sale.sale_type, sale.status, sale.total, sale.created_at));
       });
     }
     this.setState({tableRows: rows});
   }
 
-  getSales(){
-      fetch(`${API}/api/branch/${this.props.authSession.branch.id}/sales`, {headers: this.state.headers})
-      .then(res => res.json())
-      .then(res => {
-        let rows = [];
-        if(res.sales){
-          this.setState({salesLis: res.sales});
-          res.sales.map(sale => {
-              let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
-              rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
-          });
-        }
-        this.setState({tableRows: rows});
-      })
-      .catch(error => ({'error': error}));
+  handleStatus(id, sales_status_id){
+    this.setState({loading: true});
+
+    axios({
+        method: 'post',
+        url: `${API}/api/sales/${id}/update/status`,
+        data: JSON.stringify({sales_status_id}),
+        headers: this.state.headers
+    })
+    .then(res => {
+      if(res.data.sale){
+        this.getSales();
+        this.props.enqueueSnackbar(`Pedido ${sales_status_id == 4 ? 'asignado a delivery' : 'Entregado' } !`, { variant: 'success' });
+
+        // Emitir para actualizar vista del cajero
+        socket.emit(`change status`, {status: sales_status_id, branchId: this.state.branchId});
+      }else{
+        this.props.enqueueSnackbar('Ocurrió un error, intente nuevamente.', { variant: 'error' });
+      }
+    })
+    .catch(error => console.log(error))
+    .finally(() => {
+        this.setState({loading: false});
+    });
   }
 
   hanldeDelete = () => {
@@ -178,12 +233,12 @@ class salesList extends Component {
                               <InputBase
                                 placeholder="Nro o cliente"
                                 inputProps={{ 'aria-label': 'Nro o cliente' }}
-                                onChange={ this.filter }
+                                // onChange={ this.filter }
                                 value={ this.state.inputFilter }
                               />
                               <Divider orientation="vertical" style={{ height: 30, margin: 10, marginRight: 20 }} />
                               <Tooltip title="Cambiar sucursal actual" placement="top" style={{ marginLeft: 10 }}>
-                                <IconButton color="primary" aria-label="Cambiar sucursal actual" onClick={ (e) => console.log('hi') }>
+                                <IconButton color="primary" aria-label="Cambiar sucursal actual" onClick={ (e) =>  this.props.enqueueSnackbar('Ésta opción no está disponible para tu tipo de suscripción.', { variant: 'warning' }) }>
                                   <IoIosHome size={25} />
                                 </IconButton>
                               </Tooltip>
@@ -210,7 +265,7 @@ class salesList extends Component {
                               <TableBody>
                                 {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
                                   return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.number}>
                                       {tableColumns.map((column) => {
                                         const value = row[column.id];
                                         return (

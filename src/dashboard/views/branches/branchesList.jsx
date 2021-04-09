@@ -42,7 +42,7 @@ const tableColumns = [
   { id: 'name', label: 'Nombre' },
   { id: 'phones', label: 'Telefonos' },
   { id: 'address', label: 'Dirección' },
-  { id: 'actions', label: 'Opciones' },
+  { id: 'actions', label: 'Opciones', align: 'right' },
 ];
 
 class BranchesList extends Component {

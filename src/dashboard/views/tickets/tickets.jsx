@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Grid,
     Typography,
@@ -14,10 +14,19 @@ import {
 import { red } from '@material-ui/core/colors';
 import { IoMdHeart, IoMdShare } from "react-icons/io";
 
+import { connect } from 'react-redux';
+import moment from 'moment';
+import 'moment/locale/es';
+import { io } from "socket.io-client";
+import { disableBodyScroll } from 'body-scroll-lock';
+
 import { makeStyles } from '@material-ui/core/styles';
 import './tickets.css'; // Tell webpack that Button.js uses these styles
 
-// Components
+import { env } from '../../../config/env';
+
+const { API, SOCKET_IO } = env;
+const socket = io(SOCKET_IO);
 
 
 const useStyles = makeStyles({
@@ -83,40 +92,65 @@ const ListTickets = [
     }
 ];
 
-const Tickets = () => {
-    const classes = useStyles();
+const Tickets = (props) => {
+  const { token, branch } = props.authSession;
+  const headers = {
+    'Content-Type': 'application/json',
+    'accept': 'application/json',
+    'Authorization': `Bearer ${token}`
+  }
+  const [listTickets, setListTickets] = useState([])
+  const classes = useStyles();
 
-    return (
-        <>
-            <div className={classes.root}>
-                <Grid container className={classes.mask}>
-                    <Grid item md={5}>
-                        <div style={{padding: 20 }}>
-                            <RecipeReviewCard />
-                        </div>
-                    </Grid>
-                    <Grid item md={7}>
-                        <Grid container style={{marginTop: 20}}>
-                            {
-                                ListTickets.map(ticket => {
-                                    let classTicket = [classes.ticketItem];
-                                    if(ticket.status == 2){
-                                        classTicket.push('parpadea');
-                                    }
-                                    return(
-                                        <Grid item md={6} className={classTicket} key={ ticket.id }>
-                                            <Typography variant='h1' className={classes.ticketItemText}>T-{ ticket.number }</Typography>
-                                            <Typography variant='subtitle2' style={{marginLeft:10}}>{ ticket.time }</Typography>
-                                        </Grid>
-                                    );
-                                })
-                            }
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </div>
-        </>
-    );
+  useEffect(() => {
+    socket.on(`sales tickets ${branch.id}`, data => {
+      getSales();
+    });
+    getSales();
+    disableBodyScroll(document)
+  }, []);
+
+  function getSales(){
+    fetch(`${API}/api/branch/${branch.id}/sales/tickets`, {headers})
+    .then(res => res.json())
+    .then(res => {
+      setListTickets(res.sales);
+      console.log(res)
+    })
+    .catch(error => ({'error': error}));
+  }
+
+  return (
+    <>
+      <div className={classes.root}>
+          <Grid container className={classes.mask}>
+              <Grid item md={5}>
+                  <div style={{padding: 20 }}>
+                      <RecipeReviewCard />
+                  </div>
+              </Grid>
+              <Grid item md={7}>
+                  <Grid container style={{marginTop: 20}}>
+                      {
+                          listTickets.map(ticket => {
+                              let classTicket = [classes.ticketItem];
+                              if(ticket.status.id == 3){
+                                  classTicket.push('parpadea');
+                              }
+                              return(
+                                  <Grid item md={6} className={classTicket} key={ ticket.id }>
+                                      <Typography variant='h1' className={classes.ticketItemText}>T-{ ticket.sale_number }</Typography>
+                                      <Typography variant='subtitle2' style={{marginLeft:10}}>{ moment(ticket.created_at).fromNow() }</Typography>
+                                  </Grid>
+                              );
+                          })
+                      }
+                  </Grid>
+              </Grid>
+          </Grid>
+      </div>
+    </>
+  );
 }
 
 const useStylesCard = makeStyles((theme) => ({
@@ -181,4 +215,10 @@ const RecipeReviewCard = () => {
   );
 }
 
-export default Tickets;
+const mapStateToProps = (state) => {
+    return {
+        authSession: state.authSession,
+    }
+}
+
+export default connect(mapStateToProps)(Tickets);

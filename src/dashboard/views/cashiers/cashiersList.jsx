@@ -63,7 +63,7 @@ const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Caja' },
   { id: 'iconStatus', label: 'Estado' },
-  { id: 'actions', label: 'Opciones' },
+  { id: 'actions', label: 'Opciones', align: 'right' },
 ];
 
 // Tab panels config

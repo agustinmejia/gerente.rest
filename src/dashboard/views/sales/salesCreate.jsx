@@ -54,14 +54,16 @@ import { FaRegEdit } from "react-icons/fa";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
+import { io } from "socket.io-client";
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, SOCKET_IO } = env;
 const defaultImg = `${API}/images/default-image.png`;
+const socket = io(SOCKET_IO);
 
 // Sale confirmation
 const transition = React.forwardRef(function Transition(props, ref) {
@@ -479,6 +481,7 @@ class SalesCreate extends Component {
                     cashier_id: this.state.cashierId,
                     payment_type: this.state.paymentType ? 1 : 2,
                     sale_type: this.state.radioSaleType,
+                    sales_status_id: 2,
                     total: this.state.inputSaleAmount,
                     discount: this.state.inputDiscountAmount,
                     amount_received: this.state.amountReceived,
@@ -503,7 +506,7 @@ class SalesCreate extends Component {
                         saleDetails: [],
                         selectCustomerId: 1,
                         selectCustomerSelected: {id: 1, person: {ci_nit: ''}},
-                        radioSaleType: 'table',
+                        radioSaleType: 'mesa',
                         inputSaleAmount: 0,
                         inputDiscountAmount: 0,
                         amountReceived: 0,
@@ -511,6 +514,9 @@ class SalesCreate extends Component {
                         inputObservations: ''
                     });
                     this.props.enqueueSnackbar('Venta realizada correctamente!', { variant: 'success' });
+
+                    // Emitir evento para cocina
+                    socket.emit(`change status`, {status: 2, branchId: this.state.branch.id});
                 }else{
                     this.props.enqueueSnackbar('Ocurrió un error inesperado', { variant: 'error' });
                 }
@@ -542,7 +548,7 @@ class SalesCreate extends Component {
                                         <h4 style={{color: '#858585'}}>
                                             { this.state.branch.name }
                                             <Tooltip title="Cambiar de sucursal" placement="bottom" style={{marginTop: -5, marginLeft: 5}}>
-                                                <IconButton aria-label="Cambiar de sucursal" color='primary'>
+                                                <IconButton aria-label="Cambiar de sucursal" color='primary' onClick={ event => this.props.enqueueSnackbar('Ésta opción no está disponible para tu tipo de suscripción.', { variant: 'warning' }) }>
                                                     <FaRegEdit />
                                                 </IconButton>
                                             </Tooltip>
