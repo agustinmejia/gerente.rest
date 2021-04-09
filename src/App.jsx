@@ -41,6 +41,7 @@ import CashiersClose from "./dashboard/views/cashiers/cashiersClose";
 import SalesList from "./dashboard/views/sales/salesList";
 import SalesKitchenList from "./dashboard/views/sales/salesKitchenList";
 import SalesCreate from "./dashboard/views/sales/salesCreate";
+import Receipt from "./dashboard/views/sales/print/receipt";
 
 // Employes
 import EmployesList from "./dashboard/views/employes/employesList";
@@ -154,6 +155,7 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/sales" meta={{ auth: true }} render={(props) => <SalesList {...props}/>} />
             <GuardedRoute exact path="/dashboard/kitchen" meta={{ auth: true }} render={(props) => <SalesKitchenList {...props}/>} />
             <GuardedRoute exact path="/dashboard/sales/create" meta={{ auth: true }} render={(props) => <SalesCreate {...props}/>} />
+            <GuardedRoute exact path="/dashboard/sales/print/:id" meta={{ auth: true }} render={(props) => <Receipt {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/employes" meta={{ auth: true }} render={(props) => <EmployesList {...props}/>} />
             <GuardedRoute exact path="/dashboard/employes/create" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />

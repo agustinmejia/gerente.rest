@@ -111,7 +111,8 @@ class SalesCreate extends Component {
             paymentType: false,
             inputObservations: '',
             // formCustomer
-            cashierId: null,
+            cashier: null,
+            loadCashier: true,
             branch: this.props.authSession.branch,
             showDialogCustomer: false,
             inputFirstName: '',
@@ -124,7 +125,7 @@ class SalesCreate extends Component {
             inputAddress: '',
             // formCashier
             showDialogCashier: false,
-            inputNameCashier: 'Caja principal',
+            inputNameCashier: 'principal',
             inputNameCashierError: false,
             inputAmountCashier: 0,
             inputAmountCashierError: false,
@@ -188,12 +189,11 @@ class SalesCreate extends Component {
             .then(res => res.json())
             .then(res => {
                 if(res.cashier){
-                    this.setState({cashierId: res.cashier.id});
-                }else{
-                    this.setState({cashierId: 0});
+                    this.setState({cashier: res.cashier});
                 }
             })
-            .catch(error => ({'error': error}));
+            .catch(error => ({'error': error}))
+            .finally(() => this.setState({loadCashier: false}));
         }
     }
 
@@ -455,7 +455,7 @@ class SalesCreate extends Component {
         })
         .then(res => {
             if(res.data.cashier){
-                this.setState({cashierId: res.data.cashier.id});
+                this.setState({cashier: res.data.cashier});
                 this.props.enqueueSnackbar('Caja aperturada correctamente', { variant: 'success' });
             }else{
                 this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor', { variant: 'error' });
@@ -468,7 +468,7 @@ class SalesCreate extends Component {
     }
 
     handleSubmitSale(){
-        if(this.state.cashierId <= 0){
+        if(this.state.cashier === null){
             this.props.enqueueSnackbar('Debes abrir caja primero', { variant: 'error' });
             return
         }
@@ -478,8 +478,8 @@ class SalesCreate extends Component {
                     branch_id: this.state.branch.id,
                     customer_id: this.state.selectCustomerId,
                     user_id: this.props.authSession.user.id,
-                    cashier_id: this.state.cashierId,
-                    payment_type: this.state.paymentType ? 1 : 2,
+                    cashier_id: this.state.cashier.id,
+                    payment_type: this.state.paymentType ? 2 : 1,
                     sale_type: this.state.radioSaleType,
                     sales_status_id: 2,
                     total: this.state.inputSaleAmount,
@@ -517,6 +517,7 @@ class SalesCreate extends Component {
 
                     // Emitir evento para cocina
                     socket.emit(`change status`, {status: 2, branchId: this.state.branch.id});
+                    window.open(`/dashboard/sales/print/${res.sale.id}`, 'Factura', 'toolbar=0,location=0,menubar=0,width=370,height=420,top=100,left:300')
                 }else{
                     this.props.enqueueSnackbar('Ocurrió un error inesperado', { variant: 'error' });
                 }
@@ -543,7 +544,7 @@ class SalesCreate extends Component {
                         <Navbar
                             title={
                                 <>
-                                    <h1 style={{marginLeft: 20}}> Caja 001 </h1>
+                                    <h1 style={{marginLeft: 20}}> Caja - { this.state.cashier ? this.state.cashier.name : 'cerrada' } </h1>
                                     <div style={{marginTop: -5, marginBottom: 10}}>
                                         <h4 style={{color: '#858585'}}>
                                             { this.state.branch.name }
@@ -576,7 +577,7 @@ class SalesCreate extends Component {
 
                         </Grid>
 
-                        { this.state.cashierId === 0 &&
+                        { this.state.cashier === null && this.state.loadCashier === false &&
                             <Alert severity="error">
                                 <AlertTitle>Advertencia</AlertTitle>
                                 Debes abrir caja para registrar tus ventas realizadas.
@@ -783,7 +784,7 @@ class SalesCreate extends Component {
                                         <Grid item md={12}>
                                             <FormControlLabel
                                                 control={<Switch checked={ this.state.paymentType } onChange={ e => this.setState({ paymentType: e.target.checked, amountReceived: e.target.checked ? this.state.inputSaleAmount : '' })} name="switch-paymentType" color="primary" />}
-                                                label="Pago con tarjeta"
+                                                label="Pagado con tarjeta"
                                             />
                                         </Grid>
 
@@ -793,7 +794,7 @@ class SalesCreate extends Component {
                                                 color="primary"
                                                 fullWidth
                                                 size="large"
-                                                disabled={this.state.cashierId == 0 ? true : false}
+                                                disabled={this.state.cashier === null ? true : false}
                                                 endIcon={<IoIosCart>Vender</IoIosCart>}
                                                 onClick={ (e) => this.handleConfirm() }
                                             >
@@ -993,7 +994,7 @@ class SalesCreate extends Component {
                                         <Button onClick={() => this.setState({showDialogSaleConfirm: false}) } color="secondary">
                                             Cancelar
                                         </Button>
-                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } color="primary" disabled={ this.state.cashierId == 0 ? true : false }>
+                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } color="primary" disabled={ this.state.cashier === null ? true : false }>
                                             Aceptar
                                         </Button>
                                     </DialogActions>
@@ -1120,7 +1121,7 @@ class SalesCreate extends Component {
                                                 fullWidth
                                                 id="input-name"
                                                 label="Título de la caja"
-                                                helperText="título descriptivo de la caja para diferenciarlas del resto. Ej: caja de juan"
+                                                helperText="título de la caja o nombre del cajero para diferenciarla del resto. Ej: Turno tarde"
                                                 error={ this.state.inputNameCashierError }
                                                 value={ this.state.inputNameCashier }
                                                 onChange={ event => this.setState({inputNameCashier: event.target.value, inputNameCashierError: false}) }
@@ -1223,7 +1224,6 @@ TabPanel.propTypes = {
     index: PropTypes.any.isRequired,
     value: PropTypes.any.isRequired,
 };
-
 
 const mapStateToProps = (state) => {
     return {
