@@ -9,10 +9,9 @@ export class Contact extends Component {
             <div className="col-md-8">
               <div className="row">
                 <div className="section-title">
-                  <h2>contactanos</h2>
+                  <h2>Contáctanos</h2>
                   <p>
-                    Please fill out the form below to send us an email and we
-                    will get back to you as soon as possible.
+                    Complete el formulario a continuación para enviarnos un correo electrónico y nosotros nos comunicaremos contigo lo antes posible.
                   </p>
                 </div>
                 <form name="sentMessage" id="contactForm" noValidate>
@@ -23,7 +22,7 @@ export class Contact extends Component {
                           type="text"
                           id="name"
                           className="form-control"
-                          placeholder="Name"
+                          placeholder="Nombre completo"
                           required="required"
                         />
                         <p className="help-block text-danger"></p>
@@ -35,7 +34,7 @@ export class Contact extends Component {
                           type="email"
                           id="email"
                           className="form-control"
-                          placeholder="Email"
+                          placeholder="Correo electrónico"
                           required="required"
                         />
                         <p className="help-block text-danger"></p>
@@ -48,14 +47,14 @@ export class Contact extends Component {
                       id="message"
                       className="form-control"
                       rows="4"
-                      placeholder="Message"
+                      placeholder="Mensaje"
                       required
                     ></textarea>
                     <p className="help-block text-danger"></p>
                   </div>
                   <div id="success"></div>
                   <button type="submit" className="btn btn-custom btn-lg">
-                    Send Message
+                    Enviar mensaje
                   </button>
                 </form>
               </div>
@@ -92,19 +91,17 @@ export class Contact extends Component {
                 <div className="social">
                   <ul>
                     <li>
-                      <a
-                        href={this.props.data ? this.props.data.facebook : "/"}
-                      >
+                      <a target="_blank" href={this.props.data ? this.props.data.facebook : "/"}>
                         <i className="fa fa-facebook"></i>
                       </a>
                     </li>
                     <li>
-                      <a href={this.props.data ? this.props.data.twitter : "/"}>
+                      <a target="_blank" href={this.props.data ? this.props.data.twitter : "/"}>
                         <i className="fa fa-twitter"></i>
                       </a>
                     </li>
                     <li>
-                      <a href={this.props.data ? this.props.data.youtube : "/"}>
+                      <a target="_blank" href={this.props.data ? this.props.data.youtube : "/"}>
                         <i className="fa fa-youtube"></i>
                       </a>
                     </li>
@@ -117,7 +114,7 @@ export class Contact extends Component {
         <div id="footer">
           <div className="container text-center">
             <p>
-              &copy; 2020 Gerente.rest
+              &copy; 2021 Gerente.rest
               {/* <a href="http://www.templatewire.com" rel="nofollow">
                 TemplateWire
               </a> */}

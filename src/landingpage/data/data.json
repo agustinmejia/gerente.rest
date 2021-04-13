@@ -5,55 +5,64 @@
         "paragraph": "Gerente.rest de brinda una plataforma donde administrar tus compras, ventas, pedidos, deliveries, etc, En un solo lugar."
 
     },
-    "About": {
-        "paragraph": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "Why": [
-            "Lorem ipsum dolor",
-            "Tempor incididunt",
-            "Lorem ipsum dolor",
-            "Incididunt ut labore"
-        ],
-        "Why2": [
-            "Aliquip ex ea commodo",
-            "Lorem ipsum dolor",
-            "Exercitation ullamco",
-            "Lorem ipsum dolor"
-        ]
-    },
-    "Services": [{
-            "icon": "fa fa-wordpress",
-            "name": "Lorem ipsum dolor",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+    "Features": [
+        {
+            "icon": "fa fa-cloud",
+            "title": "Sin instalación",
+            "text": "No necesitas instalar ningún programa en tu computador para utilizar nuestro servicio."
+        },
+        {
+            "icon": "fa fa-desktop",
+            "title": "Multi plataforma",
+            "text": "Puedes acceder a nuestra plataforma desde cualquier dispositivo con una conexión a internet."
+        },
+        {
+            "icon": "fa fa-group",
+            "title": "Multi usuario",
+            "text": "Agregar los usuarios que desees a tu cuenta para trabajar desde diferentes dispositivos la mismo tiempo."
+        },
+        {
+            "icon": "fa fa-comments-o",
+            "title": "Soporte técnico",
+            "text": "Te brindamos soporte técnico en caso de que tengas consultas acerca del funcionamiendo de la plataforma."
+        }
+    ],
+    "Services": [
+        {
+            "icon": "fa fa-cubes",
+            "name": "Inventario",
+            "text": "Registro y administración de productos con su respectivo seguimiento de inventario del mismo en cada una de las sucursales."
         },
         {
             "icon": "fa fa-cart-arrow-down",
-            "name": "Consectetur adipiscing",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+            "name": "Ventas",
+            "text": "Adminstración de ventas, promociones y clientes con una interface de usuario intuitiva y fácil de manejar."
         },
         {
-            "icon": "fa fa-cloud-download",
-            "name": "Lorem ipsum dolor",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+            "icon": "fa fa-tags",
+            "name": "Compras",
+            "text": "Registro de compra de productos enlazado al inventario, para realizar seguimiento de stock de cada producto."
         },
         {
-            "icon": "fa fa-language",
-            "name": "Consectetur adipiscing",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+            "icon": "fa fa-home",
+            "name": "Sucursales",
+            "text": "Registro, control y seguimiento de los ingresos y egresos de cada una de las sucursales que tiene tu restaurante."
         },
         {
-            "icon": "fa fa-plane",
-            "name": "Lorem ipsum dolor",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+            "icon": "fa fa-dollar",
+            "name": "Cajas",
+            "text": "Apertura, cierre y registro de movimiento de cajas en la diferentes sucursales."
         },
         {
             "icon": "fa fa-pie-chart",
-            "name": "Consectetur adipiscing",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at."
+            "name": "Reportes",
+            "text": "Generación de los reportes necesarios tales como ventas mensuales, productos más vendidos, ingresos netos, etc."
         }
 
 
     ],
-    "Testimonials": [{
+    "Testimonials": [
+        {
             "img": "img/testimonials/01.jpg",
             "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
             "name": "John Doe"
@@ -84,7 +93,30 @@
             "name": "Johnathan Doe"
         }
     ],
-    "Team": [{
+    "About": {
+        "paragraph": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Why": [
+            "Lorem ipsum dolor",
+            "Tempor incididunt",
+            "Lorem ipsum dolor",
+            "Incididunt ut labore"
+        ],
+        "Why2": [
+            "Aliquip ex ea commodo",
+            "Lorem ipsum dolor",
+            "Exercitation ullamco",
+            "Lorem ipsum dolor"
+        ]
+    },
+    "Gallery": [
+        {
+            "thumbnail": "",
+            "image": "",
+            "caption": ""
+        }
+    ],
+    "Team": [
+        {
             "img": "img/team/01.jpg",
             "name": "John Doe",
             "job": "Director"
@@ -105,32 +137,11 @@
         }
     ],
     "Contact": {
-        "address": "Calle Ipurupuro Nro 75 ",
+        "address": "Calle 10 de Noviembre Nro 75 ",
         "phone": "+591 75199157",
         "email": "buddy.m091@gmail.com",
-        "facebook": "https://www.facebook.com/profile.php?id=100036896203498",
+        "facebook": "https://www.facebook.com/Gerente-de-Restaurantes-111894314319067",
         "twitter": "https://twitter.com/AgustinMejiaM",
         "youtube": "https://www.youtube.com/channel/UC7WoO8aDoR7Lf6g0uwVE9TQ"
-    },
-    "Features": [{
-            "icon": "fa fa-comments-o",
-            "title": "Lorem ipsum",
-            "text": "Lorem ipsum dolor sit amet placerat facilisis felis mi in tempus eleifend pellentesque natoque etiam."
-        },
-        {
-            "icon": "fa fa-bullhorn",
-            "title": "Lorem ipsum",
-            "text": "Lorem ipsum dolor sit amet placerat facilisis felis mi in tempus eleifend pellentesque natoque etiam."
-        },
-        {
-            "icon": "fa fa-group",
-            "title": "Lorem ipsum",
-            "text": "Lorem ipsum dolor sit amet placerat facilisis felis mi in tempus eleifend pellentesque natoque etiam."
-        },
-        {
-            "icon": "fa fa-magic",
-            "title": "Lorem ipsum",
-            "text": "Lorem ipsum dolor sit amet placerat facilisis felis mi in tempus eleifend pellentesque natoque etiam."
-        }
-    ]
+    }
 }

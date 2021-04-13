@@ -9,12 +9,11 @@ export const env = {
         longitude: -64.904159,
     },
     color: {
-        primary: '#2a95a5',
-        textMuted: '#6A6969',
-    },
-    images: {
-        banner: { uri: 'https://livemedic.net/storage/blocks/October2020/Pvno9mFgGRY7RJ3a2i9xxycTAVZog4Thh18MejRc.png' }
-    },
+        primary: '#28B463',
+        primaryAlt: '40, 180, 99',
+        secondary: '#212F3C',
+        secondaryAlt: '33, 47, 60',
+    }
 }
 
 export const strRandom = (length) => {

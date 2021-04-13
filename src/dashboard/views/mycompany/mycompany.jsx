@@ -19,13 +19,54 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
+import Tour from 'reactour';
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 
 import { env } from '../../../config/env';
-const { API } = env;
+const { API, color } = env;
+
+const steps = [
+    {
+        selector: '.banner-step',
+        content: 'Presiona el siguiente botón para agregar/cambiar el banner de tu restaurante.',
+    },
+    {
+        selector: '.logo-step',
+        content: 'Presiona el siguiente botón para agregar/cambiar el logo de tu restaurante.',
+    },
+    {
+        selector: '.name-step',
+        content: 'Puedes editar el nombre de tu restaurante cuendo desees.',
+    },
+    {
+        selector: '.slogan-step',
+        content: 'Escribe el slogan de tu negocio, cómo por ejemplo: La mejor atención al mejor precio!. (No obligatorio)',
+    },
+    {
+        selector: '.city-step',
+        content: 'Actualiza la ubicación de tu restaurante.',
+    },
+    {
+        selector: '.phone-step',
+        content: 'Proporciona tus telefonos de contacto para que tus clientes puedan comunicarse contigo. (No obligatorio)',
+    },
+    {
+        selector: '.address-step',
+        content: 'Escribe la dirección de tu restaurante. (No obligatorio)',
+    },
+    {
+        selector: '.description-step',
+        content: 'Escribe una descripción corta de tu restaurante con el fín de hacerte conocer con tus posibles clientes. (No obligatorio)',
+    },
+    {
+        selector: '.save-step',
+        content: 'Por último, para que los cambios se guarden debes presionar el siguiente botón.',
+    }
+];
+
 
 class MyCompany extends Component {
     constructor(props){
@@ -36,8 +77,8 @@ class MyCompany extends Component {
                 'accept': 'application/json',
                 'Authorization': `Bearer ${this.props.authSession.token}`
             },
+            tourActive: false,
             loading: false,
-            displayCameraLogo: 'none',
             banner: `${API}/images/default-image.png`,
             logo: `${API}/images/logo.png`,
             sidebarToggled: false,
@@ -56,7 +97,13 @@ class MyCompany extends Component {
     }
 
     componentDidMount(){
-        
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        if(urlParams.get('tour') == 1){
+            this.setState({tourActive: true});
+        }
+
         // Get cities
         axios.get(`${API}/api/cities/list/registers?request=api`)
         .then(response => {
@@ -70,11 +117,11 @@ class MyCompany extends Component {
         let { company } = this.props.authSession;
         this.setState({
             imputCompanyName: company.name,
-            inputSlogan: company.slogan,
+            inputSlogan: company.slogan ? company.slogan : '',
             selectCity: company.city_id,
-            inputPhones: company.phones,
-            inputAddress: company.address,
-            inputShortDescription: company.short_description
+            inputPhones: company.phones ? company.phones : '',
+            inputAddress: company.address ? company.address : '',
+            inputShortDescription: company.short_description ? company.short_description : ''
         });
 
         if(company.logos){
@@ -179,10 +226,10 @@ class MyCompany extends Component {
                                 <input accept="image/*" style={{ display: 'none' }} id="input-banner" type="file" onChange={ event => this.handleChangeImage(event, 'banner') } />
                                 <input accept="image/*" style={{ display: 'none' }} id="input-logo" type="file" onChange={ event => this.handleChangeImage(event, 'logo') } />
                             </form>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', bottom: -90, paddingRight: 10, zIndex: 1 }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', bottom: -90, paddingRight: 10, zIndex: 1 }} >
                                 <label htmlFor="input-banner">
-                                    <Tooltip title="Cambiar banner">
-                                        <IconButton aria-label="Cambiar banner" component="span">
+                                    <Tooltip title="Click para cambiar banner">
+                                        <IconButton aria-label="Click para cambiar banner" component="span" className="banner-step">
                                             <IoIosCamera color='white' size={50} />
                                         </IconButton>
                                     </Tooltip>
@@ -197,7 +244,7 @@ class MyCompany extends Component {
                                     />
                                 </CardActionArea>
                             </Card>
-                            <Grid container style={{ position: 'relative', bottom: 40, cursor: 'pointer', width: 200 }} onMouseOver={ event => this.setState({displayCameraLogo: 'flex'})} onMouseLeave={ event => this.setState({displayCameraLogo: 'none'})}>
+                            <Grid container style={{ position: 'relative', bottom: 40, cursor: 'pointer', width: 200 }} >
                                 <CardMedia
                                     style={{ width: 120, height: 120, position: 'relative', bottom: 100, left: 20, zIndex: 1, border: '3px solid white' }}
                                     image={ this.state.logo }
@@ -205,8 +252,8 @@ class MyCompany extends Component {
                                 />
                                 <div style={{ position: 'relative', bottom: 78, right: 78, zIndex: 1 }}>
                                     <label htmlFor="input-logo">
-                                        <Tooltip title="Cambiar logo">
-                                            <IconButton aria-label="Cambiar logo" style={{display: this.state.displayCameraLogo}} component="span">
+                                        <Tooltip title="Click para cambiar logo">
+                                            <IconButton aria-label="Click para cambiar logo" component="span" className="logo-step" >
                                                 <IoIosCamera color='white' size={50} />
                                             </IconButton>
                                         </Tooltip>
@@ -227,19 +274,21 @@ class MyCompany extends Component {
                                         variant="outlined"
                                         value={ this.state.imputCompanyName }
                                         onChange={ event => this.setState({imputCompanyName: event.target.value}) }
+                                        className="name-step"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         id="input-slogan"
-                                        label="Slogan"
+                                        label="Slogan de tu restaurante"
                                         placeholder="El cliente primero..."
-                                        helperText="Frase corta que describe a tu restaurante"
+                                        helperText="Escribe una frase corta que describa a tu restaurante."
                                         fullWidth
                                         margin="normal"
                                         variant="outlined"
                                         value={ this.state.inputSlogan }
                                         onChange={ event => this.setState({inputSlogan: event.target.value}) }
+                                        className="slogan-step"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -253,6 +302,7 @@ class MyCompany extends Component {
                                         fullWidth
                                         value={ this.state.selectCity }
                                         onChange={ event => this.setState({selectCity: event.target.value}) }
+                                        className="city-step"
                                         >
                                             <MenuItem disabled key={0} value="none">
                                                 <em>Selecciona tu ciudad</em>
@@ -276,14 +326,15 @@ class MyCompany extends Component {
                                         style={{ marginTop: 0}}
                                         value={ this.state.inputPhones }
                                         onChange={ event => this.setState({inputPhones: event.target.value}) }
+                                        className="phone-step"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
                                     <TextField
                                         id="input-address"
-                                        label="Dirección"
+                                        label="Dirección del restaurante"
                                         placeholder="Av. 18 de nov nro 123"
-                                        helperText="Dirección de tu(s) sucursal(es)"
+                                        helperText="Escribe la dirección de tu restaurante Ej: Av. Av. 18 de nov nro 123."
                                         fullWidth
                                         margin="normal"
                                         variant="outlined"
@@ -292,12 +343,13 @@ class MyCompany extends Component {
                                         rows={2}
                                         value={ this.state.inputAddress }
                                         onChange={ event => this.setState({inputAddress: event.target.value}) }
+                                        className="address-step"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
                                     <TextField
                                         id="input-small-description"
-                                        label="Descripción corta"
+                                        label="Descríbenos tu restaurante"
                                         placeholder="La mejor opción a la hora de degustar de un platillo de tu predilección."
                                         helperText="Describe de manera breve tu restaurante"
                                         fullWidth
@@ -308,6 +360,7 @@ class MyCompany extends Component {
                                         rows={2}
                                         value={ this.state.inputShortDescription }
                                         onChange={ event => this.setState({inputShortDescription: event.target.value}) }
+                                        className="description-step"
                                     />
                                 </Grid>
                                 <Button
@@ -318,6 +371,7 @@ class MyCompany extends Component {
                                     color="primary"
                                     endIcon={<IoMdCreate />}
                                     style={{marginTop: 30}}
+                                    className="save-step"
                                 >
                                     Actualizar datos
                                 </Button>
@@ -325,6 +379,14 @@ class MyCompany extends Component {
                         </form>
                     </main>
                 </div>
+
+                <Tour
+                    steps={ steps }
+                    isOpen={ this.state.tourActive }
+                    accentColor={ color.primary }
+                    onRequestClose={() => this.setState({tourActive: false})}
+                />
+
             </>
         );
     }

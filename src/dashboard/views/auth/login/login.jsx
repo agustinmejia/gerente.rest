@@ -1,12 +1,10 @@
 import React from 'react';
 import {
-    Avatar,
     Button,
     TextField,
     FormControlLabel,
     Checkbox,
     Paper,
-    Box,
     Grid,
     Typography,
     OutlinedInput,
@@ -19,7 +17,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { IoIosEye, IoIosEyeOff, IoLogoFacebook, IoLogoGoogle } from "react-icons/io";
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Link, useHistory } from "react-router-dom";
@@ -29,20 +27,7 @@ import { env } from '../../../../config/env';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { API } = env;
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" to="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const { API, color } = env;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -68,12 +53,6 @@ const useStyles = makeStyles((theme) => ({
     form: {
         width: '100%', // Fix IE 11 issue.
         marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-    small: {
-        fontSize: 12
     }
 }));
 
@@ -102,15 +81,18 @@ function SignInSide(props) {
             }
         })
         .then(res => res.json())
-        .catch(error => ({'error': error}));
+        .catch(error => ({'errorServer': error}));
         setLoading(false);
         if(login.user){
             props.setAuthSession(login);
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(login));
             history.push("/dashboard");
         }else{
-            // console.log(login)
-            setErrorMessage(login.error);
+            if(login.error){
+                setErrorMessage(login.error);
+            }else{
+                setErrorMessage('Ocurrió un error en nuestro servidor, intente nuevamente;');
+            }
         }
     }
 
@@ -125,10 +107,17 @@ function SignInSide(props) {
             <Grid item xs={false} sm={4} md={7} className={classes.image} />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <div className={classes.paper}>
-                    <Avatar className={classes.avatar} />
-                    <Typography component="h1" variant="h4">
-                        Iniciar sesión
-                    </Typography>
+                    <Grid container direction="column" justify="center" alignItems="center" style={{ marginBottom: 10}}>
+                        <Grid item>
+                            <img src="favicon.ico" style={{width: 80, marginBottom: 10}} />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h4">Iniciar sesión</Typography>
+                        </Grid>
+                         <Grid item>
+                            <Typography variant="body2" style={{textAlign: 'center'}}>Escribe tu Email y contraseña que creaste para ingresar a nuestra plataforma.</Typography>
+                        </Grid>
+                    </Grid>
                     <form className={classes.form} onSubmit={handleLogin}>
                         <TextField
                             variant="outlined"
@@ -171,32 +160,60 @@ function SignInSide(props) {
                             control={<Checkbox value="remember" color="primary" />}
                             label="Recuerdame"
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            size="large"
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                        >
-                            Iniciar sesión
-                        </Button>
+                        <Grid container spacing={1} style={{marginTop: 15, marginBottom: 10}}>
+                            <Grid item xs={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    // color="primary"
+                                    style={{ backgroundColor: color.primary, color: 'white'}}
+                                >
+                                    Iniciar sesión
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="body2" style={{textAlign: 'center'}}>Ingresa con tus redes sociales</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    // color="primary"
+                                    style={{ backgroundColor: '#3b5998', color: 'white'}}
+                                >
+                                    Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    // color="primary"
+                                    style={{ backgroundColor: '#F73929', color: 'white'}}
+                                >
+                                    Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </form>
                     <Grid container>
                         <Grid item xs>
-                            <Link to="/" variant="body2" className={classes.small}>
-                                Olvidate tu contraseña?
+                            <Link to="/">
+                                <Typography variant="body1">Olvidate tu contraseña?</Typography>
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link to="/register" variant="body2" className={classes.small}>
-                                Aún no tienes cuenta?
+                            <Link to="/register">
+                                <Typography variant="body1">Aún no tienes cuenta?</Typography>
                             </Link>
                         </Grid>
                     </Grid>
-                    <Box mt={5}>
-                        <Copyright />
-                    </Box>
                 </div>
             </Grid>
         </Grid>

@@ -15,6 +15,7 @@ import {
     Checkbox
 }from '@material-ui/core';
 import { IoIosMenu, IoIosCamera, IoIosAddCircleOutline } from "react-icons/io";
+import { Redirect } from "react-router-dom";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -39,6 +40,7 @@ class ProductsCreateEdit extends Component {
             },
             sidebarToggled: false,
             loading: false,
+            redirect: false,
             categories: [],
             id: this.props.match.params.id,
             inputName: '',
@@ -54,7 +56,7 @@ class ProductsCreateEdit extends Component {
             imageCategory: `${API}/images/default-image.png`,
             fileImageCategory: null,
             errorCreateCategory: false,
-            resetForm: false
+            resetForm: this.props.match.params.id ? false : true
         }
     }
 
@@ -188,6 +190,12 @@ class ProductsCreateEdit extends Component {
             console.log(res.data)
             if(res.data.product){
                 this.props.enqueueSnackbar(`Producto ${this.state.id ? 'editado' : 'registrado'} correctamente!`, { variant: 'success' });
+                
+                if(this.state.id){
+                    this.setState({redirect: true});
+                    return 0;
+                }
+
                 if(this.state.resetForm){
                     this.setState({
                         inputName: '',
@@ -208,6 +216,10 @@ class ProductsCreateEdit extends Component {
     }
 
     render() {
+        if (this.state.redirect) {
+           return <Redirect to='/dashboard/products'/>;
+        }
+
         return (
             <>
                 { this.state.loading &&
@@ -329,8 +341,8 @@ class ProductsCreateEdit extends Component {
                                         />
                                         <div style={{ display: 'flex', justifyContent:'center' }}>
                                             <label htmlFor="input-image">
-                                                <Tooltip title="Click para cambiar imagen" placement="top">
-                                                    <IconButton aria-label="Click para cambiar imagen" component="span">
+                                                <Tooltip title={`Click para ${ this.state.id ? 'editar' : 'agregar' } imagen del producto`} placement="top">
+                                                    <IconButton aria-label={`Click para ${ this.state.id ? 'editar' : 'agregar' } imagen del producto`} component="span">
                                                         <IoIosCamera size={30} color="gray" />
                                                     </IconButton>
                                                 </Tooltip>
@@ -341,8 +353,7 @@ class ProductsCreateEdit extends Component {
                                 {
                                     !this.state.id &&
                                     <FormControlLabel
-                                        control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})}
-                                        color="primary" />}
+                                        control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})} checked={ this.state.resetForm } color="primary" />}
                                         label="Limpiar campos"
                                         style={{ marginBottom: 20 }}
                                     />

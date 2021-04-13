@@ -118,10 +118,10 @@ class BranchesCreate extends Component {
                                             required
                                             fullWidth
                                             id="input-name"
-                                            label="Nombre"
-                                            placeholder='Casa matriz'
+                                            label="Nombre de la sucursal"
+                                            placeholder='Sucursal 2'
                                             autoFocus
-                                            helperText="Nombre de la sucursal"
+                                            helperText="Escribe el nombre de la sucursal."
                                             value={ this.state.name }
                                             onChange={ event => this.setState({name: event.target.value}) }
                                         />
@@ -171,10 +171,10 @@ class BranchesCreate extends Component {
                                             required
                                             fullWidth
                                             id="input-address"
-                                            label="Dirección"
+                                            label="Dirección de la sucursal"
                                             name="address"
                                             placeholder='Av. 18 de nov. Esq. Libertad Nro 123'
-                                            helperText="Dirección de la sucursal"
+                                            helperText="Escribe la dirección de la sucursal."
                                             value={ this.state.address }
                                             onChange={ event => this.setState({address: event.target.value}) }
                                         />

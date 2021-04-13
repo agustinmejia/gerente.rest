@@ -76,17 +76,18 @@ class Receipt extends Component {
         }
         const { sale } = this.state;
         const { branch } = sale;
+        const { company } = this.state;
         return (
             <div style={{width: 300}}>
                 
                 {/* Header */}
                 <div style={{textAlign: 'center'}}>
                     <div>
-                        { this.state.company.logos !== '' && <img src={ `${API}/storage/${this.state.company.logos.replace('.', '-cropped.')}` } style={{ width: 70 }} alt={ this.state.company.name } /> }
+                        { company.logos !== null && <img src={ `${API}/storage/${company.logos.replace('.', '-cropped.')}` } style={{ width: 70 }} alt={ company.name } /> }
                     </div>
                     <div>
-                        <Typography>{ this.state.company.name }</Typography>
-                        {/* <small>{ this.state.company.slogan }</small><br/> */}
+                        <Typography>{ company.name }</Typography>
+                        {/* <small>{ company.slogan }</small><br/> */}
                         { branch.phones != null && <><small style={{fontSize: 10}}>{ branch.phones }</small><br/></> }
                         { branch.address != null && <><small style={{fontSize: 10}}>{ branch.address }</small><br/></> }
                         <small style={{fontSize: 10}}>{ branch.city.name }</small>

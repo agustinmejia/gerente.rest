@@ -12,18 +12,18 @@
   
 @-moz-keyframes parpadeo{  
     0% {  background-color: transparent; }
-    30% { background-color: #E74C3C; }
+    30% { background-color: #58D68D; }
     90% { background-color: transparent; }
 }
   
 @-webkit-keyframes parpadeo {  
     0% {  background-color: transparent; }
-    30% { background-color: #E74C3C; }
+    30% { background-color: #58D68D; }
     90% { background-color: transparent; }
 }
   
 @keyframes parpadeo {  
     0% {  background-color: transparent; }
-    30% { background-color: #E74C3C; }
+    30% { background-color: #58D68D; }
     90% { background-color: transparent; }
 }

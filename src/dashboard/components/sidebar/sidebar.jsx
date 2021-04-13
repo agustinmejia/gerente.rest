@@ -30,10 +30,11 @@ const Sidebar = props => {
                 toggled={ props.toggled }
                 onToggle={ props.onToggle }
                 image='https://cdn.pixabay.com/photo/2015/03/26/10/28/restaurant-691397_960_720.jpg'
+                className={ props.className }
             >
                 <SidebarHeader>
                     <div style={{ padding: 20, }}>
-                        <b style={{ fontSize: 25, color: 'white' }}><img src="/favicon.ico" alt="gerente.rest_logo" style={{ width: 40, float: 'left', marginRight: 10 }}/> { props.globalConfig.sidebar.collapsed ?  '' : 'Gerente.rest' }</b>
+                        <b style={{ fontSize: 25, color: 'white' }}><img src="/favicon.ico" alt="gerente.rest_logo" style={{ width: 50, float: 'left', marginRight: 10 }}/> { props.globalConfig.sidebar.collapsed ?  '' : 'Gerente.rest' }</b>
                     </div>
                 </SidebarHeader>
                 <SidebarContent>
@@ -43,8 +44,8 @@ const Sidebar = props => {
                             <MenuItem><Link to="/dashboard/mycompany">Mi restaurante</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/branches">Sucursales</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/products">Productos</Link></MenuItem>
-                            <MenuItem><Link to="/dashboard/sales">Ventas</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/employes">Empleados</Link></MenuItem>
+                            <MenuItem><Link to="/dashboard/sales">Ventas</Link></MenuItem>
                         </SubMenu>
                         {/* <SubMenu icon={ <IoIosCash size={25} /> } title={<b>Ingresos/Egresos</b>}>
                             <MenuItem><Link to="/dashboard/cashiers">Cajas</Link></MenuItem>
@@ -59,9 +60,7 @@ const Sidebar = props => {
                 </SidebarContent>
                 <SidebarFooter>
                     <div style={{ textAlign: 'center', }}>
-                        <IconButton aria-label="delete"
-                            onClick={ handleSidebar }
-                        >
+                        <IconButton aria-label="delete" onClick={ handleSidebar } className={ props.classNameToggle } >
                             { props.globalConfig.sidebar.collapsed ? <IoIosArrowDropright size={40} color='white' /> : <IoIosArrowDropleft size={40} color='white' /> }
                         </IconButton>
                     </div>

@@ -1,5 +1,15 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Link as LinkScroll } from "react-scroll";
+import { Grid, Button } from "@material-ui/core";
+
+import { IoIosLogIn } from "react-icons/io";
+import { FaUserEdit } from "react-icons/fa";
+
+import { env } from '../../config/env';
+
+const { color } = env;
+
 
 export class Navigation extends Component {
   render() {
@@ -27,12 +37,16 @@ export class Navigation extends Component {
               duration={500}
               className="navbar-brand page-scroll"
             >
-              <div style={{ width: '30%' }}>
-                <img src="favicon.ico" alt="gerente.rest_logo" style={{ width: 40, float: 'left', marginTop: -5 }}/>
-              </div>
-              <div style={{ width: '70%', marginTop: 5 }}>
-                <span style={{ paddingLeft: 10,}}>gerente.rest</span>
-              </div>
+              <Grid container>
+                <Grid item xs={4}>
+                  <img src="favicon.ico" alt="gerente.rest_logo" style={{ width: 50, float: 'left', marginTop: -5 }}/>
+                </Grid>
+                <Grid item xs={4}>
+                  <div style={{ paddingTop: 10,}}>
+                    <span style={{fontSize: 20}}>gerente.rest</span>
+                  </div>
+                </Grid>
+              </Grid>
             </LinkScroll>
           </div>
 
@@ -52,19 +66,6 @@ export class Navigation extends Component {
                   className="page-scroll"
                 >
                   Caracteriticas
-                </LinkScroll>
-              </li>
-              <li>
-                <LinkScroll
-                  activeClass="nav-active"
-                  to="about"
-                  spy={true}
-                  smooth={true}
-                  offset={-70}
-                  duration={500}
-                  className="page-scroll"
-                >
-                  Acerca de
                 </LinkScroll>
               </li>
               <li>
@@ -109,16 +110,35 @@ export class Navigation extends Component {
               <li>
                 <LinkScroll
                   activeClass="nav-active"
-                  to="contact"
+                  to="about"
                   spy={true}
                   smooth={true}
                   offset={-70}
                   duration={500}
                   className="page-scroll"
                 >
-                  Contacto
+                  Acerca de
                 </LinkScroll>
               </li>
+              <Link to="/login">
+                <Button
+                
+                  variant="contained"
+                  endIcon={<IoIosLogIn />}
+                  style={{ backgroundColor: color.primary, border: `1px solid ${color.primary}`, color: 'white', marginTop: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
+                >
+                  <small style={{fontSize: 12}}>Ingreso</small>
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button
+                  variant="contained"
+                  endIcon={<FaUserEdit />}
+                  style={{ backgroundColor: 'white', border: `1px solid ${color.primary}`, color: color.primary, marginTop: 10, marginLeft: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
+                >
+                  <small style={{fontSize: 12}}>Registro</small>
+                </Button>
+              </Link>
             </ul>
           </div>
         </div>

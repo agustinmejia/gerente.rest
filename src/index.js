@@ -4,13 +4,16 @@ import { SnackbarProvider } from 'notistack';
 import App from './App';
 import { Provider } from 'react-redux'
 import store from './store';
+import SimpleReactLightbox from 'simple-react-lightbox';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <SnackbarProvider maxSnack={3}>
-        <App />
-      </SnackbarProvider>
+      <SimpleReactLightbox>
+        <SnackbarProvider maxSnack={3}>
+          <App />
+        </SnackbarProvider>
+      </SimpleReactLightbox>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

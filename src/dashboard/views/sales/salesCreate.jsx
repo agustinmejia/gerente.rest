@@ -624,7 +624,7 @@ class SalesCreate extends Component {
                                                                     .map(type => {
                                                                         return(
                                                                             <div key={type.type} style={{marginBottom: 20}}>
-                                                                                <Typography variant='overline' style={{marginBottom: 5}}>{type.type}</Typography>
+                                                                                <Typography variant='body2' style={{marginBottom: 5}}>{type.type}</Typography>
                                                                                 <Grid container spacing={1} style={{margin: 0}} >
                                                                                     {
                                                                                         type.children.map(product => <CardProduct key={product.id} product={product} onClick={ (e) => this.handlePressProduct(product) } />)

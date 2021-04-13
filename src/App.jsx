@@ -16,7 +16,8 @@ import About from './landingpage/components/about';
 import Services from './landingpage/components/services';
 import Gallery from './landingpage/components/gallery';
 import Testimonials from './landingpage/components/testimonials';
-import Contact from './landingpage/components/contact';
+// import Contact from './landingpage/components/contact';
+import Footer from './landingpage/components/footer';
 import JsonData from './landingpage/data/data.json';
 
 // Admin
@@ -122,11 +123,12 @@ export class App extends Component {
               <Navigation />
               <Header data={this.state.landingPageData.Header} />
               <Features data={this.state.landingPageData.Features} />
-              <About data={this.state.landingPageData.About} />
               <Services data={this.state.landingPageData.Services} />
               <Gallery />
               <Testimonials data={this.state.landingPageData.Testimonials} />
-              <Contact data={this.state.landingPageData.Contact} />
+              <About data={this.state.landingPageData.About} />
+              {/* <Contact data={this.state.landingPageData.Contact} /> */}
+              <Footer />
             </Route>
 
             {/* Dashboard */}

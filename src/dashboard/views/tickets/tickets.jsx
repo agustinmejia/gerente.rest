@@ -21,7 +21,7 @@ import { io } from "socket.io-client";
 import { disableBodyScroll } from 'body-scroll-lock';
 
 import { makeStyles } from '@material-ui/core/styles';
-import './tickets.css'; // Tell webpack that Button.js uses these styles
+import './tickets.css';
 
 import { env } from '../../../config/env';
 
@@ -52,45 +52,6 @@ const useStyles = makeStyles({
 
     }
 });
-
-const ListTickets = [
-    {
-        id: 3,
-        number : '0003',
-        time: 'Hace 9 min',
-        status: 1
-    },
-    {
-        id: 4,
-        number : '0004',
-        time: 'Hace 5 min',
-        status: 1
-    },
-    {
-        id: 5,
-        number : '0005',
-        time: 'Hace 3 min',
-        status: 1
-    },
-    {
-        id: 6,
-        number : '0006',
-        time: 'Hace 2 min',
-        status: 1
-    },
-    {
-        id: 7,
-        number : '0007',
-        time: 'Hace 1 min',
-        status: 2
-    },
-    {
-        id: 8,
-        number : '0008',
-        time: 'Hace 30 seg',
-        status: 1
-    }
-];
 
 const Tickets = (props) => {
   const { token, branch } = props.authSession;

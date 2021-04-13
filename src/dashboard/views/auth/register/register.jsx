@@ -3,7 +3,6 @@ import {
     Container,
     Grid,
     Box,
-    Avatar,
     Button,
     TextField,
     FormControlLabel,
@@ -17,64 +16,27 @@ import {
     InputLabel,
     FormControl,
     Backdrop,
-    CircularProgress
+    CircularProgress,
 }from '@material-ui/core';
-import { IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { makeStyles } from '@material-ui/core/styles';
+import { IoIosEye, IoIosEyeOff, IoLogoFacebook, IoLogoGoogle, IoMdArrowBack } from "react-icons/io";
 import { Link, useHistory } from "react-router-dom";
 import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { TextFieldCustom } from "../../../components/forms";
 import PhoneInput from 'react-phone-input-2'
 import es from 'react-phone-input-2/lang/es.json'
 import '../../../assets/css/material-input-code-number.css'
 
+import Footer from '../../../../landingpage/components/footer';
+
 import { env } from '../../../../config/env';
 
-const { API } = env;
-
-
-function Copyright() {
-  return (
-    <Typography color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" to="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        // fontSize: 20
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-    small: {
-        fontSize: 12
-    }
-}));
+const { API, color } = env;
 
 
 function SignUp(props) {
-    const classes = useStyles();
     const [loading, setLoading] = React.useState(false);
     const [cities, setCities] = useState([]);
     const [firstName, setFirstName] = useState('');
@@ -138,59 +100,61 @@ function SignUp(props) {
                 </Backdrop>
             }
             <Container maxWidth="sm">
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar} />
-                    <Typography variant="h4">
-                        Registrarse
-                    </Typography>
-                    <form className={classes.form} onSubmit={handleRegistre}>
+                <div>
+                    <Grid container direction="column" justify="center" alignItems="center" style={{marginTop: 20, marginBottom: 50}}>
+                        <Grid item>
+                            <img src="favicon.ico" style={{width: 100, marginBottom: 20}} />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h4">Registrarse</Typography>
+                        </Grid>
+                         <Grid item>
+                            <Typography variant="body2" style={{textAlign: 'center'}}>Rellena el siguiente formulario con el nombre de tu restaurante y tus datos personales para registrarte en nuestra plataforma.</Typography>
+                        </Grid>
+                    </Grid>
+                    <form onSubmit={handleRegistre}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    name="firstName"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="firstName"
-                                    label="Nombre(s)"
-                                    autoFocus
-                                    value={ firstName }
-                                    onChange={ event => setFirstName(event.target.value) }
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="lastName"
-                                    label="Apellidos"
-                                    name="lastName"
-                                    value={ lastName }
-                                    onChange={ event => setLastName(event.target.value) }
-                                />
-                            </Grid>
                             <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="companyName"
+                                <TextFieldCustom
+                                    autoFocus={true}
+                                    required={true}
                                     label="Nombre de tu restaurante"
+                                    helperText="Ingresa el nombre de tu restaurante"
                                     name="companyName"
                                     value={ companyName }
                                     onChange={ event => setCompanyName(event.target.value) }
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <TextFieldCustom
+                                    name="firstName"
+                                    required={true}
+                                    label="Tu(s) nombre(s)"
+                                    helperText="Escribe tu nombre o nombres"
+                                    value={ firstName }
+                                    onChange={ event => setFirstName(event.target.value) }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextFieldCustom
+                                    required={true}
+                                    id="lastName"
+                                    label="Tus apellidos"
+                                    name="lastName"
+                                    helperText="Escribe tus apellidos"
+                                    value={ lastName }
+                                    onChange={ event => setLastName(event.target.value) }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="outlined-adornment-city">Ciudad</InputLabel>
+                                    <InputLabel htmlFor="outlined-adornment-city">Ciudad de tu restaurante</InputLabel>
                                     <Select
                                         labelId="outlined-adornment-city"
                                         id="select-city"
                                         variant="outlined"
-                                        label="Ciudad"
-                                        inputProps={{ 'aria-label': 'Ciudad' }}
+                                        label="Ciudad de tu restaurante"
+                                        inputProps={{ 'aria-label': 'Ciudad de tu restaurante' }}
                                         required
                                         fullWidth
                                         value={ city }
@@ -213,32 +177,31 @@ function SignUp(props) {
                                     value={phone}
                                     onChange={ code => setPhone(code) }
                                     localization={es}
-                                    specialLabel='Nº de celular'
+                                    specialLabel='Tu Nº de celular'
                                     inputProps={{
                                         name: 'phone',
                                         required: true
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
+                            <Grid item xs={6}>
+                                <TextFieldCustom
+                                    required={true}
                                     id="email"
-                                    label="Email"
+                                    label="Tu Email"
                                     name="email"
+                                    helperText="Escribe tu correo electrónico."
                                     value={ email }
                                     onChange={ event => setEmail(event.target.value) }
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid item xs={6}>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
+                                    <InputLabel htmlFor="outlined-adornment-password">Contraseña para el sistema</InputLabel>
                                     <OutlinedInput
                                         id="outlined-adornment-password"
                                         type={ showPassword ? 'text' : 'password'}
-                                        label="Contraseña"
+                                        label="Contraseña para el sistema"
                                         fullWidth
                                         value={ password }
                                         onChange={ event => setpassword(event.target.value) }
@@ -247,7 +210,6 @@ function SignUp(props) {
                                             <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={ () => setshowPassword(!showPassword) }
-                                            // onMouseDown={handleMouseDownPassword}
                                             edge="end"
                                             >
                                             { showPassword ? <IoIosEyeOff /> : <IoIosEye /> }
@@ -264,29 +226,62 @@ function SignUp(props) {
                                 />
                             </Grid>
                         </Grid>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            size="large"
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                        >
-                            Registrarse
-                        </Button>
-                        <Grid container justify="flex-end">
+                        <Grid container spacing={2} style={{marginTop: 15}}>
+                            <Grid item xs={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    style={{ backgroundColor: color.primary, color: 'white'}}
+                                >
+                                    Registrarse
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="body2" style={{textAlign: 'center'}}>O regístrate con tus redes sociales</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    // color="primary"
+                                    style={{ backgroundColor: '#3b5998', color: 'white'}}
+                                >
+                                    Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    size="large"
+                                    variant="contained"
+                                    // color="primary"
+                                    style={{ backgroundColor: '#F73929', color: 'white'}}
+                                >
+                                    Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
+                                </Button>
+                            </Grid>
+                        </Grid>
+                        <Grid container style={{marginTop: 30}} justify="flex-end">
+                            <Grid item xs>
+                                <Link to="/">
+                                    <Typography variant="subtitle1"> <IoMdArrowBack size={12} /> Volver al inicio</Typography>
+                                </Link>
+                            </Grid>
                             <Grid item>
-                                <Link to="/login" className="btn btn-link">
-                                    Ya tienes una cuenta?
+                                <Link to="/login">
+                                    <Typography variant="subtitle1">Ya tienes una cuenta?</Typography>
                                 </Link>
                             </Grid>
                         </Grid>
                     </form>
                 </div>
-                <Box mt={5}>
-                    <Copyright />
-                </Box>
             </Container>
+            <Footer />
         </>
     );
 }

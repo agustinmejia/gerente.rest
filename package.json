@@ -26,8 +26,11 @@
     "react-router-guards": "^1.0.2",
     "react-scripts": "4.0.0",
     "react-scroll": "^1.8.1",
+    "reactour": "^1.18.3",
     "redux": "^4.0.5",
+    "simple-react-lightbox": "^3.6.6",
     "socket.io-client": "^4.0.1",
+    "styled-components": "^4.4.1",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

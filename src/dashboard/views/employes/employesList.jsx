@@ -31,6 +31,7 @@ import { withSnackbar } from 'notistack';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { ListEmpty } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API } = env;
@@ -157,49 +158,54 @@ class EmployesList extends Component {
                         </div>
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
                             <Paper >
-                              <TableContainer>
-                                <Table stickyHeader aria-label="sticky table">
-                                  <TableHead>
-                                    <TableRow>
-                                      {tableColumns.map((column) => (
-                                        <TableCell
-                                          key={column.id}
-                                          align={column.align}
-                                          style={{ minWidth: column.minWidth }}
-                                        >
-                                          {column.label}
-                                        </TableCell>
-                                      ))}
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
-                                      return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                          {tableColumns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                              <TableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                              </TableCell>
-                                            );
-                                          })}
+                              { this.state.tableRows.length === 0 && <ListEmpty /> }
+                              { this.state.tableRows.length > 0 &&
+                                <>
+                                  <TableContainer>
+                                    <Table stickyHeader aria-label="sticky table">
+                                      <TableHead>
+                                        <TableRow>
+                                          {tableColumns.map((column) => (
+                                            <TableCell
+                                              key={column.id}
+                                              align={column.align}
+                                              style={{ minWidth: column.minWidth }}
+                                            >
+                                              {column.label}
+                                            </TableCell>
+                                          ))}
                                         </TableRow>
-                                      );
-                                    })}
-                                  </TableBody>
-                                </Table>
-                              </TableContainer>
-                              <TablePagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={this.state.tableRows.length}
-                                rowsPerPage={this.state.rowsPerPage}
-                                page={this.state.page}
-                                labelRowsPerPage='Items por página'
-                                onChangePage={(event, newPage) => this.setState({page: newPage})}
-                                onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                              />
+                                      </TableHead>
+                                      <TableBody>
+                                        {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                          return (
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                              {tableColumns.map((column) => {
+                                                const value = row[column.id];
+                                                return (
+                                                  <TableCell key={column.id} align={column.align}>
+                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                  </TableCell>
+                                                );
+                                              })}
+                                            </TableRow>
+                                          );
+                                        })}
+                                      </TableBody>
+                                    </Table>
+                                  </TableContainer>
+                                  <TablePagination
+                                    rowsPerPageOptions={[10, 25, 100]}
+                                    component="div"
+                                    count={this.state.tableRows.length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    labelRowsPerPage='Items por página'
+                                    onChangePage={(event, newPage) => this.setState({page: newPage})}
+                                    onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                                  />
+                                </>
+                              }
                             </Paper>
                         </div>
                     </Grid>

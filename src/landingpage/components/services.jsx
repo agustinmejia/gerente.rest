@@ -6,11 +6,8 @@ export class Services extends Component {
       <div id="services" className="text-center">
         <div className="container">
           <div className="section-title">
-            <h2>Nuestros servicios</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit duis sed
-              dapibus leonec.
-            </p>
+            <h2>¿Qué puedes hacer en nuestra plataforma?</h2>
+            <p>A continuación te mostramos una lista de opciones que puedes utlizar en la plataforma Gerente de Restaurantes.</p>
           </div>
           <div className="row">
             {this.props.data

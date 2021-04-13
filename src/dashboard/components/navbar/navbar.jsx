@@ -54,7 +54,7 @@ class Navbar extends Component {
                     </Grid>
                     <Grid item md={2} xs={4} style={{ display: 'flex', justifyContent: 'flex-end' }} >
                         <div>
-                            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+                            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick} className="config-step">
                                 { this.props.authSession.user &&
                                     <>
                                         <Avatar alt="User" src={this.props.authSession.user.avatar.search('https') ? `${URL}/storage/${this.props.authSession.user.avatar}` : this.props.authSession.user.avatar} /> <IoMdArrowDropdown size={15} />
