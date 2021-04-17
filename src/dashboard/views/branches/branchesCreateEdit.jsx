@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
     Grid,
+    Paper,
     TextField,
     Select,
     MenuItem,
@@ -10,6 +11,7 @@ import {
     CircularProgress
 }from '@material-ui/core';
 import { IoIosMenu } from "react-icons/io";
+import { Redirect } from "react-router-dom";
 import GoogleMapReact from 'google-map-react';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
@@ -23,7 +25,7 @@ import { env } from '../../../config/env';
 
 const { API } = env;
 
-class BranchesCreate extends Component {
+class BranchesCreateEdit extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -34,6 +36,8 @@ class BranchesCreate extends Component {
             },
             sidebarToggled: false,
             loading: false,
+            redirect: false,
+            id: this.props.match.params.id,
             cities: [],
             ownerId: this.props.authSession.company.owner_id,
             name: '',
@@ -51,6 +55,24 @@ class BranchesCreate extends Component {
             this.setState({cities: res.cities});
         })
         .catch(error => ({'error': error}));
+
+        // If edit get data product
+        if(this.state.id){
+            fetch(`${API}/api/branch/${this.state.id}`, {headers: this.state.headers})
+            .then(res => res.json())
+            .then(res => {
+                let { branch } = res;
+                this.setState({
+                    name: branch.name,
+                    city: branch.city_id ? branch.city_id : 'none',
+                    location: branch.location,
+                    phones: branch.phones,
+                    address: branch.address
+                });
+                // console.log(res)
+            })
+            .catch(error => ({'error': error}));
+        }
     }
 
     handleApiLoaded = (map, maps) => {
@@ -64,34 +86,37 @@ class BranchesCreate extends Component {
             return false;
         }
 
+        let { id, ownerId, name, city, location, phones, address } = this.state;
+
+        // Change URL for update or create
+        let url = id ? `${API}/api/branch/${id}/update` : `${API}/api/branch/create`;
+
         this.setState({loading: true});
         let params = {
-            ownerId: this.state.ownerId,
-            name: this.state.name,
-            city: this.state.city,
-            location: this.state.location,
-            phones: this.state.phones,
-            address: this.state.address
+            ownerId, name, city, location, phones, address
         }
         axios({
             method: 'post',
-            url: `${API}/api/branch/create`,
+            url,
             data: params,
             headers: this.state.headers
         })
         .then(res => {
             if(res.data.branch){
-                this.props.enqueueSnackbar('Sucursal registrada correctamente!', { variant: 'success' });
+                this.props.enqueueSnackbar(`Sucursal ${this.state.id ? 'editada' : 'registrada'} correctamente!`, { variant: 'success' });
                 // console.log(res.data)
             }else{
                 this.props.enqueueSnackbar('Ocurrió un error inesparado, intente nuevamente!', { variant: 'error' })
             }
         })
         .catch((err) => this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor!', { variant: 'error' }))
-        .then(() => this.setState({loading: false}));
+        .then(() => this.setState({loading: false, redirect: true}));
     }
 
     render() {
+        if (this.state.redirect) {
+           return <Redirect to='/dashboard/branches'/>;
+        }
         return (
             <>
                 { this.state.loading &&
@@ -106,9 +131,9 @@ class BranchesCreate extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> Nueva sucursal</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> { this.state.id ? 'Editar' : 'Nueva' } sucursal</h1>} />
                         
-                        <div style={{marginTop: 50}}>
+                        <Paper style={{ backgroundColor: 'white', padding: 30, marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
@@ -180,7 +205,7 @@ class BranchesCreate extends Component {
                                         />
                                     </Grid>
                                 </Grid>
-                                <div style={{ height: 350, width: '100%', marginTop: 30 }}>
+                                <div style={{ height: 350, width: '100%', marginTop: 50 }}>
                                     <GoogleMapReact
                                         bootstrapURLKeys={{ key: 'AIzaSyAyKr3gS1Ak--QklLJYJjYOeCnA5UKFVlw', language: 'es' }}
                                         defaultCenter={{ lat: -14.833648, lng: -64.904008}}
@@ -192,7 +217,7 @@ class BranchesCreate extends Component {
                                 </div>
                                 <FormButtons back='/dashboard/branches' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
-                        </div>
+                        </Paper>
                     </main>
                 </div>
             </>
@@ -206,4 +231,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withSnackbar(BranchesCreate));
+export default connect(mapStateToProps)(withSnackbar(BranchesCreateEdit));

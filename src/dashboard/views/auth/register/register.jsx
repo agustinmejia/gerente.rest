@@ -68,6 +68,12 @@ function SignUp(props) {
             props.enqueueSnackbar('Debes seleccionar una ciudad!', { variant: 'warning' });
             return false;
         }
+
+        if(phone.length < 11 || phone.length > 12){
+            props.enqueueSnackbar('Telefono inválido! Ej: +59175199157', { variant: 'error' });
+            return false;
+        }
+
         setLoading(true);
         let params = {
             firstName,lastName,companyName,city,phone,email, password
@@ -123,6 +129,7 @@ function SignUp(props) {
                                     name="companyName"
                                     value={ companyName }
                                     onChange={ event => setCompanyName(event.target.value) }
+                                    inputProps={{ maxLength: 50 }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -133,6 +140,7 @@ function SignUp(props) {
                                     helperText="Escribe tu nombre o nombres"
                                     value={ firstName }
                                     onChange={ event => setFirstName(event.target.value) }
+                                    inputProps={{ maxLength: 50 }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -144,6 +152,7 @@ function SignUp(props) {
                                     helperText="Escribe tus apellidos"
                                     value={ lastName }
                                     onChange={ event => setLastName(event.target.value) }
+                                    inputProps={{ maxLength: 50 }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -175,12 +184,12 @@ function SignUp(props) {
                                 <PhoneInput
                                     country={'bo'}
                                     value={phone}
-                                    onChange={ code => setPhone(code) }
+                                    onChange={ phone => setPhone(phone) }
                                     localization={es}
                                     specialLabel='Tu Nº de celular'
                                     inputProps={{
                                         name: 'phone',
-                                        required: true
+                                        required: 'required',
                                     }}
                                 />
                             </Grid>
@@ -193,18 +202,21 @@ function SignUp(props) {
                                     helperText="Escribe tu correo electrónico."
                                     value={ email }
                                     onChange={ event => setEmail(event.target.value) }
+                                    inputProps={{ type: 'email', maxLength: 50 }}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <FormControl fullWidth variant="outlined">
                                     <InputLabel htmlFor="outlined-adornment-password">Contraseña para el sistema</InputLabel>
                                     <OutlinedInput
+                                        required
                                         id="outlined-adornment-password"
                                         type={ showPassword ? 'text' : 'password'}
                                         label="Contraseña para el sistema"
                                         fullWidth
                                         value={ password }
                                         onChange={ event => setpassword(event.target.value) }
+                                        inputProps={{ maxLength: 20, minLength: 6 }}
                                         endAdornment={
                                         <InputAdornment position="end">
                                             <IconButton

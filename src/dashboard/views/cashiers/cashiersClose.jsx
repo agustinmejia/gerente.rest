@@ -171,7 +171,7 @@ class CashiersClose extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> Cierre de Caja</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Cierre de Caja</h1>} />
 
                         <Grid style={{marginTop: 20}}>
                             <div style={{ marginTop: 30, marginBottom: 50 }}>
@@ -192,37 +192,37 @@ class CashiersClose extends Component {
                                                 }
                                             </div>
                                         </Grid>
-                                        <Grid item xs={12} sm={6} >
+                                        <Grid item xs={12} sm={6} style={{marginTop: 20}}>
                                             <Grid container direction="row" justify="center" alignItems="center">
-                                                <Typography variant='h3'>Detalle de caja</Typography>
+                                                <Typography variant='h4'>Detalle de caja</Typography>
                                             </Grid>
                                             <Grid container style={{ marginTop: 20 }}>
                                                 <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #CDCDCD', paddingBottom: 10, }}>
-                                                    <Typography variant='caption' style={{color: '#929292'}}>Monto de apertura:</Typography>
+                                                    <Typography variant='caption' color="textSecondary">Monto de apertura:</Typography>
                                                     <Grid container direction="row" justify="flex-end" alignItems="center">
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ this.state.cashier.opening_amount }  <small style={{fontSize: 12}}>Bs.</small></Typography>
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #CDCDCD', paddingBottom: 10, }}>
-                                                    <Typography variant='caption' style={{color: '#929292'}}>Monto total de ingresos:</Typography>
+                                                    <Typography variant='caption' color="textSecondary">Monto total de ingresos:</Typography>
                                                     <Grid container direction="row" justify="flex-end" alignItems="center">
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ this.state.incomeAmount.toFixed(2) } <small style={{fontSize: 12}}>Bs.</small> </Typography>
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #CDCDCD', paddingBottom: 10, }}>
-                                                    <Typography variant='caption' style={{color: '#929292'}}>Monto total de egresos:</Typography>
+                                                    <Typography variant='caption' color="textSecondary">Monto total de egresos:</Typography>
                                                     <Grid container direction="row" justify="flex-end" alignItems="center">
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ this.state.expensesAmount.toFixed(2) }  <small style={{fontSize: 12}}>Bs.</small></Typography>
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #CDCDCD', paddingBottom: 10, }}>
-                                                    <Typography variant='caption' style={{color: '#929292'}}>Monto en caja:</Typography>
+                                                    <Typography variant='caption' color="textSecondary">Monto en caja:</Typography>
                                                     <Grid container direction="row" justify="flex-end" alignItems="center">
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ (this.state.totalAmount).toFixed(2) }  <small style={{fontSize: 12}}>Bs.</small></Typography>
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} style={{ borderBottom: '1px solid #CDCDCD', paddingBottom: 10, }}>
-                                                    <Typography variant='caption' style={{color: '#929292'}}>Monto faltante:</Typography>
+                                                    <Typography variant='caption' color="textSecondary">Monto faltante:</Typography>
                                                     <Grid container direction="row" justify="flex-end" alignItems="center">
                                                         <Typography variant='h5' style={{paddingRight: 20}}>{ this.state.missingAmount.toFixed(2) }  <small style={{fontSize: 12}}>Bs.</small></Typography>
                                                     </Grid>

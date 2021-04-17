@@ -31,10 +31,10 @@ import { withSnackbar } from 'notistack';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { ListEmpty } from "../../components/forms";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, color } = env;
 
 const transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -56,6 +56,7 @@ class EmployesList extends Component {
             'accept': 'application/json',
             'Authorization': `Bearer ${this.props.authSession.token}`
           },
+          loadingList: false,
           showDialog: false,
           tableRows: [],
           sidebarToggled: false,
@@ -103,6 +104,7 @@ class EmployesList extends Component {
     }
 
     getData(){
+      this.setState({loadingList: true});
       let { company } = this.props.authSession;
         fetch(`${API}/api/company/${company.id}/employes/list`, {headers: this.state.headers})
         .then(res => res.json())
@@ -115,7 +117,8 @@ class EmployesList extends Component {
           }
           this.setState({tableRows: rows});
         })
-        .catch(error => ({'error': error}));
+        .catch(error => ({'error': error}))
+        .finally(() => this.setState({loadingList: false}));
     }
 
     hanldeDelete = () => {
@@ -148,17 +151,18 @@ class EmployesList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title={<h1 style={{marginLeft: 20}}> Empleados</h1>} />
+                    <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Empleados</h1>} />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Link to='/dashboard/employes/create'>
-                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nuevo</Button>
+                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Nuevo</Button>
                             </Link>
                         </div>
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
                             <Paper >
-                              { this.state.tableRows.length === 0 && <ListEmpty /> }
+                              { this.state.loadingList && <LoadingList /> }
+                              { this.state.tableRows.length === 0 && !this.state.loadingList && <EmptyList /> }
                               { this.state.tableRows.length > 0 &&
                                 <>
                                   <TableContainer>
@@ -226,7 +230,7 @@ class EmployesList extends Component {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
+                    <Button onClick={ () => this.setState({ showDialog: false }) }>
                       Cancelar
                     </Button>
                     <Button onClick={ this.hanldeDelete } color="secondary">

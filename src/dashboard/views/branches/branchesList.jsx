@@ -30,7 +30,7 @@ import Tour from 'reactour';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { ListEmpty } from "../../components/forms";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API, color } = env;
@@ -60,21 +60,22 @@ const steps = [
 
 class BranchesList extends Component {
     constructor(props){
-        super(props)
-        this.state = {
-          headers: {
-            'Content-Type': 'application/json',
-            'accept': 'application/json',
-            'Authorization': `Bearer ${this.props.authSession.token}`
-          },
-          tourActive: false,
-          showDialog: false,
-          tableRows: [],
-          sidebarToggled: false,
-          page: 0,
-          rowsPerPage: 10,
-          deleteId: 0,
-        }
+      super(props)
+      this.state = {
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json',
+          'Authorization': `Bearer ${this.props.authSession.token}`
+        },
+        loadingList: false,
+        tourActive: false,
+        showDialog: false,
+        tableRows: [],
+        sidebarToggled: false,
+        page: 0,
+        rowsPerPage: 10,
+        deleteId: 0,
+      }
     }
 
     createData(id, name, phones, address) {
@@ -103,11 +104,14 @@ class BranchesList extends Component {
       const urlParams = new URLSearchParams(queryString);
 
       if(urlParams.get('tour') == 1){
-          this.setState({tourActive: true});
+        setTimeout(() => {
+            this.setState({tourActive: true});
+        }, 1500);
       }
     }
 
     getData(){
+      this.setState({loadingList: true});
       let { company } = this.props.authSession;
         fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
         .then(res => res.json())
@@ -120,7 +124,8 @@ class BranchesList extends Component {
           }
           this.setState({tableRows: rows});
         })
-        .catch(error => ({'error': error}));
+        .catch(error => ({'error': error}))
+        .finally(() => this.setState({loadingList: false}));
     }
 
     hanldeDelete = () => {
@@ -147,71 +152,72 @@ class BranchesList extends Component {
             <div className='app'>
                 <Sidebar toggled={this.state.sidebarToggled} onToggle={ () => this.setState({ sidebarToggled: !this.state.sidebarToggled }) }/>
                 <main style={{paddingTop: 10}}>
-                    <div className="btn-toggle" onClick={() => this.setState({ sidebarToggled: !this.state.sidebarToggled })}>
-                        <IoIosMenu size={40} />
+                  <div className="btn-toggle" onClick={() => this.setState({ sidebarToggled: !this.state.sidebarToggled })}>
+                      <IoIosMenu size={40} />
+                  </div>
+
+                  <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Sucursales</h1>} />
+
+                  <Grid style={{marginTop: 20}}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Link to='/dashboard/branches/create'>
+                            <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} className="add-step" endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                        </Link>
                     </div>
-
-                    <Navbar title={<h1 style={{marginLeft: 20}}> Sucursales</h1>} />
-
-                    <Grid style={{marginTop: 20}}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Link to='/dashboard/branches/create'>
-                                <Button variant="contained" color="primary" className="add-step" endIcon={<IoIosAddCircle/>} > Nueva</Button>
-                            </Link>
-                        </div>
-                        <div style={{ marginTop: 30, marginBottom: 50 }}>
-                            <Paper className="list-step">
-                              { this.state.tableRows.length === 0 && <ListEmpty /> }
-                              { this.state.tableRows.length > 0 &&
-                                <>
-                                  <TableContainer>
-                                    <Table stickyHeader aria-label="sticky table">
-                                      <TableHead>
-                                        <TableRow>
-                                          {tableColumns.map((column) => (
-                                            <TableCell
-                                              key={column.id}
-                                              align={column.align}
-                                              style={{ minWidth: column.minWidth }}
-                                            >
-                                              {column.label}
-                                            </TableCell>
-                                          ))}
-                                        </TableRow>
-                                      </TableHead>
-                                      <TableBody>
-                                        {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                    <div style={{ marginTop: 30, marginBottom: 50 }}>
+                      <Paper className="list-step">
+                        { this.state.loadingList && <LoadingList /> }
+                        { this.state.tableRows.length === 0 && !this.state.loadingList && <EmptyList /> }
+                        { this.state.tableRows.length > 0 &&
+                          <>
+                            <TableContainer>
+                              <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                  <TableRow>
+                                    {tableColumns.map((column) => (
+                                      <TableCell
+                                        key={column.id}
+                                        align={column.align}
+                                        style={{ minWidth: column.minWidth }}
+                                      >
+                                        {column.label}
+                                      </TableCell>
+                                    ))}
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                    return (
+                                      <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                        {tableColumns.map((column) => {
+                                          const value = row[column.id];
                                           return (
-                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                              {tableColumns.map((column) => {
-                                                const value = row[column.id];
-                                                return (
-                                                  <TableCell key={column.id} align={column.align}>
-                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
-                                                  </TableCell>
-                                                );
-                                              })}
-                                            </TableRow>
+                                            <TableCell key={column.id} align={column.align}>
+                                              {column.format && typeof value === 'number' ? column.format(value) : value}
+                                            </TableCell>
                                           );
                                         })}
-                                      </TableBody>
-                                    </Table>
-                                  </TableContainer>
-                                  <TablePagination
-                                    rowsPerPageOptions={[10, 25, 100]}
-                                    component="div"
-                                    count={this.state.tableRows.length}
-                                    rowsPerPage={this.state.rowsPerPage}
-                                    page={this.state.page}
-                                    labelRowsPerPage='Items por página'
-                                    onChangePage={(event, newPage) => this.setState({page: newPage})}
-                                    onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                                  />
-                                </>
-                              }
-                            </Paper>
-                        </div>
-                    </Grid>
+                                      </TableRow>
+                                    );
+                                  })}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                            <TablePagination
+                              rowsPerPageOptions={[10, 25, 100]}
+                              component="div"
+                              count={this.state.tableRows.length}
+                              rowsPerPage={this.state.rowsPerPage}
+                              page={this.state.page}
+                              labelRowsPerPage='Items por página'
+                              onChangePage={(event, newPage) => this.setState({page: newPage})}
+                              onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                            />
+                          </>
+                        }
+                      </Paper>
+                    </div>
+                  </Grid>
                 </main>
 
                 {/* Delete dialog */}
@@ -229,7 +235,7 @@ class BranchesList extends Component {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
+                    <Button onClick={ () => this.setState({ showDialog: false }) }>
                       Cancelar
                     </Button>
                     <Button onClick={ this.hanldeDelete } color="secondary">

@@ -61,7 +61,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
 
-const { API, SOCKET_IO } = env;
+const { API, SOCKET_IO, color } = env;
 const defaultImg = `${API}/images/default-image.png`;
 const socket = io(SOCKET_IO);
 
@@ -333,11 +333,13 @@ class SalesCreate extends Component {
         let { company } = this.props.authSession;
         let params = {
             owner_id: company.owner_id,
+            company_id: company.id,
             first_name: this.state.inputFirstName,
             last_name: this.state.inputLastName,
             ci_nit: this.state.inputCI,
             phone: this.state.inputPhones,
             address: this.state.inputAddress,
+
         };
 
         let res = await axios({
@@ -543,22 +545,29 @@ class SalesCreate extends Component {
 
                         <Navbar
                             title={
-                                <>
-                                    <h1 style={{marginLeft: 20}}> Caja - { this.state.cashier ? this.state.cashier.name : 'cerrada' } </h1>
-                                    <div style={{marginTop: -5, marginBottom: 10}}>
-                                        <h4 style={{color: '#858585'}}>
-                                            { this.state.branch.name }
-                                            <Tooltip title="Cambiar de sucursal" placement="bottom" style={{marginTop: -5, marginLeft: 5}}>
-                                                <IconButton aria-label="Cambiar de sucursal" color='primary' onClick={ event => this.props.enqueueSnackbar('Ésta opción no está disponible para tu tipo de suscripción.', { variant: 'warning' }) }>
-                                                    <FaRegEdit />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </h4>
-                                    </div>
-                                </>}
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="flex-start"
+                                    alignItems="flex-start"
+                                >
+                                    <Grid item>
+                                        <h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}>
+                                            Caja - { this.state.cashier ? this.state.cashier.name : 'cerrada' }
+                                        </h1>
+                                    </Grid>
+                                    <Grid item style={{paddingTop: 10}}>
+                                        <Tooltip title="Cambiar de sucursal" placement="bottom">
+                                            <IconButton aria-label="Cambiar de sucursal" color='primary' onClick={ event => this.props.enqueueSnackbar('Ésta opción no está disponible para tu tipo de suscripción.', { variant: 'warning' }) }>
+                                                <FaRegEdit />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+                            }
                         />
 
-                        <Grid container direction="row" justify="flex-end" alignItems="center" style={{ marginTop: 10, marginBottom: 10 }}>
+                        <Grid container direction="row" justify="flex-end" alignItems="center" style={{ marginTop: 5, marginBottom: 5 }}>
 
                             {/* Products show type */}
                             <ToggleButtonGroup
@@ -588,12 +597,12 @@ class SalesCreate extends Component {
                         }
 
                         {/* Products list and sale details */}
-                        <Paper style={{ marginTop: 10 }} elevation={2}>
+                        <Paper elevation={2}>
                             <Grid container spacing={2}>
                                 
                                 {/* Tabs products */}
                                 <Grid item xs={12} sm={8} >
-                                    <AppBar position="static" style={{ margin: 0 }}>
+                                    <AppBar position="static" style={{backgroundColor: color.secondary, color: 'white', margin: 0}}>
                                         <Tabs value={ this.state.tabActive } onChange={ this.handleChangeTab } aria-label="Panel de productos">
                                             {
                                                 this.state.productsCategories.map((category, index) => {
@@ -709,27 +718,33 @@ class SalesCreate extends Component {
                                         {/* Type sale */}
                                         <Grid item sm={12} style={{marginTop: 10}}>
                                             <RadioGroup row aria-label="position" name="position" defaultValue="mesa">
-                                                <FormControlLabel
-                                                    value="mesa"
-                                                    control={<Radio color="primary" />}
-                                                    label="Mesa"
-                                                    labelPlacement="end"
-                                                    onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
-                                                />
-                                                <FormControlLabel
-                                                    value="para llevar"
-                                                    control={<Radio color="primary" />}
-                                                    label="Para llevar"
-                                                    labelPlacement="end"
-                                                    onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
-                                                />
-                                                <FormControlLabel
+                                                <Grid container direction="row" justify="space-around" alignItems="flex-start">
+                                                    <Grid item>
+                                                        <FormControlLabel
+                                                            value="mesa"
+                                                            control={<Radio color="primary" />}
+                                                            label="Mesa"
+                                                            labelPlacement="end"
+                                                            onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
+                                                        />
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <FormControlLabel
+                                                            value="para llevar"
+                                                            control={<Radio color="primary" />}
+                                                            label="Para llevar"
+                                                            labelPlacement="end"
+                                                            onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                                {/* <FormControlLabel
                                                     value="domicilio"
                                                     control={<Radio color="primary" />}
                                                     label="Domicilio"
                                                     labelPlacement="end"
                                                     onChange={ (event) => this.setState({radioSaleType: event.target.value}) }
-                                                />
+                                                /> */}
                                             </RadioGroup>
                                         </Grid>
 
@@ -739,7 +754,7 @@ class SalesCreate extends Component {
                                                 <Grid item md={6} style={{textAlign: 'right', padding: 10}}>
                                                     <TextField
                                                         id="input-amount" 
-                                                        label="Monto entregado"
+                                                        label="Monto recibido"
                                                         inputProps={{ type: 'number', min: '0', step: '0.5' }}
                                                         onClick={ e => e.target.select() }
                                                         value={ this.state.amountReceived }
@@ -756,11 +771,11 @@ class SalesCreate extends Component {
                                         <Grid item md={12} style={{paddingTop: 0, paddingBottom: 10}}>
                                             {
                                                 this.state.amountReceived == '' &&
-                                                <Alert severity="info">Ingresa el monto entregado por el cliente</Alert>
+                                                <Alert severity="info">Ingresa el monto recibido por el cliente</Alert>
                                             }
                                             {
                                                 this.state.amountReceived != '' && this.state.amountReceived == this.state.inputSaleAmount &&
-                                                <Alert severity="success">Monto entregado exacto!</Alert>
+                                                <Alert severity="success">Monto recibido exacto!</Alert>
                                             }
                                             {
                                                 this.state.amountReceived != '' && this.state.amountReceived != this.state.inputSaleAmount &&
@@ -775,7 +790,7 @@ class SalesCreate extends Component {
                                         </Grid>
 
                                         {/* Switches */}
-                                        <Grid item md={12}>
+                                        {/* <Grid item md={12}>
                                             <FormControlLabel
                                                 control={<Switch checked={ this.state.checkType } onChange={ e => this.setState({checkType: e.target.checked})} name="switch-checkType" color="primary" />}
                                                 label="Factura"
@@ -786,12 +801,12 @@ class SalesCreate extends Component {
                                                 control={<Switch checked={ this.state.paymentType } onChange={ e => this.setState({ paymentType: e.target.checked, amountReceived: e.target.checked ? this.state.inputSaleAmount : '' })} name="switch-paymentType" color="primary" />}
                                                 label="Pagado con tarjeta"
                                             />
-                                        </Grid>
+                                        </Grid> */}
 
                                         <Grid item md={12} style={{paddingBottom: 10}}>
                                             <Button
                                                 variant="contained"
-                                                color="primary"
+                                                style={{backgroundColor: color.primary, color: 'white'}}
                                                 fullWidth
                                                 size="large"
                                                 disabled={this.state.cashier === null ? true : false}
@@ -963,7 +978,7 @@ class SalesCreate extends Component {
                                             </Grid>
 
                                             {/* Sale info */}
-                                            <Grid item md={6} xs={12} style={{ backgroundColor: '#3F51B5' }}>
+                                            <Grid item md={6} xs={12} style={{ backgroundColor: color.secondary }}>
                                                 <Grid item md={12} style={{ textAlign: 'center', marginTop: 20}}>
                                                     <Typography variant='h4' style={{ color: 'white' }} >{ this.state.checkType ? 'Factura' : 'Recibo de venta' }</Typography>
                                                 </Grid>
@@ -991,10 +1006,10 @@ class SalesCreate extends Component {
                                     </Paper>
                                 </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={() => this.setState({showDialogSaleConfirm: false}) } color="secondary">
+                                        <Button onClick={() => this.setState({showDialogSaleConfirm: false}) } >
                                             Cancelar
                                         </Button>
-                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } color="primary" disabled={ this.state.cashier === null ? true : false }>
+                                        <Button disabled={this.state.formSaleSending} onClick={() => this.handleSubmitSale() } style={{ color: color.primary }} disabled={ this.state.cashier === null ? true : false }>
                                             Aceptar
                                         </Button>
                                     </DialogActions>
@@ -1011,7 +1026,7 @@ class SalesCreate extends Component {
                                 aria-labelledby="alert-dialog-customer-title"
                                 fullWidth
                             >
-                                <DialogTitle id="alert-dialog-customer-title">{ this.state.selectCustomerSelected.id > 1 ? 'Editar' : 'Nuevo' } cliente</DialogTitle>
+                                <DialogTitle id="alert-dialog-customer-title">{ this.state.selectCustomerSelected.id > 1 ? 'Editar' : 'Registrar nuevo' } cliente</DialogTitle>
                                 <DialogContent>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm={6}>
@@ -1043,7 +1058,6 @@ class SalesCreate extends Component {
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 variant="outlined"
-                                                required
                                                 fullWidth
                                                 id="input-ci_nit"
                                                 label="NIT"
@@ -1182,12 +1196,12 @@ const CardProduct = props => {
                             image={ product.image ? `${API}/storage/${product.image.replace('.', '-small.')}` : defaultImg }
                         />
                         <CardContent>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} style={{marginTop: -20}}>
                                 <Grid item sm={12}>
                                     <Typography noWrap={true}><b>{ product.name }</b></Typography>
                                     <Typography noWrap={true} variant='subtitle2'>{ product.type ? product.type : product.short_description }</Typography>
                                 </Grid>
-                                <Grid container style={{marginTop: 0}} justify="flex-end">
+                                <Grid container style={{marginTop: -10}} justify="flex-end">
                                     <small style={{ color: '#1D6CC6' }}>{ product.price }<small style={{marginLeft: 2}}>Bs.</small></small>
                                 </Grid>
                             </Grid>

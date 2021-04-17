@@ -37,9 +37,10 @@ import { io } from "socket.io-client";
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API, SOCKET_IO } = env;
+const { API, SOCKET_IO, color } = env;
 const socket = io(SOCKET_IO);
 
 const transition = React.forwardRef(function Transition(props, ref) {
@@ -63,6 +64,7 @@ class salesList extends Component {
         'accept': 'application/json',
         'Authorization': `Bearer ${this.props.authSession.token}`
       },
+      loadingList: false,
       branchId: this.props.authSession.branch.id,
       defaultImg: `${API}/images/default-image.png`,
       showDialog: false,
@@ -135,12 +137,15 @@ class salesList extends Component {
   // }
 
   getSales(){
-    fetch(`${API}/api/branch/${this.props.authSession.branch.id}/sales`, {headers: this.state.headers})
+    this.setState({loadingList: true});
+    let { branch, user } = this.props.authSession;
+    fetch(`${API}/api/branch/${branch.id}/sales/${user.id}`, {headers: this.state.headers})
     .then(res => res.json())
     .then(res => {
       this.renderRowTable(res.sales);
     })
-    .catch(error => ({'error': error}));
+    .catch(error => ({'error': error}))
+    .finally(() => this.setState({loadingList: false}));
   }
 
   renderRowTable(sales){
@@ -210,18 +215,18 @@ class salesList extends Component {
                       <IoIosMenu size={40} />
                   </div>
 
-                  <Navbar title={<h1 style={{marginLeft: 20}}> Mis ventas del día</h1>} />
+                  <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Mis ventas del día</h1>} />
 
                   <Grid style={{marginTop: 20}}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <Link to='/dashboard/sales/create'>
-                              <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                              <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Nueva</Button>
                           </Link>
                       </div>
 
                       <div style={{ marginTop: 30, marginBottom: 50 }}>
                         {/* Filtro */}
-                        <Grid container style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                        {/* <Grid container style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                           <Grid item>
                             <Paper component="form" style={{ display: 'flex', flexDirection: 'row-reverse', marginBottom: 30, maxWidth: 400 }}>
                               <Tooltip title="Buscar" placement="bottom" style={{ marginRight: 10 }}>
@@ -229,7 +234,6 @@ class salesList extends Component {
                                   <IoIosSearch size={25} />
                                 </IconButton>
                               </Tooltip>
-                              {/* Input buscador */}
                               <InputBase
                                 placeholder="Nro o cliente"
                                 inputProps={{ 'aria-label': 'Nro o cliente' }}
@@ -244,52 +248,58 @@ class salesList extends Component {
                               </Tooltip>
                             </Paper>
                           </Grid>
-                        </Grid>
+                        </Grid> */}
 
                         <Paper >
-                          <TableContainer>
-                            <Table stickyHeader aria-label="sticky table">
-                              <TableHead>
-                                <TableRow>
-                                  {tableColumns.map((column) => (
-                                    <TableCell
-                                      key={column.id}
-                                      align={column.align}
-                                      style={{ minWidth: column.minWidth }}
-                                    >
-                                      {column.label}
-                                    </TableCell>
-                                  ))}
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
-                                  return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.number}>
-                                      {tableColumns.map((column) => {
-                                        const value = row[column.id];
-                                        return (
-                                          <TableCell key={column.id} align={column.align}>
-                                            {column.format && typeof value === 'number' ? column.format(value) : value}
-                                          </TableCell>
-                                        );
-                                      })}
+                          { this.state.loadingList && <LoadingList /> }
+                          { this.state.tableRows.length === 0 && !this.state.loadingList && <EmptyList /> }
+                          { this.state.tableRows.length > 0 &&
+                            <>
+                              <TableContainer>
+                                <Table stickyHeader aria-label="sticky table">
+                                  <TableHead>
+                                    <TableRow>
+                                      {tableColumns.map((column) => (
+                                        <TableCell
+                                          key={column.id}
+                                          align={column.align}
+                                          style={{ minWidth: column.minWidth }}
+                                        >
+                                          {column.label}
+                                        </TableCell>
+                                      ))}
                                     </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                          <TablePagination
-                            rowsPerPageOptions={[10, 25, 100]}
-                            component="div"
-                            count={this.state.tableRows.length}
-                            rowsPerPage={this.state.rowsPerPage}
-                            page={this.state.page}
-                            labelRowsPerPage='Items por página'
-                            onChangePage={(event, newPage) => this.setState({page: newPage})}
-                            onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                          />
+                                  </TableHead>
+                                  <TableBody>
+                                    {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                      return (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.number}>
+                                          {tableColumns.map((column) => {
+                                            const value = row[column.id];
+                                            return (
+                                              <TableCell key={column.id} align={column.align}>
+                                                {column.format && typeof value === 'number' ? column.format(value) : value}
+                                              </TableCell>
+                                            );
+                                          })}
+                                        </TableRow>
+                                      );
+                                    })}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                              <TablePagination
+                                rowsPerPageOptions={[10, 25, 100]}
+                                component="div"
+                                count={this.state.tableRows.length}
+                                rowsPerPage={this.state.rowsPerPage}
+                                page={this.state.page}
+                                labelRowsPerPage='Items por página'
+                                onChangePage={(event, newPage) => this.setState({page: newPage})}
+                                onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                              />
+                            </>
+                          }
                         </Paper>
                       </div>
                   </Grid>

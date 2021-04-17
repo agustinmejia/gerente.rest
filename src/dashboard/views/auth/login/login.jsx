@@ -131,16 +131,19 @@ function SignInSide(props) {
                             autoFocus
                             value={ email }
                             onChange={ event => setEmail(event.target.value) }
+                            inputProps={{ type: 'email', maxLength: 50 }}
                         />
                         <FormControl fullWidth variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                             <OutlinedInput
+                                required
                                 id="outlined-adornment-password"
                                 type={ showPassword ? 'text' : 'password'}
                                 label="Contraseña"
                                 fullWidth
                                 value={ password }
                                 onChange={ event => setpassword(event.target.value) }
+                                inputProps={{ maxLength: 20 }}
                                 endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -204,9 +207,9 @@ function SignInSide(props) {
                     </form>
                     <Grid container>
                         <Grid item xs>
-                            <Link to="/">
+                            <a href={ `${API}/password/reset` }>
                                 <Typography variant="body1">Olvidate tu contraseña?</Typography>
-                            </Link>
+                            </a>
                         </Grid>
                         <Grid item>
                             <Link to="/register">

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
     Grid,
+    Paper,
     TextField,
     Select,
     MenuItem,
@@ -101,7 +102,9 @@ class MyCompany extends Component {
         const urlParams = new URLSearchParams(queryString);
 
         if(urlParams.get('tour') == 1){
-            this.setState({tourActive: true});
+            setTimeout(() => {
+                this.setState({tourActive: true});
+            }, 1500);
         }
 
         // Get cities
@@ -219,7 +222,7 @@ class MyCompany extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> { this.state.imputCompanyName ? this.state.imputCompanyName : 'Mi restaurante' }</h1>} />
 
                         <Grid style={{ marginTop: -60 }}>
                             <form>
@@ -261,122 +264,123 @@ class MyCompany extends Component {
                                 </div>
                             </Grid>
                         </Grid>
-                        <form onSubmit={ this.handleSubmit }>
-                            <Grid container spacing={2} style={{ marginTop: -80 }}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        id="input-name"
-                                        label="Nombre de tu restaurante *"
-                                        placeholder="La clave"
-                                        helperText="Nombre de tu restaurante"
+                        <Paper style={{ marginTop: -80, backgroundColor: 'white', padding: 30 }}>
+                            <form onSubmit={ this.handleSubmit }>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            id="input-name"
+                                            label="Nombre de tu restaurante *"
+                                            placeholder="La clave"
+                                            helperText="Nombre de tu restaurante"
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                            value={ this.state.imputCompanyName }
+                                            onChange={ event => this.setState({imputCompanyName: event.target.value}) }
+                                            className="name-step"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            id="input-slogan"
+                                            label="Slogan de tu restaurante"
+                                            placeholder="El cliente primero..."
+                                            helperText="Escribe una frase corta que describa a tu restaurante."
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                            value={ this.state.inputSlogan }
+                                            onChange={ event => this.setState({inputSlogan: event.target.value}) }
+                                            className="slogan-step"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Select
+                                            labelId="select-city"
+                                            id="demo-simple-select-filled"
+                                            variant="outlined"
+                                            // label="Ciudad"
+                                            inputProps={{ 'aria-label': 'Ciudad' }}
+                                            required
+                                            fullWidth
+                                            value={ this.state.selectCity }
+                                            onChange={ event => this.setState({selectCity: event.target.value}) }
+                                            className="city-step"
+                                            >
+                                                <MenuItem disabled key={0} value="none">
+                                                    <em>Selecciona tu ciudad</em>
+                                                </MenuItem>
+                                                {
+                                                    this.state.cities.map(city => 
+                                                        <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
+                                                    )
+                                                }
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            id="input-phones"
+                                            label="Telefonos de contacto"
+                                            placeholder="462 4545 - 75199157"
+                                            helperText="Números de telefono o celular para atención al cliente separados por -"
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                            style={{ marginTop: 0}}
+                                            value={ this.state.inputPhones }
+                                            onChange={ event => this.setState({inputPhones: event.target.value}) }
+                                            className="phone-step"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            id="input-address"
+                                            label="Dirección del restaurante"
+                                            placeholder="Av. 18 de nov nro 123"
+                                            helperText="Escribe la dirección de tu restaurante Ej: Av. Av. 18 de nov nro 123."
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                            style={{ marginTop: 0}}
+                                            multiline
+                                            rows={2}
+                                            value={ this.state.inputAddress }
+                                            onChange={ event => this.setState({inputAddress: event.target.value}) }
+                                            className="address-step"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            id="input-small-description"
+                                            label="Descríbenos tu restaurante"
+                                            placeholder="La mejor opción a la hora de degustar de un platillo de tu predilección."
+                                            helperText="Describe de manera breve tu restaurante"
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                            style={{ marginTop: 0}}
+                                            multiline
+                                            rows={2}
+                                            value={ this.state.inputShortDescription }
+                                            onChange={ event => this.setState({inputShortDescription: event.target.value}) }
+                                            className="description-step"
+                                        />
+                                    </Grid>
+                                    <Button
+                                        type="submit"
                                         fullWidth
-                                        margin="normal"
-                                        variant="outlined"
-                                        value={ this.state.imputCompanyName }
-                                        onChange={ event => this.setState({imputCompanyName: event.target.value}) }
-                                        className="name-step"
-                                    />
+                                        size="large"
+                                        variant="contained"
+                                        endIcon={<IoMdCreate />}
+                                        style={{marginTop: 30, backgroundColor: color.primary, color: 'white'}}
+                                        className="save-step"
+                                    >
+                                        Actualizar datos
+                                    </Button>
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        id="input-slogan"
-                                        label="Slogan de tu restaurante"
-                                        placeholder="El cliente primero..."
-                                        helperText="Escribe una frase corta que describa a tu restaurante."
-                                        fullWidth
-                                        margin="normal"
-                                        variant="outlined"
-                                        value={ this.state.inputSlogan }
-                                        onChange={ event => this.setState({inputSlogan: event.target.value}) }
-                                        className="slogan-step"
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Select
-                                        labelId="select-city"
-                                        id="demo-simple-select-filled"
-                                        variant="outlined"
-                                        // label="Ciudad"
-                                        inputProps={{ 'aria-label': 'Ciudad' }}
-                                        required
-                                        fullWidth
-                                        value={ this.state.selectCity }
-                                        onChange={ event => this.setState({selectCity: event.target.value}) }
-                                        className="city-step"
-                                        >
-                                            <MenuItem disabled key={0} value="none">
-                                                <em>Selecciona tu ciudad</em>
-                                            </MenuItem>
-                                            {
-                                                this.state.cities.map(city => 
-                                                    <MenuItem key={city.id} value={city.id}>{city.name} - {city.state}</MenuItem>
-                                                )
-                                            }
-                                    </Select>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        id="input-phones"
-                                        label="Telefonos de contacto"
-                                        placeholder="462 4545 - 75199157"
-                                        helperText="Números de telefono o celular para atención al cliente separados por -"
-                                        fullWidth
-                                        margin="normal"
-                                        variant="outlined"
-                                        style={{ marginTop: 0}}
-                                        value={ this.state.inputPhones }
-                                        onChange={ event => this.setState({inputPhones: event.target.value}) }
-                                        className="phone-step"
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12}>
-                                    <TextField
-                                        id="input-address"
-                                        label="Dirección del restaurante"
-                                        placeholder="Av. 18 de nov nro 123"
-                                        helperText="Escribe la dirección de tu restaurante Ej: Av. Av. 18 de nov nro 123."
-                                        fullWidth
-                                        margin="normal"
-                                        variant="outlined"
-                                        style={{ marginTop: 0}}
-                                        multiline
-                                        rows={2}
-                                        value={ this.state.inputAddress }
-                                        onChange={ event => this.setState({inputAddress: event.target.value}) }
-                                        className="address-step"
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12}>
-                                    <TextField
-                                        id="input-small-description"
-                                        label="Descríbenos tu restaurante"
-                                        placeholder="La mejor opción a la hora de degustar de un platillo de tu predilección."
-                                        helperText="Describe de manera breve tu restaurante"
-                                        fullWidth
-                                        margin="normal"
-                                        variant="outlined"
-                                        style={{ marginTop: 0}}
-                                        multiline
-                                        rows={2}
-                                        value={ this.state.inputShortDescription }
-                                        onChange={ event => this.setState({inputShortDescription: event.target.value}) }
-                                        className="description-step"
-                                    />
-                                </Grid>
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    size="large"
-                                    variant="contained"
-                                    color="primary"
-                                    endIcon={<IoMdCreate />}
-                                    style={{marginTop: 30}}
-                                    className="save-step"
-                                >
-                                    Actualizar datos
-                                </Button>
-                            </Grid>
-                        </form>
+                            </form>
+                        </Paper>
                     </main>
                 </div>
 

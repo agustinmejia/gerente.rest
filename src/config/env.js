@@ -13,6 +13,15 @@ export const env = {
         primaryAlt: '40, 180, 99',
         secondary: '#212F3C',
         secondaryAlt: '33, 47, 60',
+        red: '#E74C3C',
+        violeta: '#8E44AD',
+        blue: '#236DCC',
+        green: '#28B463',
+        yellow: '#F1C40F',
+        orange: '#E67E22',
+        white: '#FDFEFE',
+        gray: '#95A5A6',
+        black: '#17202A'
     }
 }
 

@@ -3,10 +3,11 @@ import {
     Grid,
     TextField,
     Button,
-    Typography
+    Typography,
+    CircularProgress
 }from '@material-ui/core';
 import { Link } from "react-router-dom";
-import { IoIosCheckmarkCircle, IoIosArrowDropleft } from "react-icons/io";
+import { IoIosCheckmarkCircle, IoIosArrowDropleft, IoIosHappy } from "react-icons/io";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 
 import { env } from '../../config/env';
@@ -28,6 +29,7 @@ export const TextFieldCustom = (props) => {
                 name={ props.name }
                 value={ props.value }
                 onChange={ props.onChange }
+                inputProps={ props.inputProps }
             />
         </Grid>
     )
@@ -35,7 +37,7 @@ export const TextFieldCustom = (props) => {
 
 export const FormButtons = (props) => {
     return(
-        <div style={{ paddingTop: 100 }}>
+        <div style={{ paddingTop: 80 }}>
             <Grid container spacing={2} direction="row" justify="flex-end" style={{position: 'fixed', bottom: 0, right: 0, backgroundColor: 'white', padding: 20, zIndex: 10}}>
                 <Grid item xs={4} sm={3}>
                     <Link to={ props.back }>
@@ -55,7 +57,7 @@ export const FormButtons = (props) => {
                         fullWidth
                         size="large"
                         variant="contained"
-                        color="primary"
+                        style={{ backgroundColor: color.primary, color: 'white'}}
                         endIcon={ <IoIosCheckmarkCircle/> }
                     >
                     { props.titleSuccess }
@@ -66,13 +68,46 @@ export const FormButtons = (props) => {
     );
 }
 
-export const ListEmpty = props => {
+export const EmptyList = props => {
+    const icon = props.icon != null ? props.icon : <AiOutlineMinusCircle size={150} color={`rgba(${color.primaryAlt},0.6)`} />;
     return(
         <Grid container direction="column" justify="center" alignItems="center" style={{padding: 40}}>
-            <AiOutlineMinusCircle size={150} color={`rgba(${color.primaryAlt},0.6)`} />
-            <Typography variant="h4" style={{color: 'rgba(0,0,0,0.5)'}}>Lista vacía</Typography>
-            <Typography variant="body2" style={{color: 'rgba(0,0,0,0.5)'}}>Para agregar un nuevo registro presiona el botón de la parte superior derecha.</Typography>
+            { icon }
+            <Typography variant="h5" color="textSecondary" style={{ marginTop: 20}}>{ props.title != null ? props.title : 'Lista vacía' }</Typography>
+            <Typography variant="body2" color="textSecondary">{ props.subtitle != null ? props.subtitle : 'Para agregar un nuevo registro presiona el botón de la parte superior derecha.' }</Typography>
         </Grid>
         
     );
+}
+
+export const LoadingList = props => {
+    return(
+        <Grid container direction="column" justify="center" alignItems="center" style={{padding: 40}}>
+            <CircularProgress style={{color: color.primary}}/>
+            <Typography variant="body" color="textSecondary" style={{ margin: 10}}>Cargando...</Typography>
+        </Grid>
+        
+    );
+}
+
+export const YoutubeEmbed = (props) => {
+    const { innerWidth, innerHeight } = window;
+    let width = props.width ? props.width : 450;
+    let height = props.height ? props.height : 253
+    if(innerWidth < width){
+        return <></>
+    }
+    return(
+        <div className="video-responsive">
+            <iframe
+                width={ props.width ? props.width : 450 }
+                height={ props.height ? props.height : 253 }
+                src={`https://www.youtube.com/embed/${props.embedId}`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Embedded youtube"
+            />
+        </div>
+    )
 }

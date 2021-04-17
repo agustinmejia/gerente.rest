@@ -33,7 +33,7 @@ const Sidebar = props => {
                 className={ props.className }
             >
                 <SidebarHeader>
-                    <div style={{ padding: 20, }}>
+                    <div style={{ padding: 15,}}>
                         <b style={{ fontSize: 25, color: 'white' }}><img src="/favicon.ico" alt="gerente.rest_logo" style={{ width: 50, float: 'left', marginRight: 10 }}/> { props.globalConfig.sidebar.collapsed ?  '' : 'Gerente.rest' }</b>
                     </div>
                 </SidebarHeader>
@@ -45,15 +45,14 @@ const Sidebar = props => {
                             <MenuItem><Link to="/dashboard/branches">Sucursales</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/products">Productos</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/employes">Empleados</Link></MenuItem>
-                            <MenuItem><Link to="/dashboard/sales">Ventas</Link></MenuItem>
                         </SubMenu>
-                        {/* <SubMenu icon={ <IoIosCash size={25} /> } title={<b>Ingresos/Egresos</b>}>
-                            <MenuItem><Link to="/dashboard/cashiers">Cajas</Link></MenuItem>
-                        </SubMenu> */}
-                        <MenuItem icon={ <IoIosCash size={25} /> } ><Link to="/dashboard/cashiers">{<b>Cajas</b>}</Link></MenuItem>
-                        <MenuItem icon={ <IoMdCart size={25} /> } ><Link to="/dashboard/sales/create">{<b>Vender</b>}</Link></MenuItem>
-                        <SubMenu icon={ <IoIosBulb size={25} /> } title={<b>Complementos</b>}>
+                        <SubMenu icon={ <IoMdCart size={25} /> } title={<b>Ventas</b>}>
+                            <MenuItem><Link to="/dashboard/sales/create">Vender</Link></MenuItem>
+                            <MenuItem><Link to="/dashboard/sales">Ventas del día</Link></MenuItem>
                             <MenuItem><Link to="/dashboard/kitchen">Cocina</Link></MenuItem>
+                        </SubMenu>
+                        <MenuItem icon={ <IoIosCash size={25} /> } ><Link to="/dashboard/cashiers">{<b>Cajas</b>}</Link></MenuItem>
+                        <SubMenu icon={ <IoIosBulb size={25} /> } title={<b>Complementos</b>}>
                             <MenuItem><Link to="/dashboard/tickets" target="_blank">Tickets</Link></MenuItem>
                         </SubMenu>
                     </Menu>

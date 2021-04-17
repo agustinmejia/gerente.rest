@@ -35,14 +35,16 @@ import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash } from "react-icons/
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import axios from "axios";
+import Tour from 'reactour';
 import { withSnackbar } from 'notistack';
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, color } = env;
 const defaultImg = `${API}/images/default-image.png`;
 
 const transition = React.forwardRef(function Transition(props, ref) {
@@ -57,6 +59,21 @@ const tableColumns = [
   { id: 'actions', label: 'Opciones', align: 'right' },
 ];
 
+const steps = [
+  {
+    selector: '.list-step',
+    content: 'Lista de productos de tu restaurante con las opciones de edición y eliminación.',
+  },
+  {
+    selector: '.add-step',
+    content: 'Presiona para añadir un nuevo producto de tu restaurante.',
+  },
+  {
+    selector: '.stock-step',
+    content: 'Opción para agregar el stock de tus productos para llevar un control del mismo por sucursales. Ej: las gaseosas o jugos que vendes en tu restaurante.',
+  }
+];
+
 class ProductsList extends Component {
     constructor(props){
         super(props)
@@ -68,6 +85,8 @@ class ProductsList extends Component {
           },
           showDialogDelete: false,
           showDialogStock: false,
+          tourActive: false,
+          loadingList: false,
           loading: false,
           products: [],
           tableRows: [],
@@ -129,31 +148,41 @@ class ProductsList extends Component {
     }
 
     componentDidMount(){
-        this.getProducts();
+      this.getProducts();
 
-        // Get branches company
-        let { company } = this.props.authSession;
-        fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
-        .then(res => res.json())
-        .then(res => {
-            this.setState({branches: res.branches}, () => {
-                // Si solo hay una sucursal la seleccionamos por defecto
-                if(res.branches.length == 1){
-                    this.setState({branchId: res.branches[0].id});
-                }
-            });
-        })
-        .catch(error => ({'error': error}));
+      // Get branches company
+      let { company } = this.props.authSession;
+      fetch(`${API}/api/company/${company.id}/branches/list`, {headers: this.state.headers})
+      .then(res => res.json())
+      .then(res => {
+          this.setState({branches: res.branches}, () => {
+              // Si solo hay una sucursal la seleccionamos por defecto
+              if(res.branches.length == 1){
+                  this.setState({branchId: res.branches[0].id});
+              }
+          });
+      })
+      .catch(error => ({'error': error}));
+
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      if(urlParams.get('tour') == 1){
+        setTimeout(() => {
+            this.setState({tourActive: true});
+        }, 1500);
+      }
     }
 
     getProducts(){
+      this.setState({loadingList: true});
       let { company } = this.props.authSession;
       fetch(`${API}/api/company/${company.id}/products/list`, {headers: this.state.headers})
       .then(res => res.json())
       .then(res => {
         this.renderRowsTable(res.products);
       })
-      .catch(error => ({'error': error}));
+      .catch(error => ({'error': error}))
+      .finally(() => this.setState({loadingList: false}));
     }
 
     renderRowsTable(products){
@@ -275,66 +304,72 @@ class ProductsList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title={<h1 style={{marginLeft: 20}}> Mis productos</h1>} />
+                    <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Mis productos</h1>} />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Link to='/dashboard/products/create'>
                               <Tooltip title="Crear nuevo producto" placement="top">
-                                <Button variant="contained" color="primary" endIcon={<IoIosAddCircle/>} > Nuevo</Button>
+                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} className="add-step" > Nuevo</Button>
                               </Tooltip>
                             </Link>
                             <Tooltip title="Agregar inventario de productos" placement="top">
-                              <Button variant="contained" onClick={ () => this.setState({showDialogStock: true}) } style={{ backgroundColor: '#138D75', color: 'white', marginLeft: 10 }} endIcon={<IoIosAddCircle/>} > Inventario</Button>
+                              <Button variant="contained" onClick={ () => this.setState({showDialogStock: true}) } style={{ backgroundColor: color.secondary, color: 'white', marginLeft: 10 }} endIcon={<IoIosAddCircle/>} className="stock-step" > Inventario</Button>
                             </Tooltip>
                         </div>
                         
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
-                            <Paper >
-                              <TableContainer>
-                                <Table stickyHeader aria-label="sticky table">
-                                  <TableHead>
-                                    <TableRow>
-                                      {tableColumns.map((column) => (
-                                        <TableCell
-                                          key={column.id}
-                                          align={column.align}
-                                          style={{ minWidth: column.minWidth }}
-                                        >
-                                          {column.label}
-                                        </TableCell>
-                                      ))}
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
-                                      return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                          {tableColumns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                              <TableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                              </TableCell>
-                                            );
-                                          })}
+                            { this.state.loadingList && <LoadingList /> }
+                            { this.state.tableRows.length === 0 && !this.state.loadingList && <EmptyList /> }
+                            { this.state.tableRows.length > 0 &&
+                              <>
+                                <Paper className="list-step">
+                                  <TableContainer>
+                                    <Table stickyHeader aria-label="sticky table">
+                                      <TableHead>
+                                        <TableRow>
+                                          {tableColumns.map((column) => (
+                                            <TableCell
+                                              key={column.id}
+                                              align={column.align}
+                                              style={{ minWidth: column.minWidth }}
+                                            >
+                                              {column.label}
+                                            </TableCell>
+                                          ))}
                                         </TableRow>
-                                      );
-                                    })}
-                                  </TableBody>
-                                </Table>
-                              </TableContainer>
-                              <TablePagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={this.state.tableRows.length}
-                                rowsPerPage={this.state.rowsPerPage}
-                                page={this.state.page}
-                                labelRowsPerPage='Items por página'
-                                onChangePage={(event, newPage) => this.setState({page: newPage})}
-                                onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                              />
-                            </Paper>
+                                      </TableHead>
+                                      <TableBody>
+                                        {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                          return (
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                              {tableColumns.map((column) => {
+                                                const value = row[column.id];
+                                                return (
+                                                  <TableCell key={column.id} align={column.align}>
+                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                  </TableCell>
+                                                );
+                                              })}
+                                            </TableRow>
+                                          );
+                                        })}
+                                      </TableBody>
+                                    </Table>
+                                  </TableContainer>
+                                  <TablePagination
+                                    rowsPerPageOptions={[10, 25, 100]}
+                                    component="div"
+                                    count={this.state.tableRows.length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    labelRowsPerPage='Items por página'
+                                    onChangePage={(event, newPage) => this.setState({page: newPage})}
+                                    onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                                  />
+                                </Paper>
+                              </>
+                            }
                         </div>
                     </Grid>
                 </main>
@@ -420,10 +455,10 @@ class ProductsList extends Component {
                       </Grid>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={ () => this.setState({ showDialogStock: false }) } color="primary">
+                      <Button onClick={ () => this.setState({ showDialogStock: false }) } >
                         Cancelar
                       </Button>
-                      <Button type="submit" color="secondary">
+                      <Button type="submit" style={{ color: color.primary }}>
                         Agregar a inventario
                       </Button>
                     </DialogActions>
@@ -445,7 +480,7 @@ class ProductsList extends Component {
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={ () => this.setState({ showDialogDelete: false }) } color="primary">
+                      <Button onClick={ () => this.setState({ showDialogDelete: false }) } >
                         Cancelar
                       </Button>
                       <Button onClick={ this.hanldeDelete } color="secondary">
@@ -453,6 +488,13 @@ class ProductsList extends Component {
                       </Button>
                     </DialogActions>
                 </Dialog>
+
+                <Tour
+                  steps={ steps }
+                  isOpen={ this.state.tourActive }
+                  accentColor={ color.primary }
+                  onRequestClose={() => this.setState({tourActive: false})}
+                />
             </div>
           </>
         );

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
     Grid,
+    Paper,
     TextField,
     Select,
     MenuItem,
@@ -16,6 +17,7 @@ import {
     Typography
 }from '@material-ui/core';
 import { IoIosMenu, IoIosCamera, IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { Redirect } from "react-router-dom";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -39,6 +41,7 @@ class EmployesCreateEdit extends Component {
             },
             sidebarToggled: false,
             loading: false,
+            redirect: false,
             branches: [],
             roles: [],
             id: this.props.match.params ? this.props.match.params.id : null,
@@ -158,10 +161,14 @@ class EmployesCreateEdit extends Component {
             }
         })
         .catch((err) => this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor!', { variant: 'error' }))
-        .then(() => this.setState({loading: false}));
+        .then(() => this.setState({loading: false, redirect: true}));
     }
 
     render() {
+        if (this.state.redirect) {
+           return <Redirect to='/dashboard/branches'/>;
+        }
+        
         return (
             <>
                 { this.state.loading &&
@@ -176,12 +183,12 @@ class EmployesCreateEdit extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.id ? 'Editar' : 'Nuevo' } empleado</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> { this.state.id ? 'Editar' : 'Nuevo' } empleado</h1>} />
                         
-                        <div style={{marginTop: 50}}>
+                        <Paper style={{ backgroundColor: 'white', padding: 30, marginTop: 50}}>
                             <form onSubmit={ this.handleSubmit } >
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={2}>
+                                <Grid container spacing={2}   direction="row" justify="center" alignItems="flex-start">
+                                    <Grid item xs={12} sm={3}>
                                         <Grid container style={{ cursor: 'pointer', width: 250, height: 150 }} onMouseOver={ event => this.setState({displayCameraPicture: 'flex'})} onMouseLeave={ event => this.setState({displayCameraPicture: 'none'})}>
                                             <CardMedia
                                                 style={{ width: 150, height: 150, borderRadius: 75, border: '3px solid white' }}
@@ -200,7 +207,7 @@ class EmployesCreateEdit extends Component {
                                             </div>
                                         </Grid>
                                     </Grid>
-                                    <Grid item xs={12} sm={10}>
+                                    <Grid item xs={12} sm={9}>
                                         <Grid container spacing={2}>
                                             <Grid item xs={12} sm={6} style={{marginBottom: 20}}>
                                                 <FormControl fullWidth variant="outlined">
@@ -381,7 +388,7 @@ class EmployesCreateEdit extends Component {
                                 </Grid>
                                 <FormButtons back='/dashboard/employes' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
-                        </div>
+                        </Paper>
                     </main>
                 </div>
             </>

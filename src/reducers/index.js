@@ -8,6 +8,10 @@ const reducerApp = (
                 },
                 TPVSales:{
                     productsShowType: 'cuadricula'
+                },
+                help: {
+                    tour: true,
+                    tips: true,
                 }
             },
             productsTPV: []

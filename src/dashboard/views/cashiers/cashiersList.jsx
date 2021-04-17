@@ -51,6 +51,7 @@ import axios from "axios";
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API } = env;
@@ -84,6 +85,7 @@ class CashiersList extends Component {
             'Authorization': `Bearer ${this.props.authSession.token}`
           },
           loading: false,
+          loadingList: false,
           showDialogDelete: false,
           showDialogDetails: false,
           tabActive: 0,
@@ -144,13 +146,15 @@ class CashiersList extends Component {
     }
 
     getData(){
+      this.setState({loadingList: true});
       let { company } = this.props.authSession;
         fetch(`${API}/api/company/${company.id}/cashier/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
           this.renderRowsTable(res.cashiers);
         })
-        .catch(error => ({'error': error}));
+        .catch(error => ({'error': error}))
+        .finally(() => this.setState({loadingList: false}));
     }
 
     renderRowsTable(cashiers){
@@ -252,46 +256,56 @@ class CashiersList extends Component {
                         <IoIosMenu size={40} />
                     </div>
 
-                    <Navbar title={<h1 style={{marginLeft: 20}}> Cajas</h1>} />
+                    <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Cajas</h1>} />
 
                     <Grid style={{marginTop: 20}}>
                         <div style={{ marginTop: 30, marginBottom: 50 }}>
                             <Paper >
-                              <TableContainer>
-                                <Table stickyHeader aria-label="sticky table">
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell />
-                                      {tableColumns.map((column) => (
-                                        <TableCell
-                                          key={column.id}
-                                          align={column.align}
-                                          style={{ minWidth: column.minWidth }}
-                                        >
-                                          {column.label}
-                                        </TableCell>
-                                      ))}
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
-                                      return (
-                                        <Row key={row.id} row={row} />
-                                      );
-                                    })}
-                                  </TableBody>
-                                </Table>
-                              </TableContainer>
-                              <TablePagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={this.state.tableRows.length}
-                                rowsPerPage={this.state.rowsPerPage}
-                                page={this.state.page}
-                                labelRowsPerPage='Items por página'
-                                onChangePage={(event, newPage) => this.setState({page: newPage})}
-                                onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                              />
+                              { this.state.loadingList && <LoadingList /> }
+                              { this.state.tableRows.length === 0 && !this.state.loadingList &&
+                                <EmptyList
+                                  subtitle="No has aperturado ninguna caja hasta el momento."
+                                />
+                              }
+                              { this.state.tableRows.length > 0 &&
+                                <>
+                                  <TableContainer>
+                                    <Table stickyHeader aria-label="sticky table">
+                                      <TableHead>
+                                        <TableRow>
+                                          <TableCell />
+                                          {tableColumns.map((column) => (
+                                            <TableCell
+                                              key={column.id}
+                                              align={column.align}
+                                              style={{ minWidth: column.minWidth }}
+                                            >
+                                              {column.label}
+                                            </TableCell>
+                                          ))}
+                                        </TableRow>
+                                      </TableHead>
+                                      <TableBody>
+                                        {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                          return (
+                                            <Row key={row.id} row={row} />
+                                          );
+                                        })}
+                                      </TableBody>
+                                    </Table>
+                                  </TableContainer>
+                                  <TablePagination
+                                    rowsPerPageOptions={[10, 25, 100]}
+                                    component="div"
+                                    count={this.state.tableRows.length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    labelRowsPerPage='Items por página'
+                                    onChangePage={(event, newPage) => this.setState({page: newPage})}
+                                    onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                                  />
+                                </>
+                              }
                             </Paper>
                         </div>
                     </Grid>

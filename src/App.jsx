@@ -27,8 +27,7 @@ import Home from "./dashboard/views/home/home";
 import MyCompany from "./dashboard/views/mycompany/mycompany";
 // Branches
 import BranchesList from "./dashboard/views/branches/branchesList";
-import BranchesCreate from "./dashboard/views/branches/branchesCreate";
-import BranchesEdit from "./dashboard/views/branches/branchesEdit";
+import BranchesCreateEdit from "./dashboard/views/branches/branchesCreateEdit";
 
 // Products
 import ProductsList from "./dashboard/views/products/productsList";
@@ -50,6 +49,9 @@ import EmployesCreateEdit from "./dashboard/views/employes/EmployesCreateEdit";
 
 // Tickets
 import Tickets from "./dashboard/views/tickets/tickets";
+
+// Config
+import Profile from "./dashboard/views/config/profile";
 
 import Error404 from "./dashboard/views/errors/404";
 
@@ -144,8 +146,8 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/mycompany" meta={{ auth: true }} render={(props) => <MyCompany {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/branches" meta={{ auth: true }} render={(props) => <BranchesList {...props}/>} />
-            <GuardedRoute exact path="/dashboard/branches/create" meta={{ auth: true }} render={(props) => <BranchesCreate {...props}/>} />
-            <GuardedRoute exact path="/dashboard/branches/:id/edit" meta={{ auth: true }} render={(props) => <BranchesEdit {...props}/>} />
+            <GuardedRoute exact path="/dashboard/branches/create" meta={{ auth: true }} render={(props) => <BranchesCreateEdit {...props}/>} />
+            <GuardedRoute exact path="/dashboard/branches/:id/edit" meta={{ auth: true }} render={(props) => <BranchesCreateEdit {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/products" meta={{ auth: true }} render={(props) => <ProductsList {...props}/>} />
             <GuardedRoute exact path="/dashboard/products/create" meta={{ auth: true }} render={(props) => <ProductsCreateEdit {...props}/>} />
@@ -164,6 +166,8 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/employes/:id/edit" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/tickets" meta={{ auth: true }} render={(props) => <Tickets {...props}/>} />
+
+            <GuardedRoute exact path="/dashboard/profile" meta={{ auth: true }} render={(props) => <Profile {...props}/>} />
 
             {/* Not found */}
             <Route path="*" component={Error404} />

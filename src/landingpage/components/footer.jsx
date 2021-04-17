@@ -18,8 +18,8 @@ export class Footer extends Component {
     render(){
         const { Contact } = JsonData
         return (
-            <Grid container style={{backgroundColor: color.secondary, marginTop: 100, padding: 50, paddingTop: 40,}}>
-                <Grid item xs={9}>
+            <Grid container style={{backgroundColor: color.secondary, marginTop: 100, padding: 50, paddingTop: 40}}>
+                <Grid item sm={9} xs={12}>
                     <Grid container>
                         <Grid item xs={12}>
                             <Grid item xs={12} >
@@ -59,7 +59,7 @@ export class Footer extends Component {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item sm={3} xs={12}>
                     <Grid container direction="column" justify="flex-end" alignItems="flex-end" style={{marginTop: 30}}>
                         <Typography variant="h6" style={{color: 'white'}}>Comunícate con nosotros</Typography>
                         <small style={{color: 'white'}}>Puedes contactarnos a través de los siguientes medios</small>
@@ -78,7 +78,7 @@ export class Footer extends Component {
                         </div>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} >
+                <Grid item xs={12} style={{marginTop: 50}}>
                     <Typography style={{color: 'white'}} align="center">
                         {'Copyright © '} <Link to="https://gerente.rest">Gerente de restaurantes{' '}</Link>{' '}{new Date().getFullYear()}
                     </Typography>

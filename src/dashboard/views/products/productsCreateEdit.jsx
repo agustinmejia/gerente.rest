@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
     Grid,
+    Paper,
     TextField,
     Backdrop,
     CircularProgress,
@@ -234,9 +235,9 @@ class ProductsCreateEdit extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> { this.state.id ? 'Editar' : 'Nuevo' } producto</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> { this.state.id ? 'Editar' : 'Nuevo' } producto</h1>} />
 
-                        <div style={{marginTop: 50}}>
+                        <Paper style={{ marginTop: 50, backgroundColor: 'white', padding: 30 }}>
                             <form onSubmit={ this.handleSubmit } >
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
@@ -360,7 +361,7 @@ class ProductsCreateEdit extends Component {
                                 }
                                 <FormButtons back='/dashboard/products' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
-                        </div>
+                        </Paper>
 
                         {/* Create category */}
                         <ProductsCategories

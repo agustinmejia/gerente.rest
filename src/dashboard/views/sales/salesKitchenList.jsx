@@ -33,6 +33,7 @@ import { io } from "socket.io-client";
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
+import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API, SOCKET_IO } = env;
@@ -56,6 +57,7 @@ class SalesKitchenList extends Component {
             'accept': 'application/json',
             'Authorization': `Bearer ${this.props.authSession.token}`
         },
+        loadingList: false,
         branchId: this.props.authSession.branch.id,
         tableRows: [],
         sidebarToggled: false,
@@ -109,12 +111,14 @@ class SalesKitchenList extends Component {
     }
 
     getSales(){
+        this.setState({loadingList: true});
         fetch(`${API}/api/branch/${this.state.branchId}/sales/kitchen`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
             this.renderRowTable(res.sales);
         })
-        .catch(error => ({'error': error}));
+        .catch(error => ({'error': error}))
+        .finally(() => this.setState({loadingList: false}));
     }
 
     renderRowTable(sales){
@@ -180,54 +184,66 @@ class SalesKitchenList extends Component {
                             <IoIosMenu size={40} />
                         </div>
 
-                        <Navbar title={<h1 style={{marginLeft: 20}}> Pedidos pendientes</h1>} />
+                        <Navbar title={<h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}> Pedidos pendientes</h1>} />
 
                         <Grid style={{marginTop: 20}}>
                             <div style={{ marginTop: 30, marginBottom: 50 }}>
                                 <Paper >
-                                    <TableContainer>
-                                        <Table stickyHeader aria-label="sticky table">
-                                        <TableHead>
-                                            <TableRow>
-                                            {tableColumns.map((column) => (
-                                                <TableCell
-                                                    key={column.id}
-                                                    align={column.align}
-                                                    style={{ minWidth: column.minWidth }}
-                                                >
-                                                {column.label}
-                                                </TableCell>
-                                            ))}
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
-                                                return (
-                                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                                        {tableColumns.map((column) => {
-                                                            const value = row[column.id];
-                                                            return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                                            </TableCell>
-                                                            );
-                                                        })}
+                                    { this.state.loadingList && <LoadingList /> }
+                                    { this.state.tableRows.length === 0 && !this.state.loadingList &&
+                                        <EmptyList
+                                        icon={<img src="/img/break.png" style={{width: 100}} />}
+                                        title="No tienes pedidos pendientes"
+                                        subtitle="Puedes tomarte un descanso."
+                                        />
+                                    }
+                                    { this.state.tableRows.length > 0 &&
+                                        <>
+                                            <TableContainer>
+                                                <Table stickyHeader aria-label="sticky table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                    {tableColumns.map((column) => (
+                                                        <TableCell
+                                                            key={column.id}
+                                                            align={column.align}
+                                                            style={{ minWidth: column.minWidth }}
+                                                        >
+                                                        {column.label}
+                                                        </TableCell>
+                                                    ))}
                                                     </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                    <TablePagination
-                                        rowsPerPageOptions={[10, 25, 100]}
-                                        component="div"
-                                        count={this.state.tableRows.length}
-                                        rowsPerPage={this.state.rowsPerPage}
-                                        page={this.state.page}
-                                        labelRowsPerPage='Items por página'
-                                        onChangePage={(event, newPage) => this.setState({page: newPage})}
-                                        onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
-                                    />
+                                                </TableHead>
+                                                <TableBody>
+                                                    {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
+                                                        return (
+                                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                                                {tableColumns.map((column) => {
+                                                                    const value = row[column.id];
+                                                                    return (
+                                                                    <TableCell key={column.id} align={column.align}>
+                                                                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                                    </TableCell>
+                                                                    );
+                                                                })}
+                                                            </TableRow>
+                                                        );
+                                                    })}
+                                                </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                            <TablePagination
+                                                rowsPerPageOptions={[10, 25, 100]}
+                                                component="div"
+                                                count={this.state.tableRows.length}
+                                                rowsPerPage={this.state.rowsPerPage}
+                                                page={this.state.page}
+                                                labelRowsPerPage='Items por página'
+                                                onChangePage={(event, newPage) => this.setState({page: newPage})}
+                                                onChangeRowsPerPage={(event) => this.setState({rowsPerPage: +event.target.value, page: 0})}
+                                            />
+                                        </>
+                                    }
                                 </Paper>
                             </div>
                         </Grid>
