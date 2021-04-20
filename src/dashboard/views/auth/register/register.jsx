@@ -21,6 +21,8 @@ import { Link, useHistory } from "react-router-dom";
 import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
 import { TextFieldCustom } from "../../../components/forms";
 import PhoneInput from 'react-phone-input-2'
@@ -31,7 +33,7 @@ import Footer from '../../../../landingpage/components/footer';
 
 import { env } from '../../../../config/env';
 
-const { API, color } = env;
+const { API, color, services } = env;
 
 
 function SignUp(props) {
@@ -60,7 +62,7 @@ function SignUp(props) {
         .catch(error => ({'error': error}));
     }, []);
     
-    const handleRegistre = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if(city === 'none'){
             props.enqueueSnackbar('Debes seleccionar una ciudad!', { variant: 'warning' });
@@ -76,6 +78,41 @@ function SignUp(props) {
         let params = {
             firstName,lastName,companyName,city,phone,email, password
         }
+        handleRegister(params);
+    }
+
+    const registerWithGoogle = async e => {
+        setLoading(true);
+        let { profileObj } = e;
+
+        let params = {
+            firstName: profileObj.givenName,
+            lastName: profileObj.familyName,
+            companyName: `Restaurante de ${profileObj.givenName}`,
+            city: cities.length > 0 ? cities[0].id : null,
+            phone: '591',
+            email: profileObj.email,
+            avatar: profileObj.imageUrl,
+            social_register: 1
+        }
+        handleRegister(params);
+    }
+
+    const registerWithFacebook = async e => {
+        setLoading(true);
+        let params = {
+            firstName: e.name,
+            companyName: `Restaurante de ${e.name}`,
+            city: cities.length > 0 ? cities[0].id : null,
+            phone: '591',
+            email: e.email ? e.email : `${e.id}@gerente.rest`,
+            avatar: e.picture.data.url,
+            social_register: 1
+        }
+        handleRegister(params);
+    }
+
+    async function handleRegister(params){
         let register = await fetch(`${API}/api/auth/register`, {
             method: 'POST',
             body: JSON.stringify(params),
@@ -116,7 +153,7 @@ function SignUp(props) {
                             <Typography variant="body2" style={{textAlign: 'center'}}>Rellena el siguiente formulario con el nombre de tu restaurante y tus datos personales para registrarte en nuestra plataforma.</Typography>
                         </Grid>
                     </Grid>
-                    <form onSubmit={handleRegistre}>
+                    <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextFieldCustom
@@ -252,26 +289,44 @@ function SignUp(props) {
                                 <Typography variant="body2" style={{textAlign: 'center'}}>O regístrate con tus redes sociales</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    size="large"
-                                    variant="contained"
-                                    style={{ backgroundColor: '#3b5998', color: 'white'}}
-                                >
-                                    Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
-                                </Button>
+                                <FacebookLogin
+                                    appId={ services.facebookOAuth }
+                                    fields="name,email,picture.type(large)"
+                                    callback={ registerWithFacebook }
+                                    render={renderProps => (
+                                        <Button
+                                            type="button"
+                                            fullWidth
+                                            size="large"
+                                            variant="contained"
+                                            style={{ backgroundColor: '#3b5998', color: 'white'}}
+                                            onClick={renderProps.onClick}
+                                        >
+                                            Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
+                                        </Button>
+                                    )}
+                                />
                             </Grid>
                             <Grid item xs={6}>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    size="large"
-                                    variant="contained"
-                                    style={{ backgroundColor: '#F73929', color: 'white'}}
-                                >
-                                    Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
-                                </Button>
+                                <GoogleLogin
+                                    clientId={ services.googleOAuth }
+                                    render={renderProps => (
+                                        <Button
+                                            type="button"
+                                            fullWidth
+                                            size="large"
+                                            variant="contained"
+                                            style={{ backgroundColor: '#F73929', color: 'white'}}
+                                            onClick={renderProps.onClick}
+                                        >
+                                            Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
+                                        </Button>
+                                    )}
+                                    buttonText="Login"
+                                    onSuccess={ registerWithGoogle }
+                                    onFailure={ e => console.log(e) }
+                                    cookiePolicy={'single_host_origin'}
+                                />
                             </Grid>
                         </Grid>
                         <Grid container style={{marginTop: 30}} justify="flex-end">

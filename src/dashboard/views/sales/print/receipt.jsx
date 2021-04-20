@@ -50,7 +50,6 @@ class Receipt extends Component {
                 window.close();
                 break;
             case 27:
-                console.log('Escape')
                 window.close();
                 break;
             default:

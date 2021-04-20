@@ -76,7 +76,6 @@ const Tickets = (props) => {
     .then(res => res.json())
     .then(res => {
       setListTickets(res.sales);
-      console.log(res)
     })
     .catch(error => ({'error': error}));
   }

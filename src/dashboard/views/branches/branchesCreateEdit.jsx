@@ -94,7 +94,7 @@ class BranchesCreateEdit extends Component {
         navigator?.geolocation.getCurrentPosition(
             ({ coords: { latitude: lat, longitude: lng } }) => {
                 const pos = { lat, lng };
-                if(!this.state.id){
+                if(!this.state.id || this.state.marker == null){
                     this.setState({ center: pos, marker: pos });
                 }
             }
@@ -126,7 +126,6 @@ class BranchesCreateEdit extends Component {
         .then(res => {
             if(res.data.branch){
                 this.props.enqueueSnackbar(`Sucursal ${this.state.id ? 'editada' : 'registrada'} correctamente!`, { variant: 'success' });
-                // console.log(res.data)
             }else{
                 this.props.enqueueSnackbar('Ocurrió un error inesparado, intente nuevamente!', { variant: 'error' })
             }

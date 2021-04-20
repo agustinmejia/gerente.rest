@@ -188,7 +188,6 @@ class ProductsCreateEdit extends Component {
             headers: this.state.headers
         })
         .then(res => {
-            console.log(res.data)
             if(res.data.product){
                 this.props.enqueueSnackbar(`Producto ${this.state.id ? 'editado' : 'registrado'} correctamente!`, { variant: 'success' });
                 

@@ -64,9 +64,12 @@ class Profile extends Component {
             ci: person.ci_nit ? person.ci_nit : '',
             phone: person.phone ? person.phone : '',
             address: person.address ? person.address : '',
-            email: user.email,
-            picture: `${API}/storage/${user.avatar}`
+            email: user.email
         });
+
+        if(user.avatar){
+            this.setState({picture: user.avatar.search('https') == -1 ? `${API}/storage/${user.avatar}` : user.avatar});
+        }
     }
 
     hanldeImage = e => {

@@ -157,7 +157,7 @@ class Home extends Component {
 
     async componentDidMount(){
         let { user, company } = this.props.authSession;
-        let res = await fetch(`${API}/api/comapny/${company.id}/metrcis/${user.id}`, {headers: this.state.headers})
+        let res = await fetch(`${API}/api/comapny/${company.id}/metrics/${user.id}`, {headers: this.state.headers})
                         .then(res => res.json())
                         .catch(error => ({'error': error}));
         if(!res.error){
@@ -172,26 +172,30 @@ class Home extends Component {
             let historySalesData = [];
             let historySpendingData = [];
             let historySalesLabels = [];
-            res.current_sales.map(sale => {
-                historySalesData.push(sale.total);
-                historySpendingData.push(sale.gasto);
-                historySalesLabels.push(moment(sale.date).format('dddd'));
-            });
+            if(res.current_sales){
+                res.current_sales.map(sale => {
+                    historySalesData.push(sale.total);
+                    historySpendingData.push(sale.gasto);
+                    historySalesLabels.push(moment(sale.date).format('dddd'));
+                });
+            }
             this.setState({ historySalesData, historySpendingData, historySalesLabels });
 
             // Set data bestSeller
             let bestSellerData = [];
             let bestSellerLabels = [];
-            res.best_seller.map((detail, index) => {
-                let quantity = 0;
-                detail.sales.map(sale => {
-                    quantity += sale.quantity;
-                });
+            if(res.best_seller){
+                res.best_seller.map((detail, index) => {
+                    let quantity = 0;
+                    detail.sales.map(sale => {
+                        quantity += sale.quantity;
+                    });
 
-                // Set value and labels to Doughnut Chart
-                bestSellerData.push(quantity);
-                bestSellerLabels.push(`${detail.name} - ${detail.type}`);
-            });
+                    // Set value and labels to Doughnut Chart
+                    bestSellerData.push(quantity);
+                    bestSellerLabels.push(`${detail.name} - ${detail.type}`);
+                });
+            }
             
             this.setState({ bestSellerData, bestSellerLabels });
         }

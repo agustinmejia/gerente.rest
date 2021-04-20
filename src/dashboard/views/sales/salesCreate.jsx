@@ -49,6 +49,7 @@ import {
 } from '@material-ui/lab';
 
 import { IoIosMenu, IoIosAddCircleOutline, IoIosCreate, IoIosList, IoIosKeypad, IoIosCart, IoIosTrash } from "react-icons/io";
+import { Link } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
@@ -154,7 +155,6 @@ class SalesCreate extends Component {
                 }
                 break;
             case 27:
-                console.log('Escape')
                 break;
             default: 
                 break;
@@ -247,12 +247,12 @@ class SalesCreate extends Component {
 
     handleSelectCustomerId = (event, value, reason) => {
         if(value){
-            this.setState({ selectCustomerId: value.id, selectCustomerSelected: value, checkType: true, selectCustomerText: '' });
+            this.setState({ selectCustomerId: value.id, selectCustomerSelected: value, /* checkType: true,*/ selectCustomerText: '' });
         }else{
             this.setState({
                 selectCustomerId: 1,
                 selectCustomerSelected: {id: 1, person: {ci_nit: ''}},
-                checkType: false,
+                // checkType: false,
                 selectCustomerText: '',
                 inputFirstName: '',
                 inputCI: '',
@@ -353,7 +353,7 @@ class SalesCreate extends Component {
             let { customers } = this.state;
             customers.push(res.customer);
             let count = customers.length - 1;
-            this.setState({customers, selectCustomerSelected: customers[count], selectCustomerId: customers[count].id, checkType: true});
+            this.setState({customers, selectCustomerSelected: customers[count], selectCustomerId: customers[count].id /*, checkType: true */});
             this.props.enqueueSnackbar('Cliente registrado correctamente!', { variant: 'success' });
         }else{
             this.props.enqueueSnackbar('Ocurrió un error al registrar el cliente!', { variant: 'error' });
@@ -807,6 +807,9 @@ class SalesCreate extends Component {
                                                 Vender
                                             </Button>
 
+                                        </Grid>
+                                        <Grid item md={12} style={{ textAlign: 'center', paddingBottom: 10 }}>
+                                            <Link to='/dashboard/sales' style={{ textDecoration: 'underline' }}>Ver lista de ventas</Link>
                                         </Grid>
                                     </Grid>
                                 </Grid>

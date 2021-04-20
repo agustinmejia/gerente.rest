@@ -167,7 +167,7 @@ class BranchesList extends Component {
                   <Grid style={{marginTop: 20}}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Link to='/dashboard/branches/create'>
-                            <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} className="add-step" endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                            <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} className="add-step" endIcon={<IoIosAddCircle/>} > Crear nueva</Button>
                         </Link>
                     </div>
                     <div style={{ marginTop: 30, marginBottom: 50 }}>

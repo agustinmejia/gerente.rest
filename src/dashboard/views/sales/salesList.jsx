@@ -126,7 +126,7 @@ class salesList extends Component {
     let labelType = ''
     let iconType = null
     switch (type) {
-      case 'table':
+      case 'mesa':
         labelType = 'Para la mesa';
         iconType = <IoIosRestaurant color='white' />
         break;
@@ -238,7 +238,7 @@ class salesList extends Component {
                   <Grid style={{marginTop: 20}}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <Link to='/dashboard/sales/create'>
-                              <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Nueva</Button>
+                              <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Crear nueva</Button>
                           </Link>
                       </div>
 

@@ -26,8 +26,10 @@ import { env } from '../../../../config/env';
 
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
-const { API, color } = env;
+const { API, color, services } = env;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -66,12 +68,37 @@ function SignInSide(props) {
     const [errorMessage, setErrorMessage] = React.useState('');
 
 
-    const handleLogin = async (event) => {
-        setLoading(true);
+    const handleSubmit = (event) => {
         event.preventDefault();
+        setLoading(true);
         let params = {
             email, password
         }
+        hanldeLogin(params);
+    }
+
+    const loginWithGoogle = async e => {
+        setLoading(true);
+        let { profileObj } = e;
+        let params = {
+            email: profileObj.email,
+            social_token: profileObj.googleId,
+            social_login: 1
+        }
+        hanldeLogin(params, profileObj.googleId);
+    }
+
+    const loginWithFacebook = async e => {
+        setLoading(true);
+        let params = {
+            email: e.email ? e.email : `${e.id}@gerente.rest`,
+            social_token: e.id,
+            social_login: 1
+        }
+        hanldeLogin(params, e.id);
+    }
+
+    async function hanldeLogin(params, social_token = null){
         let login = await fetch(`${API}/api/auth/login`, {
             method: 'POST',
             body: JSON.stringify(params),
@@ -84,6 +111,14 @@ function SignInSide(props) {
         .catch(error => ({'errorServer': error}));
         setLoading(false);
         if(login.user){
+            if(social_token && social_token !== login.social_token){
+                setErrorMessage('Error inesperado, intente nuevamente;');
+                return;
+            }
+            
+            // Eliminar el id de google
+            // delete login['social_token'];
+
             props.setAuthSession(login);
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(login));
 
@@ -129,7 +164,7 @@ function SignInSide(props) {
                             <Typography variant="body2" style={{textAlign: 'center'}}>Escribe tu Email y contraseña que creaste para ingresar a nuestra plataforma.</Typography>
                         </Grid>
                     </Grid>
-                    <form className={classes.form} onSubmit={handleLogin}>
+                    <form className={classes.form} onSubmit={ handleSubmit }>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -190,28 +225,44 @@ function SignInSide(props) {
                                 <Typography variant="body2" style={{textAlign: 'center'}}>Ingresa con tus redes sociales</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    size="large"
-                                    variant="contained"
-                                    // color="primary"
-                                    style={{ backgroundColor: '#3b5998', color: 'white'}}
-                                >
-                                    Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
-                                </Button>
+                                <FacebookLogin
+                                    appId={ services.facebookOAuth }
+                                    fields="name,email,picture"
+                                    callback={ loginWithFacebook }
+                                    render={renderProps => (
+                                        <Button
+                                            type="button"
+                                            fullWidth
+                                            size="large"
+                                            variant="contained"
+                                            style={{ backgroundColor: '#3b5998', color: 'white'}}
+                                            onClick={renderProps.onClick}
+                                        >
+                                            Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
+                                        </Button>
+                                    )}
+                                />
                             </Grid>
                             <Grid item xs={6}>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    size="large"
-                                    variant="contained"
-                                    // color="primary"
-                                    style={{ backgroundColor: '#F73929', color: 'white'}}
-                                >
-                                    Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
-                                </Button>
+                            <GoogleLogin
+                                clientId={ services.googleOAuth }
+                                render={renderProps => (
+                                    <Button
+                                        type="button"
+                                        fullWidth
+                                        size="large"
+                                        variant="contained"
+                                        style={{ backgroundColor: '#F73929', color: 'white'}}
+                                        onClick={renderProps.onClick}
+                                    >
+                                        Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />
+                                    </Button>
+                                )}
+                                buttonText="Login"
+                                onSuccess={ loginWithGoogle }
+                                onFailure={ e => console.log(e) }
+                                cookiePolicy={'single_host_origin'}
+                            />
                             </Grid>
                         </Grid>
                     </form>

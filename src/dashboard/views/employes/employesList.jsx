@@ -156,7 +156,7 @@ class EmployesList extends Component {
                     <Grid style={{marginTop: 20}}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Link to='/dashboard/employes/create'>
-                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Nuevo</Button>
+                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} > Crear nuevo</Button>
                             </Link>
                         </div>
                         <div style={{ marginTop: 30, marginBottom: 50 }}>

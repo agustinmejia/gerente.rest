@@ -63,7 +63,6 @@ class Navbar extends Component {
                 tips: helpTips
             }
         }
-        console.log(helpTour, helpTips)
         await AsyncStorage.setItem('sessionGlobalConfig', JSON.stringify(config));
         this.props.setGlobalConfig(config);
     }

@@ -31,7 +31,7 @@ import {
 import { Autocomplete } from '@material-ui/lab';
 
 
-import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircle, IoIosCreate, IoIosTrash, IoIosApps } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -310,11 +310,11 @@ class ProductsList extends Component {
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Link to='/dashboard/products/create'>
                               <Tooltip title="Crear nuevo producto" placement="top">
-                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} className="add-step" > Nuevo</Button>
+                                <Button variant="contained" style={{backgroundColor: color.primary, color: 'white'}} endIcon={<IoIosAddCircle/>} className="add-step" > Crear nuevo</Button>
                               </Tooltip>
                             </Link>
                             <Tooltip title="Agregar inventario de productos" placement="top">
-                              <Button variant="contained" onClick={ () => this.setState({showDialogStock: true}) } style={{ backgroundColor: color.secondary, color: 'white', marginLeft: 10 }} endIcon={<IoIosAddCircle/>} className="stock-step" > Inventario</Button>
+                              <Button variant="contained" onClick={ () => this.setState({showDialogStock: true}) } style={{ backgroundColor: color.secondary, color: 'white', marginLeft: 10 }} endIcon={<IoIosApps/>} className="stock-step" > Inventariar</Button>
                             </Tooltip>
                         </div>
                         
