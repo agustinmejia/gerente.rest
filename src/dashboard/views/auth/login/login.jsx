@@ -22,7 +22,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { Link, useHistory } from "react-router-dom";
 
-import { env } from '../../../../config/env';
+import { env } from '../../../../env';
 
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';

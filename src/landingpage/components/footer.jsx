@@ -10,7 +10,7 @@ import { FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 import JsonData from '../data/data.json';
 
 
-import { env } from '../../config/env';
+import { env } from '../../env';
 
 const { color } = env;
 

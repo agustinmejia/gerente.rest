@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { IoIosCheckmarkCircle, IoIosArrowDropleft } from "react-icons/io";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 
-import { env } from '../../config/env';
+import { env } from '../../env';
 
 const { color } = env;
 

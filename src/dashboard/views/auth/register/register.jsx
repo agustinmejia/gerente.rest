@@ -31,7 +31,7 @@ import '../../../assets/css/material-input-code-number.css'
 
 import Footer from '../../../../landingpage/components/footer';
 
-import { env } from '../../../../config/env';
+import { env } from '../../../../env';
 
 const { API, color, services } = env;
 

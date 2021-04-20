@@ -29,7 +29,7 @@ import { withSnackbar } from 'notistack';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 
 const { API, color } = env;
 const transition = React.forwardRef(function Transition(props, ref) {

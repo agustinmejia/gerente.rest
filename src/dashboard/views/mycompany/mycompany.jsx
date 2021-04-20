@@ -26,7 +26,7 @@ import Tour from 'reactour';
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 const { API, color } = env;
 
 const steps = [

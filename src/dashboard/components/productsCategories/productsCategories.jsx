@@ -12,8 +12,7 @@ import {
 }from '@material-ui/core';
 import { IoIosCamera, IoIosAddCircleOutline } from "react-icons/io";
 
-import { env } from '../../../config/env';
-
+import { env } from '../../../env';
 const { color } = env;
 
 const ProductsCategories = (props) => {

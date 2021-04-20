@@ -26,7 +26,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import ProductsCategories from "../../components/productsCategories/productsCategories";
 import { FormButtons } from "../../components/forms";
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 
 const { API } = env;
 

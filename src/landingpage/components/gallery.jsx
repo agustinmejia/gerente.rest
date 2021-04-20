@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Grid } from "@material-ui/core";
 import SimpleReactLightbox, { SRLWrapper } from "simple-react-lightbox";
-import { env } from '../../config/env';
+import { env } from '../../env';
 
 const { color } = env;
 

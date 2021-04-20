@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/es';
 
-import { env } from '../../../../config/env';
+import { env } from '../../../../env';
 const { API } = env;
 
 class Receipt extends Component {

@@ -25,8 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
 import { Link, Redirect } from "react-router-dom";
 
-import { env } from '../../../config/env'
-
+import { env } from '../../../env';
 const {API: URL, color} = env;
 
 const StyledBadge = withStyles((theme) => ({

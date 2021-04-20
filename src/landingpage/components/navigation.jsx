@@ -6,7 +6,7 @@ import { Grid, Button } from "@material-ui/core";
 import { IoIosLogIn } from "react-icons/io";
 import { FaUserEdit } from "react-icons/fa";
 
-import { env } from '../../config/env';
+import { env } from '../../env';
 
 const { color } = env;
 

@@ -30,7 +30,7 @@ import Navbar from "../../components/navbar/navbar";
 import { Link } from "react-router-dom";
 import Tour from 'reactour'
 import { YoutubeEmbed } from "../../components/forms";
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 
 const { API, color } = env;
 

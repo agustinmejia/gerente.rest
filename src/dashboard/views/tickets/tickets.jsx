@@ -23,7 +23,7 @@ import { disableBodyScroll } from 'body-scroll-lock';
 import { makeStyles } from '@material-ui/core/styles';
 import './tickets.css';
 
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 
 const { API, SOCKET_IO } = env;
 const socket = io(SOCKET_IO);

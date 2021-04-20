@@ -52,7 +52,7 @@ import axios from "axios";
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { EmptyList, LoadingList } from "../../components/forms";
-import { env } from '../../../config/env';
+import { env } from '../../../env';
 
 const { API, color } = env;
 
