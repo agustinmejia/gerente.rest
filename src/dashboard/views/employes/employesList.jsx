@@ -72,13 +72,13 @@ class EmployesList extends Component {
           <Link to={`/dashboard/employes/${id}/edit`} style={{marginRight: 10}}>
             <Tooltip title="Editar empleado" placement="top">
               <Fab aria-label="Editar empleado" size='small'>
-                <IoIosCreate size={25} color="#0D9CCE" />
+                <IoIosCreate size={25} style={{color: color.skyBlue}} />
               </Fab>
             </Tooltip>
           </Link>
           <Tooltip title="Eliminar empleado" placement="top">
             <Fab aria-label="Eliminar empleado" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
-              <IoIosTrash size={25} color="#F33417" />
+              <IoIosTrash size={25} style={{color: color.red}} />
             </Fab>
           </Tooltip>
         </>
@@ -233,7 +233,7 @@ class EmployesList extends Component {
                     <Button onClick={ () => this.setState({ showDialog: false }) }>
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary">
+                    <Button onClick={ this.hanldeDelete } style={{color: color.red}}>
                       Eliminar
                     </Button>
                   </DialogActions>

@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 
 import {
-    
     Typography,
-    Chip,
     Divider,
     Backdrop,
     CircularProgress
 } from "@material-ui/core";
-import { IoIosMenu } from "react-icons/io";
 import { connect } from 'react-redux';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -55,6 +52,8 @@ class Receipt extends Component {
             case 27:
                 console.log('Escape')
                 window.close();
+                break;
+            default:
                 break;
         }
     }

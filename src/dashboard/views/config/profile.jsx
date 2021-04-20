@@ -3,9 +3,6 @@ import {
     Grid,
     Paper,
     TextField,
-    Select,
-    Button,
-    MenuItem,
     InputLabel,
     FormControl,
     Backdrop,
@@ -87,7 +84,6 @@ class Profile extends Component {
         }
 
         this.setState({loading: true});
-        let { company } = this.props.authSession;
         let formData = new FormData();
         let { id, filePicture, firstName, lastName, ci, phone, address, email, password } = this.state;
 
@@ -176,7 +172,7 @@ class Profile extends Component {
                                                     <label htmlFor="input-avatar">
                                                         <Tooltip title="Cambiar foto de perfil">
                                                             <IconButton aria-label="Cambiar foto de perfil" component="span">
-                                                                <IoIosCamera color='white' size={50} color={ color.primary } />
+                                                                <IoIosCamera size={50} color={ color.primary } />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </label>

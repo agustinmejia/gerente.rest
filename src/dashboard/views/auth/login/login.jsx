@@ -86,6 +86,17 @@ function SignInSide(props) {
         if(login.user){
             props.setAuthSession(login);
             await AsyncStorage.setItem('sessionAuthSession', JSON.stringify(login));
+
+            let globalConfig = {
+                ...props.globalConfig,
+                help: {
+                    tips: props.globalConfig.help.tips,
+                    tour: false,
+                }
+            };
+            props.setGlobalConfig(globalConfig);
+            await AsyncStorage.setItem('sessionGlobalConfig', JSON.stringify(globalConfig));
+
             history.push("/dashboard");
         }else{
             if(login.error){
@@ -109,7 +120,7 @@ function SignInSide(props) {
                 <div className={classes.paper}>
                     <Grid container direction="column" justify="center" alignItems="center" style={{ marginBottom: 10}}>
                         <Grid item>
-                            <img src="favicon.ico" style={{width: 80, marginBottom: 10}} />
+                            <img src="favicon.ico" style={{width: 80, marginBottom: 10}} alt="icon" />
                         </Grid>
                         <Grid item>
                             <Typography variant="h4">Iniciar sesión</Typography>
@@ -170,7 +181,6 @@ function SignInSide(props) {
                                     fullWidth
                                     size="large"
                                     variant="contained"
-                                    // color="primary"
                                     style={{ backgroundColor: color.primary, color: 'white'}}
                                 >
                                     Iniciar sesión
@@ -224,13 +234,23 @@ function SignInSide(props) {
   );
 }
 
+const mapStateToProps = (state) => {
+    return {
+        globalConfig: state.globalConfig,
+    }
+}
+
 const mapDispatchToProps = (dispatch) => {
     return {
-        setAuthSession : (authSession) => dispatch({
+        setAuthSession: (authSession) => dispatch({
             type: 'SET_AUTH_SESSION',
             payload: authSession
+        }),
+        setGlobalConfig: (globalConfig) => dispatch({
+            type: 'SET_GLOBAL_CONFIG',
+            payload: globalConfig
         })
     }
 }
 
-export default connect(null, mapDispatchToProps)(SignInSide);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInSide);

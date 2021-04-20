@@ -31,7 +31,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, color } = env;
 const transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -91,10 +91,12 @@ class CashiersClose extends Component {
             var incomeAmount = 0;
             var expensesAmount = 0;
             cashier.details.map(detail => {
-                if(detail.type == 1){
-                    incomeAmount += parseFloat(detail.amount);
-                }else if(detail.type == 2){
-                    expensesAmount += parseFloat(detail.amount);
+                if(detail.deleted_at == null){
+                    if(detail.type == 1){
+                        incomeAmount += parseFloat(detail.amount);
+                    }else if(detail.type == 2){
+                        expensesAmount += parseFloat(detail.amount);
+                    }
                 }
             });
             this.setState({cashier, incomeAmount, expensesAmount, totalAmount: (incomeAmount - expensesAmount + openingAmount)});
@@ -251,7 +253,7 @@ class CashiersClose extends Component {
                                                 <Grid item md={12} style={{paddingBottom: 10}}>
                                                     <Button
                                                         variant="contained"
-                                                        color="primary"
+                                                        style={{backgroundColor: color.green, color: 'white'}}
                                                         fullWidth
                                                         size="large"
                                                         disabled={this.state.cashierId == 0 ? true : false}
@@ -305,10 +307,10 @@ class CashiersClose extends Component {
                                     </Grid>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
+                                    <Button onClick={ () => this.setState({ showDialog: false }) } >
                                         Cancelar
                                     </Button>
-                                    <Button onClick={ this.handleSubmit } color="secondary">
+                                    <Button onClick={ this.handleSubmit } style={{color: color.primary}}>
                                         Si, cerrar caja!
                                     </Button>
                                 </DialogActions>

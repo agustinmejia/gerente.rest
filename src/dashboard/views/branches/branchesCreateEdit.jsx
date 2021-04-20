@@ -12,7 +12,7 @@ import {
 }from '@material-ui/core';
 import { IoIosMenu } from "react-icons/io";
 import { Redirect } from "react-router-dom";
-import GoogleMapReact from 'google-map-react';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -23,7 +23,11 @@ import Navbar from "../../components/navbar/navbar";
 import { FormButtons } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, services, location } = env;
+
+const containerStyle = {
+    height: 350, width: '100%', marginTop: 50
+};
 
 class BranchesCreateEdit extends Component {
     constructor(props){
@@ -42,9 +46,13 @@ class BranchesCreateEdit extends Component {
             ownerId: this.props.authSession.company.owner_id,
             name: '',
             city: 'none',
-            location: '',
             phones: '',
-            address: ''
+            address: '',
+            // Map
+            center: {
+                lat: location.latitude, lng: location.longitude
+            },
+            marker: null
         }
     }
 
@@ -65,18 +73,32 @@ class BranchesCreateEdit extends Component {
                 this.setState({
                     name: branch.name,
                     city: branch.city_id ? branch.city_id : 'none',
-                    location: branch.location,
                     phones: branch.phones,
                     address: branch.address
                 });
-                // console.log(res)
+                
+                // Set location
+                if(branch.location != null){
+                    let location = JSON.parse(branch.location);
+                    this.setState({
+                        center: location,
+                        marker: location
+                    });
+                }
             })
             .catch(error => ({'error': error}));
         }
     }
 
-    handleApiLoaded = (map, maps) => {
-      // use map and maps objects
+    onMapLoad = map => {
+        navigator?.geolocation.getCurrentPosition(
+            ({ coords: { latitude: lat, longitude: lng } }) => {
+                const pos = { lat, lng };
+                if(!this.state.id){
+                    this.setState({ center: pos, marker: pos });
+                }
+            }
+        );
     };
 
     handleSubmit = (event) => {
@@ -86,14 +108,14 @@ class BranchesCreateEdit extends Component {
             return false;
         }
 
-        let { id, ownerId, name, city, location, phones, address } = this.state;
+        let { id, ownerId, name, city, center, phones, address } = this.state;
 
         // Change URL for update or create
         let url = id ? `${API}/api/branch/${id}/update` : `${API}/api/branch/create`;
 
         this.setState({loading: true});
         let params = {
-            ownerId, name, city, location, phones, address
+            ownerId, name, city, location: center, phones, address
         }
         axios({
             method: 'post',
@@ -206,14 +228,36 @@ class BranchesCreateEdit extends Component {
                                     </Grid>
                                 </Grid>
                                 <div style={{ height: 350, width: '100%', marginTop: 50 }}>
-                                    <GoogleMapReact
-                                        bootstrapURLKeys={{ key: 'AIzaSyAyKr3gS1Ak--QklLJYJjYOeCnA5UKFVlw', language: 'es' }}
-                                        defaultCenter={{ lat: -14.833648, lng: -64.904008}}
-                                        defaultZoom={15}
-                                        yesIWantToUseGoogleMapApiInternals
-                                        onGoogleApiLoaded={({ map, maps }) => this.handleApiLoaded(map, maps)}
+                                    <LoadScript
+                                        googleMapsApiKey={ services.googleMaps }
+                                        language='es'
+                                        onLoad={ this.onMapLoad }
                                     >
-                                    </GoogleMapReact>
+                                        <GoogleMap
+                                        mapContainerStyle={containerStyle}
+                                        center={ this.state.center }
+                                        zoom={14}
+                                        >
+                                        { /* Child components, such as markers, info windows, etc. */ }
+                                        <>
+                                            {
+                                                this.state.marker != null &&
+                                                <Marker
+                                                    position={ this.state.marker }
+                                                    draggable
+                                                    onDragEnd={ e => {
+                                                        let center = {
+                                                            lat: e.latLng.lat(),
+                                                            lng: e.latLng.lng()
+                                                        }
+                                                        this.setState({center});
+                                                    } }
+                                                />
+                                            }
+                                        </>
+                                        </GoogleMap>
+                                    </LoadScript>
+
                                 </div>
                                 <FormButtons back='/dashboard/branches' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>

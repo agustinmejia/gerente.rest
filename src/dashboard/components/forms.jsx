@@ -7,7 +7,7 @@ import {
     CircularProgress
 }from '@material-ui/core';
 import { Link } from "react-router-dom";
-import { IoIosCheckmarkCircle, IoIosArrowDropleft, IoIosHappy } from "react-icons/io";
+import { IoIosCheckmarkCircle, IoIosArrowDropleft } from "react-icons/io";
 import { AiOutlineMinusCircle } from "react-icons/ai";
 
 import { env } from '../../config/env';
@@ -91,7 +91,7 @@ export const LoadingList = props => {
 }
 
 export const YoutubeEmbed = (props) => {
-    const { innerWidth, innerHeight } = window;
+    const { innerWidth } = window;
     let width = props.width ? props.width : 450;
     let height = props.height ? props.height : 253
     if(innerWidth < width){
@@ -101,7 +101,7 @@ export const YoutubeEmbed = (props) => {
         <div className="video-responsive">
             <iframe
                 width={ props.width ? props.width : 450 }
-                height={ props.height ? props.height : 253 }
+                height={ height }
                 src={`https://www.youtube.com/embed/${props.embedId}`}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

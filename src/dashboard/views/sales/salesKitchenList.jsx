@@ -36,7 +36,7 @@ import Navbar from "../../components/navbar/navbar";
 import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API, SOCKET_IO } = env;
+const { API, SOCKET_IO, color } = env;
 const defaultImg = `${API}/images/default-image.png`;
 const socket = io(SOCKET_IO);
 
@@ -98,7 +98,7 @@ class SalesKitchenList extends Component {
                 <Tooltip title="Pedido listo" placement="bottom">
                     <Button
                         variant="contained"
-                        color="primary"
+                        style={{ backgroundColor: color.primary, color: 'white' }}
                         endIcon={<IoMdThumbsUp />}
                         onClick={ event => this.handleStatus(id) }
                     >
@@ -112,7 +112,7 @@ class SalesKitchenList extends Component {
 
     getSales(){
         this.setState({loadingList: true});
-        fetch(`${API}/api/branch/${this.state.branchId}/sales/kitchen`, {headers: this.state.headers})
+        fetch(`${API}/api/branch/${this.state.branchId}/sales/kitchen/list`, {headers: this.state.headers})
         .then(res => res.json())
         .then(res => {
             this.renderRowTable(res.sales);

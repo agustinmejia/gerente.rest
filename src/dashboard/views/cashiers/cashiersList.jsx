@@ -54,7 +54,7 @@ import Navbar from "../../components/navbar/navbar";
 import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
-const { API } = env;
+const { API, color } = env;
 
 const transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -110,7 +110,7 @@ class CashiersList extends Component {
           { status == 1 &&
             <Tooltip title="Movimiento de caja" placement="top" style={{marginRight: 10}}>
               <Fab aria-label="Movimiento de caja" size='small' onClick={ () => this.setState({ showDialogDetails: true, cashierDetails: details, cashierId: id }) }>
-                <IoIosJournal size={25} color="#0D9CCE" />
+                <IoIosJournal size={25} color={ color.secondary } />
               </Fab>
             </Tooltip>
           }
@@ -119,7 +119,7 @@ class CashiersList extends Component {
             <Link to={`/dashboard/cashiers/${id}/close`}>
               <Tooltip title="Cerrar caja" placement="top">
                 <Fab aria-label="Cerrar caja" size='small'>
-                  <IoIosLock size={25} color="#138D75" />
+                  <IoIosLock size={25} color={ color.primary } />
                 </Fab>
               </Tooltip>
             </Link>
@@ -127,7 +127,7 @@ class CashiersList extends Component {
           { status == 1 && details.length == 0 &&
             <Tooltip title="Eliminar caja" placement="top">
               <Fab aria-label="Eliminar caja" size='small' onClick={ () => this.setState({ showDialogDelete: true, deleteId: id }) }>
-                <IoIosTrash size={25} color="#F33417" />
+                <IoIosTrash size={25} color={ color.red } />
               </Fab>
             </Tooltip>
           }
@@ -137,7 +137,7 @@ class CashiersList extends Component {
                     <b>{name}</b><br/>
                     <small>Abierta por <b>{user}</b></small>
                   </>
-      let iconStatus = status == 1 ? <Chip label="Abierta" color='primary' icon={<IoMdKey size={15} />} /> : <Chip label="Cerrada" icon={<IoIosLock size={18} />} />
+      let iconStatus = status == 1 ? <Chip label="Abierta" style={{backgroundColor: color.green, color: 'white'}} icon={<IoMdKey size={15} color="white" />} /> : <Chip label="Cerrada" icon={<IoIosLock size={18} />} />
       return { id, name: title, iconStatus, status, opening_amount, closing_amount, missing_amount, details, actions: tableOptions };
     }
 
@@ -325,7 +325,7 @@ class CashiersList extends Component {
                     <DialogTitle id="alert-dialog-title">{"Movimientos de caja"}</DialogTitle>
                     <DialogContent id="alert-dialog-description">
                       <div style={{marginTop: -10}}>
-                        <AppBar position="static">
+                        <AppBar position="static" style={{backgroundColor: color.secondary, color: 'white', margin: 0}}>
                           <Tabs value={ this.state.tabActive } onChange={(event, newValue) => { this.setState({tabActive: newValue})}} aria-label="Movimientos de caja">
                             <Tab label="Registros de caja" {...tabProps(0)} />
                             <Tab label="Crear nuevo" {...tabProps(1)} />
@@ -398,11 +398,11 @@ class CashiersList extends Component {
                       </div>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={ () => this.setState({ showDialogDetails: false }) } color="primary">
+                      <Button onClick={ () => this.setState({ showDialogDetails: false }) }>
                         Cerrar
                       </Button>
                       { this.state.tabActive == 1 &&
-                        <Button type="submit" color="secondary">
+                        <Button type="submit" style={{ color: color.primary}}>
                           Guardar registro
                         </Button>
                       }
@@ -425,10 +425,10 @@ class CashiersList extends Component {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={ () => this.setState({ showDialogDelete: false }) } color="primary">
+                    <Button onClick={ () => this.setState({ showDialogDelete: false }) }>
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary">
+                    <Button onClick={ this.hanldeDelete } style={{color: color.primary}}>
                       Eliminar
                     </Button>
                   </DialogActions>
@@ -448,10 +448,12 @@ function Row(props) {
   var income = 0;
   var expenses = 0;
   row.details.map(detail => {
-    if(detail.type == 1){
-      income += parseFloat(detail.amount);
-    }else if(detail.type == 2){
-      expenses += parseFloat(detail.amount);
+    if(detail.deleted_at == null){
+      if(detail.type == 1){
+        income += parseFloat(detail.amount);
+      }else if(detail.type == 2){
+        expenses += parseFloat(detail.amount);
+      }
     }
   });
 
@@ -535,19 +537,27 @@ TabPanel.propTypes = {
 
 const TableDetails = props => {
 
-  function createData(id, description, type, amount) {
-    let labelType = type == 1 ? <Chip size="small" label="Ingreso" color="primary" /> : <Chip size="small" label="Egreso" color="secondary" />;
+  function createData(id, description, type, amount, deleted) {
+    let labelType = null;
+    if(deleted == null){
+      labelType = type == 1 ? <Chip size="small" label="Ingreso" style={{backgroundColor: color.green, color: 'white'}} /> : <Chip size="small" label="Egreso" style={{backgroundColor: color.blue, color: 'white'}} />;
+    }else{
+      labelType = <Chip size="small" label="Eliminado" style={{backgroundColor: color.red, color: 'white'}} />
+    }
+    
     return {id, description, type: labelType, amount };
   }
 
   var rows = [];
   var total = 0;
   props.details.map(row => {
-    rows.push(createData(row.id, row.description, row.type, row.amount));
-    if(row.type == 1){
-      total += parseFloat(row.amount);
-    }else{
-      total -= parseFloat(row.amount);
+    rows.push(createData(row.id, row.description, row.type, row.amount, row.deleted_at));
+    if(row.deleted_at == null){
+      if(row.type == 1){
+        total += parseFloat(row.amount);
+      }else{
+        total -= parseFloat(row.amount);
+      }
     }
   });
 

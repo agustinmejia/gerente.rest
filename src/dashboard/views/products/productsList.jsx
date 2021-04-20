@@ -133,13 +133,13 @@ class ProductsList extends Component {
           <Link to={`/dashboard/products/${id}/edit`} style={{marginRight: 10}}>
             <Tooltip title="Editar productos" placement="top">
               <Fab aria-label="Editar productos" size='small'>
-                <IoIosCreate size={25} color="#0D9CCE" />
+                <IoIosCreate size={25} style={{color: color.skyBlue}} />
               </Fab>
             </Tooltip>
           </Link>
           <Tooltip title="Eliminar productos" placement="top">
             <Fab aria-label="Eliminar productos" size='small' onClick={ () => this.setState({ showDialogDelete: true, deleteId: id }) }>
-              <IoIosTrash size={25} color="#F33417" />
+              <IoIosTrash size={25} style={{color: color.red}} />
             </Fab>
           </Tooltip>
         </>
@@ -483,7 +483,7 @@ class ProductsList extends Component {
                       <Button onClick={ () => this.setState({ showDialogDelete: false }) } >
                         Cancelar
                       </Button>
-                      <Button onClick={ this.hanldeDelete } color="secondary">
+                      <Button onClick={ this.hanldeDelete } style={{color: color.red}}>
                         Eliminar
                       </Button>
                     </DialogActions>

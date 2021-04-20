@@ -12,6 +12,10 @@ import {
 }from '@material-ui/core';
 import { IoIosCamera, IoIosAddCircleOutline } from "react-icons/io";
 
+import { env } from '../../../config/env';
+
+const { color } = env;
+
 const ProductsCategories = (props) => {
     return(
         <Dialog
@@ -71,10 +75,10 @@ const ProductsCategories = (props) => {
                 </>
             </DialogContent>
             <DialogActions>
-                <Button onClick={ props.onClose } color="secondary">
+                <Button onClick={ props.onClose } >
                     Cancelar
                 </Button>
-                <Button onClick={ props.handleSubmitCategory } color="primary">
+                <Button onClick={ props.handleSubmitCategory } style={{color: color.primary}}>
                     Guardar
                 </Button>
             </DialogActions>

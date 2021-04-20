@@ -72,7 +72,7 @@ const Tickets = (props) => {
   }, []);
 
   function getSales(){
-    fetch(`${API}/api/branch/${branch.id}/sales/tickets`, {headers})
+    fetch(`${API}/api/branch/${branch.id}/sales/tickets/list`, {headers})
     .then(res => res.json())
     .then(res => {
       setListTickets(res.sales);

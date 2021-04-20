@@ -23,7 +23,6 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
-    Switch,
     // Table
     Table,
     TableBody,
@@ -101,7 +100,7 @@ class SalesCreate extends Component {
             selectCustomerId: 1,
             selectCustomerSelected: {id: 1, person: {ci_nit: ''}},
             selectCustomerText: '',
-            radioSaleType: 'table',
+            radioSaleType: 'mesa',
             inputSaleAmount: 0,
             inputDiscountAmount: 0,
             amountReceived: '',
@@ -117,8 +116,6 @@ class SalesCreate extends Component {
             showDialogCustomer: false,
             inputFirstName: '',
             inputFirstNameError: false,
-            inputLastName: '',
-            inputLastNameError: false,
             inputCI: '',
             inputCIError: false,
             inputPhones: '',
@@ -158,6 +155,8 @@ class SalesCreate extends Component {
                 break;
             case 27:
                 console.log('Escape')
+                break;
+            default: 
                 break;
         }
     }
@@ -256,7 +255,6 @@ class SalesCreate extends Component {
                 checkType: false,
                 selectCustomerText: '',
                 inputFirstName: '',
-                inputLastName: '',
                 inputCI: '',
                 inputPhones: '',
                 inputAddress: '',
@@ -312,10 +310,6 @@ class SalesCreate extends Component {
             this.setState({inputFirstNameError: true});
             return;
         }
-        if(!this.state.inputLastName){
-            this.setState({inputLastNameError: true});
-            return;
-        }
         if(!this.state.inputCI){
             this.setState({inputCIError: true});
             return;
@@ -335,7 +329,6 @@ class SalesCreate extends Component {
             owner_id: company.owner_id,
             company_id: company.id,
             first_name: this.state.inputFirstName,
-            last_name: this.state.inputLastName,
             ci_nit: this.state.inputCI,
             phone: this.state.inputPhones,
             address: this.state.inputAddress,
@@ -374,7 +367,6 @@ class SalesCreate extends Component {
         this.setState({
             showDialogCustomer: true,
             inputFirstName: first_name ? first_name : '',
-            inputLastName: last_name ? last_name : '',
             inputCI: ci_nit ? ci_nit : '',
             inputPhones: phone ? phone : '',
             inputAddress: address ? address : '',
@@ -389,7 +381,6 @@ class SalesCreate extends Component {
         this.setState({loading: true, showDialogCustomer: false});
         let params = {
             first_name: this.state.inputFirstName,
-            last_name: this.state.inputLastName,
             ci_nit: this.state.inputCI,
             phone: this.state.inputPhones,
             address: this.state.inputAddress,
@@ -1029,30 +1020,17 @@ class SalesCreate extends Component {
                                 <DialogTitle id="alert-dialog-customer-title">{ this.state.selectCustomerSelected.id > 1 ? 'Editar' : 'Registrar nuevo' } cliente</DialogTitle>
                                 <DialogContent>
                                     <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={12}>
                                             <TextField
                                                 name="firstName"
                                                 variant="outlined"
                                                 required
                                                 fullWidth
                                                 id="input-firstName"
-                                                label="Nombre(s)"
+                                                label="Nombre completo o razón social"
                                                 error={ this.state.inputFirstNameError }
                                                 value={ this.state.inputFirstName }
                                                 onChange={ event => this.setState({inputFirstName: event.target.value, inputFirstNameError: false}) }
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                id="input-lastName"
-                                                label="Apellidos"
-                                                name="lastName"
-                                                error={ this.state.inputLastNameError }
-                                                value={ this.state.inputLastName }
-                                                onChange={ event => this.setState({inputLastName: event.target.value, inputLastNameError: false}) }
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
@@ -1166,10 +1144,10 @@ class SalesCreate extends Component {
                                     </Grid>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button onClick={() => this.setState({ showDialogCashier: false }) } color="secondary">
+                                    <Button onClick={() => this.setState({ showDialogCashier: false }) } >
                                         Cancelar
                                     </Button>
-                                    <Button onClick={ this.handleSubmitCashier } color="primary" >
+                                    <Button onClick={ this.handleSubmitCashier } style={{color: color.primary}} >
                                         Aperturar caja
                                     </Button>
                                 </DialogActions>

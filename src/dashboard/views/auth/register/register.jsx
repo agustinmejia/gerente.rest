@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Container,
     Grid,
-    Box,
     Button,
-    TextField,
     FormControlLabel,
     Checkbox,
     Typography,
@@ -109,7 +107,7 @@ function SignUp(props) {
                 <div>
                     <Grid container direction="column" justify="center" alignItems="center" style={{marginTop: 20, marginBottom: 50}}>
                         <Grid item>
-                            <img src="favicon.ico" style={{width: 100, marginBottom: 20}} />
+                            <img src="favicon.ico" style={{width: 100, marginBottom: 20}} alt="icon" />
                         </Grid>
                         <Grid item>
                             <Typography variant="h4">Registrarse</Typography>
@@ -259,7 +257,6 @@ function SignUp(props) {
                                     fullWidth
                                     size="large"
                                     variant="contained"
-                                    // color="primary"
                                     style={{ backgroundColor: '#3b5998', color: 'white'}}
                                 >
                                     Facebook <IoLogoFacebook style={{marginLeft: 10}} size={25} />
@@ -271,7 +268,6 @@ function SignUp(props) {
                                     fullWidth
                                     size="large"
                                     variant="contained"
-                                    // color="primary"
                                     style={{ backgroundColor: '#F73929', color: 'white'}}
                                 >
                                     Google <IoLogoGoogle style={{marginLeft: 10}} size={25} />

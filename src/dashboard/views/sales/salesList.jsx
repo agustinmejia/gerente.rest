@@ -22,10 +22,13 @@ import {
   Fab,
   Slide,
   Chip,
-  Typography
+  Typography,
+  Collapse,
+  Box,
+  Avatar
 } from '@material-ui/core';
 
-import { IoIosMenu, IoIosAddCircle, IoIosTrash, IoIosSearch, IoIosHome, IoMdThumbsUp } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircle, IoIosTrash, IoIosSearch, IoIosHome, IoMdThumbsUp, IoIosArrowDropupCircle, IoIosArrowDropdownCircle, IoIosBasket, IoIosRestaurant, IoMdRestaurant, IoMdCloseCircle, IoMdTime } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import axios from "axios";
@@ -41,6 +44,7 @@ import { EmptyList, LoadingList } from "../../components/forms";
 import { env } from '../../../config/env';
 
 const { API, SOCKET_IO, color } = env;
+const defaultImg = `${API}/images/default-image.png`;
 const socket = io(SOCKET_IO);
 
 const transition = React.forwardRef(function Transition(props, ref) {
@@ -88,7 +92,7 @@ class salesList extends Component {
     });
   }
 
-  createData(id, number, customer, type, status, total, hour) {
+  createData(id, number, customer, type, status, total, hour, details, observations) {
     let detail = (
       <>
         <Typography>{customer}</Typography>
@@ -97,44 +101,59 @@ class salesList extends Component {
     );
     let tableOptions = (
         <>
+        { status.id == 2 &&
+          <Tooltip title="Pedido listo" placement="top">
+            <Fab aria-label="Pedido listo" size='small' onClick={ () => this.handleStatus(id, 3) } style={{marginRight: 10}}>
+              <IoMdTime size={25} style={{color: color.green}} />
+            </Fab>
+          </Tooltip>
+        }
         { status.id == 3 &&
           <Tooltip title="Pedido entregada" placement="top">
             <Fab aria-label="Pedido entregada" size='small' onClick={ () => this.handleStatus(id, 5) } style={{marginRight: 10}}>
-              <IoMdThumbsUp size={25} color="#3C85E7" />
+              <IoMdThumbsUp size={25} style={{color: color.blue}} />
             </Fab>
           </Tooltip>
         }
           <Tooltip title="Eliminar venta" placement="top">
               <Fab aria-label="Eliminar venta" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
-                  <IoIosTrash size={25} color="#F33417" />
+                  <IoIosTrash size={25} style={{color: color.red}} />
               </Fab>
           </Tooltip>
         </>
     );
 
-    return { number, customer: detail, total, status: <Chip size="small" label={status.name} style={{ backgroundColor: status.color , color: 'white' }} />, actions: tableOptions };
-  }
+    let labelType = ''
+    let iconType = null
+    switch (type) {
+      case 'table':
+        labelType = 'Para la mesa';
+        iconType = <IoIosRestaurant color='white' />
+        break;
+      case 'para llevar':
+        labelType = 'Para llevar';
+        iconType = <IoIosBasket color='white' />
+        break;
+      default:
+        labelType = 'Desconocido';
+        iconType = <IoMdCloseCircle color='white' />
+        break;
+    }
 
-  // filter = e => {
-  //   let {value} = e.target
-  //   this.setState({inputFilter: value});
-  //   let rows = [];
-  //   if(value){
-  //     this.state.salesLis.map(sale => {
-  //       let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`;
-  //       let sale_number = sale.sale_number.toString();
-  //       if(customer.toLowerCase().search(value.toLowerCase()) >= 0 || sale_number.search(value) >= 0){
-  //         rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
-  //       }
-  //     });
-  //   }else{
-  //     this.state.salesLis.map(sale => {
-  //       let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
-  //       rows.push(this.createData(sale.sale_number, customer, sale.sale_type, sale.total));
-  //     });
-  //   }
-  //   this.setState({tableRows: rows});
-  // }
+    let statusLabel = (
+      <Tooltip title={ labelType } placement="top">
+        <Chip
+          icon={ iconType }
+          size="small"
+          style={{ backgroundColor: status.color , color: 'white' }}
+          label={ status.name }
+        />
+      </Tooltip>
+    )
+
+
+    return { number, customer: detail, total, status: statusLabel, details, observations, actions: tableOptions };
+  }
 
   getSales(){
     this.setState({loadingList: true});
@@ -154,7 +173,7 @@ class salesList extends Component {
       this.setState({salesLis: sales});
       sales.map(sale => {
           let customer = `${sale.customer.person.first_name} ${sale.customer.person.last_name ? sale.customer.person.last_name : ''}`
-          rows.push(this.createData(sale.id, sale.sale_number, customer, sale.sale_type, sale.status, sale.total, sale.created_at));
+          rows.push(this.createData(sale.id, sale.sale_number, customer, sale.sale_type, sale.status, sale.total, sale.created_at, sale.details, sale.observations));
       });
     }
     this.setState({tableRows: rows});
@@ -187,23 +206,22 @@ class salesList extends Component {
   }
 
   hanldeDelete = () => {
-    // let options = {
-    //     headers: this.state.headers
-    // }
-    // axios.get(`${API}/api/product/${this.state.deleteId}/delete`, options)
-    // .then(response => {
-    //     if(response.data.product){
-    //         this.getSales();
-    //         this.props.enqueueSnackbar('Sucursal eliminada correctamente!', { variant: 'success' });
-    //     }else{
-    //         this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
-    //     }
-    // })
-    // .catch(error => ({'error': error}))
-    // .finally( () => {
-    //     this.setState({showDialog: false});
-    // });
-    this.setState({showDialog: false});
+    let options = {
+        headers: this.state.headers
+    }
+    axios.get(`${API}/api/sales/${this.state.deleteId}/delete`, options)
+    .then(response => {
+        if(response.data.sale_id){
+          this.getSales();
+          this.props.enqueueSnackbar('Venta anulada correctamente!', { variant: 'success' });
+        }else{
+          this.props.enqueueSnackbar(response.data.error, { variant: 'error' });
+        }
+    })
+    .catch(error => ({'error': error}))
+    .finally( () => {
+        this.setState({showDialog: false});
+    });
   }
 
   render() {
@@ -259,6 +277,7 @@ class salesList extends Component {
                                 <Table stickyHeader aria-label="sticky table">
                                   <TableHead>
                                     <TableRow>
+                                      <TableCell />
                                       {tableColumns.map((column) => (
                                         <TableCell
                                           key={column.id}
@@ -273,16 +292,7 @@ class salesList extends Component {
                                   <TableBody>
                                     {this.state.tableRows.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((row) => {
                                       return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.number}>
-                                          {tableColumns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                              <TableCell key={column.id} align={column.align}>
-                                                {column.format && typeof value === 'number' ? column.format(value) : value}
-                                              </TableCell>
-                                            );
-                                          })}
-                                        </TableRow>
+                                        <Row key={row.id} row={row} />
                                       );
                                     })}
                                   </TableBody>
@@ -320,10 +330,10 @@ class salesList extends Component {
                       </DialogContentText>
                     </DialogContent>
                   <DialogActions>
-                    <Button onClick={ () => this.setState({ showDialog: false }) } color="primary">
+                    <Button onClick={ () => this.setState({ showDialog: false }) }>
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary">
+                    <Button onClick={ this.hanldeDelete } style={{color: color.red}}>
                       Eliminar
                     </Button>
                   </DialogActions>
@@ -331,6 +341,91 @@ class salesList extends Component {
           </div>
       );
   }
+}
+
+function Row(props) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+
+  // Calcular ingresos y gastos
+  var opening_amount = parseFloat(row.opening_amount);
+  var income = 0;
+  var expenses = 0;
+
+  return (
+    <React.Fragment>
+      <TableRow hover role="checkbox" tabIndex={-1}>
+        <TableCell>
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            {open ? <IoIosArrowDropupCircle /> : <IoIosArrowDropdownCircle />}
+          </IconButton>
+        </TableCell>
+        {tableColumns.map((column) => {
+          const value = row[column.id];
+          return (
+            <TableCell key={column.id} align={column.align}>
+              {column.format && typeof value === 'number' ? column.format(value) : value}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1} style={{marginBottom: 30}}>
+              <Typography variant="h6" gutterBottom component="div">
+                Detalle de la venta
+              </Typography>
+              <Table size="small" aria-label="purchases" style={{marginBottom: 10}}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Producto</TableCell>
+                    <TableCell>Cantidad</TableCell>
+                    <TableCell>Precio</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {
+                    row.details.map(item => {
+                      let { image, name, type } = item.product;
+                      return(
+                        <TableRow>
+                          <TableCell scope="row">
+                            <Grid container spacing={2}>
+                              <Grid item>
+                                <Avatar src={ image ? `${API}/storage/${image.replace('.', '-cropped.')}` : defaultImg} style={{width: 50, height: 50}} />
+                              </Grid>
+                              <Grid item xs={12} sm container>
+                                <Grid item xs container direction="column" spacing={1}>
+                                  <Grid item xs>
+                                    <Typography gutterBottom variant="subtitle1">
+                                      { name }
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                      { type }
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </TableCell>
+                          <TableCell scope="row">{ item.quantity }</TableCell>
+                          <TableCell scope="row">{ item.price }</TableCell>
+                        </TableRow>
+                      )
+                    })
+                  }
+                </TableBody>
+              </Table>
+              <div>
+                <b>Observaciones</b> : <span>{ row.observations ? row.observations : 'Ninguna' }</span>
+              </div>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
 }
 
 const mapStateToProps = (state) => {

@@ -16,12 +16,16 @@ export const env = {
         red: '#E74C3C',
         violeta: '#8E44AD',
         blue: '#236DCC',
+        skyBlue: '#09ABE1',
         green: '#28B463',
         yellow: '#F1C40F',
         orange: '#E67E22',
         white: '#FDFEFE',
         gray: '#95A5A6',
         black: '#17202A'
+    },
+    services: {
+        googleMaps: 'AIzaSyD-DNJO1Iay857VY_N6ArLJ0-XF16gRNUQ'
     }
 }
 

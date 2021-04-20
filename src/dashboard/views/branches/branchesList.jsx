@@ -84,13 +84,13 @@ class BranchesList extends Component {
           <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
             <Tooltip title="Editar sucursal" placement="top">
               <Fab aria-label="Editar sucursal" size='small'>
-                <IoIosCreate size={25} color="#0D9CCE" />
+                <IoIosCreate size={25} style={{color: color.skyBlue}} />
               </Fab>
             </Tooltip>
           </Link>
           <Tooltip title="Eliminar sucursal" placement="top">
             <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
-              <IoIosTrash size={25} color="#F33417" />
+              <IoIosTrash size={25} style={{color: color.red}} />
             </Fab>
           </Tooltip>
         </>
@@ -105,7 +105,7 @@ class BranchesList extends Component {
 
       if(urlParams.get('tour') == 1){
         setTimeout(() => {
-            this.setState({tourActive: true});
+          this.setState({tourActive: true});
         }, 1500);
       }
     }
@@ -129,6 +129,12 @@ class BranchesList extends Component {
     }
 
     hanldeDelete = () => {
+      if(this.state.tableRows.length == 1){
+        this.props.enqueueSnackbar('No puedes eliminar tu única sucursal!', { variant: 'warning' });
+        this.setState({showDialog: false});
+        return;
+      }
+
       let options = {
         headers: this.state.headers
       }
@@ -238,7 +244,7 @@ class BranchesList extends Component {
                     <Button onClick={ () => this.setState({ showDialog: false }) }>
                       Cancelar
                     </Button>
-                    <Button onClick={ this.hanldeDelete } color="secondary">
+                    <Button onClick={ this.hanldeDelete } style={{color: color.red}}>
                       Eliminar
                     </Button>
                   </DialogActions>
