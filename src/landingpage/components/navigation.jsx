@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Link as LinkScroll } from "react-scroll";
-import { Grid, Button } from "@material-ui/core";
+import { Grid, Button, Avatar } from "@material-ui/core";
+import { connect } from 'react-redux';
 
 import { IoIosLogIn } from "react-icons/io";
 import { FaUserEdit } from "react-icons/fa";
@@ -120,25 +121,31 @@ export class Navigation extends Component {
                   Acerca de
                 </LinkScroll>
               </li>
-              <Link to="/login">
-                <Button
-                
-                  variant="contained"
-                  endIcon={<IoIosLogIn />}
-                  style={{ backgroundColor: color.primary, border: `1px solid ${color.primary}`, color: 'white', marginTop: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
-                >
-                  <small style={{fontSize: 12}}>Ingreso</small>
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button
-                  variant="contained"
-                  endIcon={<FaUserEdit />}
-                  style={{ backgroundColor: 'white', border: `1px solid ${color.primary}`, color: color.primary, marginTop: 10, marginLeft: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
-                >
-                  <small style={{fontSize: 12}}>Registro</small>
-                </Button>
-              </Link>
+              { this.props.authSession.user && <Avatar alt="User" src={this.props.authSession.user.avatar.search('https') ? `${URL}/storage/${this.props.authSession.user.avatar}` : this.props.authSession.user.avatar} /> }
+              {
+                !this.props.authSession.user &&
+                <>
+                  <Link to="/login">
+                  <Button
+                    
+                      variant="contained"
+                      endIcon={<IoIosLogIn />}
+                      style={{ backgroundColor: color.primary, border: `1px solid ${color.primary}`, color: 'white', marginTop: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
+                    >
+                      <small style={{fontSize: 12}}>Ingreso</small>
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button
+                      variant="contained"
+                      endIcon={<FaUserEdit />}
+                      style={{ backgroundColor: 'white', border: `1px solid ${color.primary}`, color: color.primary, marginTop: 10, marginLeft: 10, textTransform: 'capitalize', paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4}}
+                    >
+                      <small style={{fontSize: 12}}>Registro</small>
+                    </Button>
+                  </Link>
+                </>
+              }
             </ul>
           </div>
         </div>
@@ -147,4 +154,10 @@ export class Navigation extends Component {
   }
 }
 
-export default Navigation;
+const mapStateToProps = (state) => {
+    return {
+        authSession: state.authSession
+    }
+}
+
+export default connect(mapStateToProps)(Navigation);

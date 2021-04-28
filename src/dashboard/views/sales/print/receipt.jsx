@@ -47,7 +47,7 @@ class Receipt extends Component {
     capturekeyPress = (e) => {
         switch (e.keyCode) {
             case 13:
-                window.close();
+                window.print();
                 break;
             case 27:
                 window.close();
@@ -56,13 +56,6 @@ class Receipt extends Component {
                 break;
         }
     }
-
-    componentWillMount(){
-        setTimeout(() => {
-            window.print();
-        }, 1000);
-    }
-
 
     render() {
         if(this.state.sale === null){

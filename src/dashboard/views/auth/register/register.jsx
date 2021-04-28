@@ -200,7 +200,6 @@ function SignUp(props) {
                                         label="Ciudad de tu restaurante"
                                         inputProps={{ 'aria-label': 'Ciudad de tu restaurante' }}
                                         required
-                                        fullWidth
                                         value={ city }
                                         onChange={ handleChangeCity }
                                         >

@@ -708,7 +708,7 @@ class SalesCreate extends Component {
 
                                         {/* Type sale */}
                                         <Grid item sm={12} style={{marginTop: 10}}>
-                                            <RadioGroup row aria-label="position" name="position" defaultValue="mesa">
+                                            <RadioGroup row aria-label="position" name="position" defaultValue={ this.state.radioSaleType }>
                                                 <Grid container direction="row" justify="space-around" alignItems="flex-start">
                                                     <Grid item>
                                                         <FormControlLabel

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from 'react-redux';
 
 export class Header extends Component {
   render() {
@@ -17,7 +18,8 @@ export class Header extends Component {
                   <p>
                     {this.props.data ? this.props.data.paragraph : "Loading"}
                   </p>
-                  <Link to="/register" className="btn btn-custom btn-lg">Registrate ahora!</Link>
+                  { this.props.authSession.user && <Link to="/dashboard" className="btn btn-custom btn-lg">Ir al panel! </Link> }
+                  { !this.props.authSession.user && <Link to="/register" className="btn btn-custom btn-lg">Registrate ahora!</Link> }
                 </div>
               </div>
             </div>
@@ -27,5 +29,10 @@ export class Header extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+    return {
+        authSession: state.authSession
+    }
+}
 
-export default Header;
+export default connect(mapStateToProps)(Header);

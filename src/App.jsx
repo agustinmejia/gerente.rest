@@ -5,20 +5,12 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-
 import { GuardProvider, GuardedRoute } from 'react-router-guards';
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Components
-import Navigation from './landingpage/components/navigation';
-import Header from './landingpage/components/header';
-import Features from './landingpage/components/features';
-import About from './landingpage/components/about';
-import Services from './landingpage/components/services';
-import Gallery from './landingpage/components/gallery';
-import Testimonials from './landingpage/components/testimonials';
-// import Contact from './landingpage/components/contact';
-import Footer from './landingpage/components/footer';
-import JsonData from './landingpage/data/data.json';
+// LandingPage
+import Index from "./landingpage/views/index";
 
 // Admin
 import Login from "./dashboard/views/auth/login/login";
@@ -42,21 +34,22 @@ import SalesList from "./dashboard/views/sales/salesList";
 import SalesKitchenList from "./dashboard/views/sales/salesKitchenList";
 import SalesCreate from "./dashboard/views/sales/salesCreate";
 import Receipt from "./dashboard/views/sales/print/receipt";
+import Tickets from "./dashboard/views/tickets/tickets";
 
 // Employes
 import EmployesList from "./dashboard/views/employes/employesList";
 import EmployesCreateEdit from "./dashboard/views/employes/EmployesCreateEdit";
 
-// Tickets
-import Tickets from "./dashboard/views/tickets/tickets";
+// Reports
+import SalesReports from "./dashboard/views/reports/sales";
 
 // Config
 import Profile from "./dashboard/views/config/profile";
 
+// Pages default
 import Error404 from "./dashboard/views/errors/404";
 
-import { connect } from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import JsonData from './landingpage/data/data.json';
 
 const Loading = () => {
   return(
@@ -121,17 +114,7 @@ export class App extends Component {
         <GuardProvider guards={[this.requireLogin]} loading={Loading} error={Error404}>
           <Switch>
             {/* LandingPage */}
-            <Route exact path="/">
-              <Navigation />
-              <Header data={this.state.landingPageData.Header} />
-              <Features data={this.state.landingPageData.Features} />
-              <Services data={this.state.landingPageData.Services} />
-              <Gallery />
-              <Testimonials data={this.state.landingPageData.Testimonials} />
-              <About data={this.state.landingPageData.About} />
-              {/* <Contact data={this.state.landingPageData.Contact} /> */}
-              <Footer />
-            </Route>
+            <GuardedRoute exact path="/" meta={{ routeLogin: true }} render={(props) => <Index data={ this.state.landingPageData } {...props}/>} />
 
             {/* Dashboard */}
 
@@ -160,12 +143,13 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/kitchen" meta={{ auth: true }} render={(props) => <SalesKitchenList {...props}/>} />
             <GuardedRoute exact path="/dashboard/sales/create" meta={{ auth: true }} render={(props) => <SalesCreate {...props}/>} />
             <GuardedRoute exact path="/dashboard/sales/print/:id" meta={{ auth: true }} render={(props) => <Receipt {...props}/>} />
+            <GuardedRoute exact path="/dashboard/tickets" meta={{ auth: true }} render={(props) => <Tickets {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/employes" meta={{ auth: true }} render={(props) => <EmployesList {...props}/>} />
             <GuardedRoute exact path="/dashboard/employes/create" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />
             <GuardedRoute exact path="/dashboard/employes/:id/edit" meta={{ auth: true }} render={(props) => <EmployesCreateEdit {...props}/>} />
 
-            <GuardedRoute exact path="/dashboard/tickets" meta={{ auth: true }} render={(props) => <Tickets {...props}/>} />
+            <GuardedRoute exact path="/dashboard/reports/sales" meta={{ auth: true }} render={(props) => <SalesReports {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/profile" meta={{ auth: true }} render={(props) => <Profile {...props}/>} />
 

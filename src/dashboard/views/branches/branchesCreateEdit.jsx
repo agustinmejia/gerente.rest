@@ -10,6 +10,7 @@ import {
     Backdrop,
     CircularProgress
 }from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { IoIosMenu } from "react-icons/io";
 import { Redirect } from "react-router-dom";
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
@@ -227,6 +228,10 @@ class BranchesCreateEdit extends Component {
                                     </Grid>
                                 </Grid>
                                 <div style={{ height: 350, width: '100%', marginTop: 50 }}>
+                                    <Alert severity="info">
+                                        <AlertTitle>Información</AlertTitle>
+                                        Para seleccionar otra ubicación arrastre el marcador del mapa hacia la ubicación de su <strong>Restaurante!</strong>
+                                    </Alert>
                                     <LoadScript
                                         googleMapsApiKey={ services.googleMaps }
                                         language='es'

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { IoIosHome, IoIosBriefcase, IoIosBulb, IoIosArrowDropright, IoIosArrowDropleft, IoMdCart, IoIosCash } from "react-icons/io";
+import { IoIosHome, IoIosBriefcase, IoIosBulb, IoIosArrowDropright, IoIosArrowDropleft, IoMdCart, IoIosCash, IoIosPie } from "react-icons/io";
 import { IconButton } from '@material-ui/core';
 import "../../style.scss";
 
@@ -54,6 +54,9 @@ const Sidebar = props => {
                         <MenuItem icon={ <IoIosCash size={25} /> } ><Link to="/dashboard/cashiers">{<b>Cajas</b>}</Link></MenuItem>
                         <SubMenu icon={ <IoIosBulb size={25} /> } title={<b>Complementos</b>}>
                             <MenuItem><Link to="/dashboard/tickets" target="_blank">Tickets</Link></MenuItem>
+                        </SubMenu>
+                        <SubMenu icon={ <IoIosPie size={25} /> } title={<b>Reportes</b>}>
+                            <MenuItem><Link to="/dashboard/reports/sales">Ventas</Link></MenuItem>
                         </SubMenu>
                     </Menu>
                 </SidebarContent>
