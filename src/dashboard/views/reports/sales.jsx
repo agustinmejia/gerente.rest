@@ -13,6 +13,7 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
+    Typography
 }from '@material-ui/core';
 import {
     Alert,
@@ -21,10 +22,13 @@ import {
     ToggleButton
 } from '@material-ui/lab';
 
-import { IoIosMenu, IoMdCalendar, IoIosCalendar, IoMdCrop, IoIosCog } from "react-icons/io";
+import { IoIosMenu, IoMdCalendar, IoIosCalendar, IoMdCrop, IoIosCog, IoMdPrint } from "react-icons/io";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
+import moment from 'moment';
+import 'moment/locale/es';
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
@@ -59,7 +63,8 @@ class SalesReports extends Component {
             radioType: 'sales',
             report: [],
             groupReport: null,
-            discountReport: 0
+            discountReport: 0,
+            reportDate: {}
         }
     }
 
@@ -72,6 +77,7 @@ class SalesReports extends Component {
         let { reportType, inputDate, selectMonth, inputYear, inputStart, inputEnd, radioType } = this.state;
         let params = {};
 
+        // Validación dependiendo del tipo de rango de fecha
         if(reportType == 'day'){
             if(inputDate == ''){
                 this.props.enqueueSnackbar('Debes ingresar la fecha del reporte!', { variant: 'warning' });
@@ -93,6 +99,7 @@ class SalesReports extends Component {
             }
             params = { type: reportType, start: inputStart, finish: inputEnd, group: radioType }
         }
+        // ============================================
 
         let { company } = this.props.authSession;
 
@@ -104,11 +111,27 @@ class SalesReports extends Component {
             headers: this.state.headers
         })
         .then(res => {
+            let report = [];
+            // Si el reporte está agrupado por productos verificar que los productos tengan ventas
+            // sino, vaciar el arreglo
+            if(res.data.group == 'products'){
+                let countSales = 0;
+                res.data.report.map(item => {
+                    countSales += item.sales.length;
+                });
+                report = countSales > 0 ? res.data.report : []
+            }else{
+                report = res.data.report
+            }
+
             this.setState({
-                report: res.data.report,
+                report,
                 groupReport: res.data.group,
-                discountReport: res.data.discount
+                discountReport: res.data.discount,
+                reportDate: res.data.date
             });
+
+            
         })
         .catch((err) => this.props.enqueueSnackbar('Ocurrió un error en nuestro servidor!', { variant: 'error' }))
         .then(() => this.setState({loading: false}));
@@ -140,9 +163,9 @@ class SalesReports extends Component {
                                             <ToggleButtonGroup
                                                 value={ this.state.reportType }
                                                 exclusive
-                                                onChange={ (event, newReportType) => this.setState({reportType: newReportType ? newReportType : this.state.reportType }) }
+                                                onChange={ (event, newReportType) => { if(newReportType) this.setState({reportType: newReportType, report: [] }) } }
                                                 aria-label="Tipo de aporte"
-                                                >
+                                            >
                                                 <ToggleButton value="day" aria-label="Diario">
                                                     <IoMdCalendar size={20} />
                                                 </ToggleButton>
@@ -158,7 +181,7 @@ class SalesReports extends Component {
                                     {/* Form day */}
                                     {
                                         this.state.reportType == 'day' &&
-                                        <Grid container spacing={1}>
+                                        <>
                                             <Grid item lg={3} sm={6} xs={6}>
                                                 <TextField
                                                     fullWidth
@@ -172,22 +195,12 @@ class SalesReports extends Component {
                                                     onChange={event => this.setState({inputDate: event.target.value})}
                                                 />
                                             </Grid>
-                                            <Grid item lg={3} sm={6} xs={6}>
-                                                <Button
-                                                    variant="contained"
-                                                    style={{backgroundColor: color.primary, color: 'white', height: 55}}
-                                                    endIcon={<IoIosCog />}
-                                                    type="submit"
-                                                >
-                                                    Generar
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                        </>
                                     }
                                     {/* Form month */}
                                     {
                                         this.state.reportType == 'month' &&
-                                        <Grid container spacing={1}>
+                                        <>
                                             <Grid item lg={3} sm={4} xs={4}>
                                                 <FormControl variant="outlined" fullWidth>
                                                     <InputLabel htmlFor="outlined-age-native-simple">Mes</InputLabel>
@@ -227,23 +240,13 @@ class SalesReports extends Component {
                                                     onChange={ event => this.setState({inputYear: event.target.value}) }
                                                 />
                                             </Grid>
-                                            <Grid item lg={3} sm={4} xs={4}>
-                                                <Button
-                                                    variant="contained"
-                                                    style={{backgroundColor: color.primary, color: 'white', height: 55}}
-                                                    endIcon={<IoIosCog />}
-                                                    type="submit"
-                                                >
-                                                    Generar
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                        </>
                                     }
 
                                     {/* Form range */}
                                     {
                                         this.state.reportType == 'range' &&
-                                        <Grid container spacing={1}>
+                                        <>
                                             <Grid item lg={3} sm={4} xs={4}>
                                                 <TextField
                                                     fullWidth
@@ -270,18 +273,34 @@ class SalesReports extends Component {
                                                     onChange={event => this.setState({inputEnd: event.target.value})}
                                                 />
                                             </Grid>
-                                            <Grid item lg={3} sm={4} xs={4}>
-                                                <Button
-                                                    variant="contained"
-                                                    style={{backgroundColor: color.primary, color: 'white', height: 55}}
-                                                    endIcon={<IoIosCog />}
-                                                    type="submit"
-                                                >
-                                                    Generar
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
+                                        </>
                                     }
+                                    <Grid item lg={3} sm={6} xs={6}>
+                                        <Button
+                                            variant="contained"
+                                            style={{backgroundColor: color.primary, color: 'white', height: 55}}
+                                            endIcon={<IoIosCog />}
+                                            type="submit"
+                                        >
+                                            Generar
+                                        </Button>
+                                        { this.state.report.length > 0 &&
+                                            <ReactToPrint content={() => this.componentRef} documentTitle="Reporte de ventas" pageStyle="margin: 10px;">
+                                                <PrintContextConsumer>
+                                                    {({ handlePrint }) => (
+                                                        <Button
+                                                            variant="contained"
+                                                            style={{backgroundColor: color.red, color: 'white', height: 55, marginLeft: 5}}
+                                                            endIcon={<IoMdPrint />}
+                                                            onClick={ handlePrint }
+                                                        >
+                                                            Imprimir
+                                                        </Button>
+                                                    )}
+                                                </PrintContextConsumer>
+                                            </ReactToPrint>
+                                        }
+                                    </Grid>
                                     <Grid item sm={12} style={{marginTop: 10}}>
                                         <RadioGroup row aria-label="position" name="position" defaultValue="sales" >
                                             <Grid container direction="row" alignItems="flex-start">
@@ -312,9 +331,51 @@ class SalesReports extends Component {
 
                         {/* Table */}
                         <Paper style={{ backgroundColor: 'white', padding: 30, marginTop: 20}}>
-                            { this.state.report.length == 0 && this.state.groupReport == null && <div>Generar reporte</div> }                            
-                            { this.state.groupReport == 'sales' && <ReportGroupSales data={ this.state.report } /> }
-                            { this.state.groupReport == 'products' && <ReportGroupProducts data={ this.state.report } discount={ this.state.discountReport } /> }
+                            { this.state.report.length == 0 && this.state.groupReport == null &&
+                                <div>
+                                    <Alert severity="info">
+                                        <AlertTitle>Información</AlertTitle>
+                                        Puedes elegir el tipo de reporte que deseas según el tiempo o la forma en que lo desees visualizar y presionar el botón <strong>Generar!</strong>
+                                    </Alert>    
+                                </div>
+                            }                            
+                            
+                            {/* Reporte agrupado por ventas */}
+                            { 
+                                this.state.groupReport == 'sales' && 
+                                <>
+                                    <ReportGroupSales data={ this.state.report } ref={el => (this.componentRef = el)} />
+                                    <div style={{ display: "none" }}>
+                                        <PrintReport
+                                            type="sales"
+                                            company={this.props.authSession.company}
+                                            data={ this.state.report }
+                                            ref={el => (this.componentRef = el)}
+                                            reportType={ this.state.reportType }
+                                            reportDate={ this.state.reportDate }
+                                        />
+                                    </div>
+                                </>
+                            }
+
+                            {/* Reporte agrupado por productos */}
+                            {
+                                this.state.groupReport == 'products' &&
+                                <>
+                                    <ReportGroupProducts data={ this.state.report } discount={ this.state.discountReport } ref={el => (this.componentRef = el)} />
+                                    <div style={{ display: "none" }}>
+                                        <PrintReport
+                                            type="products"
+                                            company={this.props.authSession.company}
+                                            data={ this.state.report }
+                                            discount={ this.state.discountReport }
+                                            ref={el => (this.componentRef = el)}
+                                            reportType={ this.state.reportType }
+                                            reportDate={ this.state.reportDate }
+                                        />
+                                    </div>
+                                </>
+                            }
                         </Paper>
                     </main>
                 </div>
@@ -336,7 +397,9 @@ const ReportGroupSales = props => {
 
     if(data.length == 0){
         return(
-            <div>No hay datos</div>
+            <div>
+                <Typography variant="h6" color="textSecondary">No hay datos para mostrar!</Typography>
+            </div>
         );
     }
 
@@ -392,7 +455,9 @@ const ReportGroupProducts = props => {
 
     if(data.length == 0){
         return(
-            <div>No hay datos</div>
+            <div>
+                <Typography variant="h6" color="textSecondary">No hay datos para mostrar!</Typography>
+            </div>
         );
     }
 
@@ -420,19 +485,21 @@ const ReportGroupProducts = props => {
                             total_price += parseFloat(sale.price);
                         });
 
-                        avg_price = total_price/item.sales.length;
+                        avg_price = item.sales.length > 0 ? total_price/item.sales.length : 0;
                         totalSale += quantity * avg_price;
 
-                        return(
-                            <tr key={item.id}>
-                                <td>{ index +1 }</td>
-                                <td>{ item.name } { item.type }</td>
-                                <td>{ item.price }</td>
-                                <td>{ quantity }</td>
-                                <td>{ avg_price.toFixed(2) } Bs.</td>
-                                <td style={{textAlign: 'right'}}>{ (quantity * avg_price).toFixed(2) }  Bs.</td>
-                            </tr>
-                        )
+                        if(quantity > 0){
+                            return(
+                                <tr key={item.id}>
+                                    <td>{ index +1 }</td>
+                                    <td>{ item.name } { item.type }</td>
+                                    <td>{ item.price }</td>
+                                    <td>{ quantity }</td>
+                                    <td>{ avg_price.toFixed(2) } Bs.</td>
+                                    <td style={{textAlign: 'right'}}>{ (quantity * avg_price).toFixed(2) }  Bs.</td>
+                                </tr>
+                            )
+                        }
                     })
                 }
                 <tr>
@@ -447,5 +514,60 @@ const ReportGroupProducts = props => {
         </table>
     );
 }
+
+const PrintReport = React.forwardRef((props, ref) => {
+    const { type, company, reportType, reportDate } = props;
+    return(
+        <div ref={ref}>
+            <Grid container direction="row" justify="space-between" alignItems="flex-start" style={{marginTop: 10, marginBottom: 40}}>
+                {/* Información del restaurante */}
+                {
+                    company != undefined &&
+                    <Grid item>
+                        <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                            <Grid item>
+                                <img src={ company.logos ? `${API}/storage/${company.logos.replace('.', '-cropped.')}` : `${API}/images/logo.png`} alt='logo' style={{width: 80}} />
+                            </Grid>
+                            <Grid item style={{marginLeft: 10}}>
+                                <b style={{fontSize: 20}}>{ company.name }</b><br/>
+                                <small>{ company.phones ? company.phones : '' }</small><br/>
+                                <small>{ company.address ? company.address : '' }</small><br/>
+                                <small>{ company.city.name } - { company.city.state } - { company.city.country }</small>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                }
+
+                {/* Descripción del reporte */}
+                <Grid item style={{textAlign: 'right'}}>
+                    <b style={{fontSize: 30}}>Reporte de ventas</b><br/>
+                    {/* Diaria */}
+                    { reportType == 'day' && <span>{ moment(reportDate.date).format('dddd, DD [de] MMMM [de] YYYY') }</span> }
+                    
+                    {/* Mensual */}
+                    { reportType == 'month' && <span>{ moment(reportDate.date).format('MMMM [de] YYYY') }</span> }
+                    
+                    {/* Por rango de fecha */}
+                    {
+                        reportType == 'range' &&
+                        <>
+                            <span>Del { moment(reportDate.start).format('DD [de] MMMM [de] YYYY') }</span><br/>
+                            <span>Al { moment(reportDate.finish).format('DD [de] MMMM [de] YYYY') }</span>
+                        </>
+                    }
+                </Grid>
+            </Grid>
+            {/* Renderizar reporte agrupado por producto */}
+            {
+                type == 'products' && <ReportGroupProducts {...props} />
+            }
+            
+            {/* Renderizar reporte agrupado po venta */}
+            {
+                type == 'sales' && <ReportGroupSales {...props} />
+            }
+        </div>
+    );
+})
 
 export default connect(mapStateToProps)(withSnackbar(SalesReports));

@@ -31,6 +31,7 @@
     "react-router-guards": "^1.0.2",
     "react-scripts": "4.0.0",
     "react-scroll": "^1.8.1",
+    "react-to-print": "^2.12.4",
     "reactour": "^1.18.3",
     "redux": "^4.0.5",
     "simple-react-lightbox": "^3.6.6",
