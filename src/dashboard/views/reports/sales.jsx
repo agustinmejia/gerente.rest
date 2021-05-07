@@ -33,7 +33,6 @@ import 'moment/locale/es';
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from "../../components/navbar/navbar";
-import { FormButtons } from "../../components/forms";
 import { env } from '../../../env';
 
 const { API, services, location, color } = env;
@@ -69,7 +68,8 @@ class SalesReports extends Component {
     }
 
     componentDidMount(){
-        
+        let date = new Date();
+        this.setState({selectMonth: date.getMonth()})
     }
 
     handleSubmit = async (event) => {
@@ -275,7 +275,7 @@ class SalesReports extends Component {
                                             </Grid>
                                         </>
                                     }
-                                    <Grid item lg={3} sm={6} xs={6}>
+                                    <Grid item lg={6} sm={6} xs={6}>
                                         <Button
                                             variant="contained"
                                             style={{backgroundColor: color.primary, color: 'white', height: 55}}

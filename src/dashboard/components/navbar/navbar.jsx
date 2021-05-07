@@ -19,7 +19,7 @@ import {
     Switch
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications, IoMdShareAlt } from "react-icons/io";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
@@ -49,17 +49,21 @@ class Navbar extends Component {
             logout: false,
             // Accesibility
             helpTour: this.props.globalConfig.help ? this.props.globalConfig.help.tour : true,
-            helpTips: this.props.globalConfig.help ? this.props.globalConfig.help.tips : true
+            helpTips: this.props.globalConfig.help ? this.props.globalConfig.help.tips : true,
+            salesPrint: this.props.globalConfig.sales ? this.props.globalConfig.sales.print : true,
         }
     }
 
     async handleHelpConfig(){
-        let { helpTour, helpTips } = this.state;
+        let { helpTour, helpTips, salesPrint } = this.state;
         let config = {
             ...this.props.globalConfig,
             help: {
                 tour: helpTour,
                 tips: helpTips
+            },
+            sales: {
+                print: salesPrint
             }
         }
         await AsyncStorage.setItem('sessionGlobalConfig', JSON.stringify(config));
@@ -175,6 +179,14 @@ class Navbar extends Component {
                                     </List>
                                     <Divider style={{width: '100%'}} />
                                     <List component="nav" aria-label="Salir">
+                                        <Link to="/">
+                                            <ListItem button>
+                                                <ListItemIcon>
+                                                    <IoMdShareAlt size={20} color={ color.primary } />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Ir al inicio" />
+                                            </ListItem>
+                                        </Link>
                                         <ListItem button onClick={this.logout}>
                                             <ListItemIcon>
                                                 <IoMdPower size={20} color={ color.primary } />
@@ -211,6 +223,19 @@ class Navbar extends Component {
                                     <Grid item xs={3} >
                                         <Tooltip title="Tips de ayuda" placement="bottom">
                                             <Switch checked={ this.state.helpTips } onChange={ (e) => this.setState({helpTips: !this.state.helpTips}, () => this.handleHelpConfig()) } name="switch-helpTips" color="primary" />
+                                        </Tooltip>
+                                    </Grid>
+                                    <Divider style={{width: '100%'}} />
+                                </Grid>
+
+                                <div style={{padding: 10, paddingBottom: 0, paddingTop: 30,}}><Typography variant="subtitule1" color="textSecondary">Configuración de ventas</Typography></div>
+                                <Grid container direction="row" justify="space-between" alignItems="flex-start" style={{paddingLeft: 20, paddingRight: 20}} >                                  
+                                    <Grid item xs={9} style={{padding: 10}}>
+                                        <Typography variant="body1">Impresion de Recibo/Factura</Typography>
+                                    </Grid>
+                                    <Grid item xs={3} >
+                                        <Tooltip title="Impresión de recibos al realizar un venta" placement="bottom">
+                                            <Switch checked={ this.state.salesPrint } onChange={ (e) => this.setState({salesPrint: !this.state.salesPrint}, () => this.handleHelpConfig()) } name="switch-salesPrint" color="primary" />
                                         </Tooltip>
                                     </Grid>
                                     <Divider style={{width: '100%'}} />

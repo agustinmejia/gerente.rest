@@ -322,13 +322,13 @@ class Home extends Component {
                             <div className="row" style={{ margin: 20, marginTop: 50, marginBottom: 100 }}>
                                 <Grid container spacing={3}>
                                     <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
-                                        <CardMetrics title="Dinero en caja" value={ this.state.cashAmount } color={ color.blue } icon={ <IoMdCash size={50} color={ color.blue } /> } />
+                                        <CardMetrics url="dashboard/cashiers" title="Dinero en caja" value={ this.state.cashAmount } color={ color.blue } icon={ <IoMdCash size={50} color={ color.blue } /> } />
                                     </Grid>
                                     <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
-                                        <CardMetrics title="Nro de ventas" value={ this.state.countSales } color={ color.green } icon={ <IoMdCart size={50} color={ color.green } /> } />
+                                        <CardMetrics url="dashboard/sales" title="Nro de ventas" value={ this.state.countSales } color={ color.green } icon={ <IoMdCart size={50} color={ color.green } /> } />
                                     </Grid>
                                     <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
-                                        <CardMetrics title="Productos" value={ this.state.countProducts } color={ color.red } icon={ <IoLogoBuffer size={50} color={ color.red } /> } />
+                                        <CardMetrics url="dashboard/products" title="Productos" value={ this.state.countProducts } color={ color.red } icon={ <IoLogoBuffer size={50} color={ color.red } /> } />
                                     </Grid>
                                     <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
                                         <CardMetrics title="Clientes" value={ this.state.countCustomer } color={ color.yellow } icon={ <IoIosContacts size={50} color={ color.yellow } /> } />
@@ -415,19 +415,21 @@ const TutorialStep = props => {
 }
 
 const CardMetrics = (props) => (
-    <Card sx={{ height: '100%' }} style={{ borderBottom: `5px solid ${props.color}` }}>
-        <CardContent>
-            <Grid container spacing={5} sx={{ justifyContent: 'space-between' }}>
-                <Grid item xs={8}>
-                    <Typography color="textSecondary" gutterBottom variant="h6" noWrap > { props.title } </Typography>
-                    <Typography color="textPrimary" variant="h3" style={{color: 'rgba(0,0,0,0.8)', paddingTop: 10}} > <CountUp end={props.value} duration={2} /> </Typography>
+    <Link to={ props.url }>
+        <Card sx={{ height: '100%' }} style={{ borderBottom: `5px solid ${props.color}` }}>
+            <CardContent>
+                <Grid container spacing={5} sx={{ justifyContent: 'space-between' }}>
+                    <Grid item xs={8}>
+                        <Typography color="textSecondary" gutterBottom variant="h6" noWrap > { props.title } </Typography>
+                        <Typography color="textPrimary" variant="h3" style={{color: 'rgba(0,0,0,0.8)', paddingTop: 10}} > <CountUp end={props.value} duration={2} /> </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                        { props.icon }
+                    </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                    { props.icon }
-                </Grid>
-            </Grid>
-        </CardContent>
-    </Card>
+            </CardContent>
+        </Card>
+    </Link>
 );
 
 YoutubeEmbed.propTypes = {

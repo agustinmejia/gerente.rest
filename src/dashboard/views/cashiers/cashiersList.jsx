@@ -47,6 +47,8 @@ import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
 import axios from "axios";
+import moment from 'moment';
+import 'moment/locale/es';
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
@@ -63,6 +65,7 @@ const transition = React.forwardRef(function Transition(props, ref) {
 const tableColumns = [
   { id: 'id', label: 'ID' },
   { id: 'name', label: 'Caja' },
+  { id: 'opening', label: 'Fecha de apertura' },
   { id: 'iconStatus', label: 'Estado' },
   { id: 'actions', label: 'Opciones', align: 'right' },
 ];
@@ -104,7 +107,7 @@ class CashiersList extends Component {
         }
     }
 
-    createData(id, name, user, status, opening_amount, closing_amount, missing_amount, details) {
+    createData(id, name, user, status, opening_amount, closing_amount, missing_amount, details, date) {
       let tableOptions = (
         <>
           { status == 1 &&
@@ -138,7 +141,8 @@ class CashiersList extends Component {
                     <small>Abierta por <b>{user}</b></small>
                   </>
       let iconStatus = status == 1 ? <Chip label="Abierta" style={{backgroundColor: color.green, color: 'white'}} icon={<IoMdKey size={15} color="white" />} /> : <Chip label="Cerrada" icon={<IoIosLock size={18} />} />
-      return { id, name: title, iconStatus, status, opening_amount, closing_amount, missing_amount, details, actions: tableOptions };
+      let opening = <><span>{ moment(date).format('DD [de] MMMM YYYY, h:mm:ss a') }</span><br/><Typography variant="body2" color="textSecondary">{ moment(date).fromNow() }</Typography></>;
+      return { id, name: title, opening, iconStatus, status, opening_amount, closing_amount, missing_amount, details, actions: tableOptions };
     }
 
     componentDidMount(){
@@ -161,7 +165,7 @@ class CashiersList extends Component {
       if(cashiers){
         let rows = [];
         cashiers.map(cashier => {
-          rows.push(this.createData(cashier.id, cashier.name, cashier.user.name, cashier.status, cashier.opening_amount, cashier.closing_amount, cashier.missing_amount, cashier.details));
+          rows.push(this.createData(cashier.id, cashier.name, cashier.user.name, cashier.status, cashier.opening_amount, cashier.closing_amount, cashier.missing_amount, cashier.details, cashier.created_at));
         });
         this.setState({tableRows: rows, cashiers});
       }

@@ -7,6 +7,7 @@ nodejs 14.x
 
 ## Instalación
 ```
+cp src/env.example.js src/env.js
 npm i
 npm run start
 ```

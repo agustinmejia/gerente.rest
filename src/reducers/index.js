@@ -12,6 +12,9 @@ const reducerApp = (
                 help: {
                     tour: true,
                     tips: true,
+                },
+                sales: {
+                    print: false
                 }
             },
             productsTPV: []

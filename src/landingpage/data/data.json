@@ -94,25 +94,50 @@
         }
     ],
     "About": {
-        "paragraph": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "paragraph": "Gerente.rest es una aplicación web desarrollada por el Ing. de sistemas Agustin Mejia (@AgustinMejiaM) con el fin de brindar facilidad a la hora de gestionar la información de su restaurante.",
         "Why": [
-            "Lorem ipsum dolor",
-            "Tempor incididunt",
-            "Lorem ipsum dolor",
-            "Incididunt ut labore"
+            "Fácilidad en el uso del software",
+            "Soporte técnico de calidad",
+            "Actualizaciones continuas",
+            "Bajo costo"
         ],
         "Why2": [
-            "Aliquip ex ea commodo",
-            "Lorem ipsum dolor",
-            "Exercitation ullamco",
-            "Lorem ipsum dolor"
+            "Protección de tus datos",
+            "Capacitación de tu personal",
+            "Promociones frecuentes"
+            
         ]
     },
     "Gallery": [
         {
-            "thumbnail": "",
-            "image": "",
-            "caption": ""
+            "thumbnail": "img/gallery/1-small.png",
+            "image": "img/gallery/1.png",
+            "caption": "Panel principal"
+        },
+        {
+            "thumbnail": "img/gallery/2-small.png",
+            "image": "img/gallery/2.png",
+            "caption": "Datos de tu restaurante"
+        },
+        {
+            "thumbnail": "img/gallery/3-small.png",
+            "image": "img/gallery/3.png",
+            "caption": "Interface de venta"
+        },
+        {
+            "thumbnail": "img/gallery/4-small.png",
+            "image": "img/gallery/4.png",
+            "caption": "Lista de productos"
+        },
+        {
+            "thumbnail": "img/gallery/5-small.png",
+            "image": "img/gallery/5.png",
+            "caption": "Ventas del día"
+        },
+        {
+            "thumbnail": "img/gallery/6-small.png",
+            "image": "img/gallery/6.png",
+            "caption": "Monitor de tickets"
         }
     ],
     "Team": [
@@ -137,9 +162,9 @@
         }
     ],
     "Contact": {
-        "address": "Calle 10 de Noviembre Nro 75 ",
-        "phone": "+591 75199157",
-        "email": "buddy.m091@gmail.com",
+        "address": "Calle 9 de Abril Nro 215",
+        "phone": "75199157",
+        "email": "soporte.gerente.rest@gmail.com",
         "facebook": "https://www.facebook.com/Gerente-de-Restaurantes-111894314319067",
         "twitter": "https://twitter.com/AgustinMejiaM",
         "youtube": "https://www.youtube.com/channel/UC7WoO8aDoR7Lf6g0uwVE9TQ"

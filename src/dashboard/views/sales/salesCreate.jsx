@@ -510,7 +510,11 @@ class SalesCreate extends Component {
 
                     // Emitir evento para cocina
                     socket.emit(`change status`, {status: 2, branchId: this.state.branch.id});
-                    window.open(`/dashboard/sales/print/${res.sale.id}`, 'Factura', 'toolbar=0,location=0,menubar=0,width=370,height=420,top=100,left:300')
+                    
+                    let enablePrintRecipe = this.props.globalConfig.sales ? this.props.globalConfig.sales.print : true;
+                    if(enablePrintRecipe){
+                        window.open(`/dashboard/sales/print/${res.sale.id}`, 'Factura', 'toolbar=0,location=0,menubar=0,width=370,height=420,top=100,left:300');
+                    }
                 }else{
                     this.props.enqueueSnackbar('Ocurrió un error inesperado', { variant: 'error' });
                 }

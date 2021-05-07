@@ -17,7 +17,7 @@ const Index = props => {
             <Header data={props.data.Header} />
             <Features data={props.data.Features} />
             <Services data={props.data.Services} />
-            <Gallery />
+            <Gallery data={props.data.Gallery} />
             <Testimonials data={props.data.Testimonials} />
             <About data={props.data.About} />
             {/* <Contact data={props.data.Contact} /> */}

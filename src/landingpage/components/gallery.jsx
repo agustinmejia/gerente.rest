@@ -21,6 +21,9 @@ const options = {
 };
 
 export class Gallery extends Component {
+  constructor(props){
+    super(props)
+  }
   render() {
     return (
       <div id="portfolio" className="text-center">
@@ -34,36 +37,15 @@ export class Gallery extends Component {
             <div className="col-md-12">
               <SimpleReactLightbox>
                 <SRLWrapper options={options}>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/01-large.jpg">
-                      <img src="img/portfolio/01-small.jpg" width="100%" alt="Umbrella" />
-                    </a>
-                  </div>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/02-large.jpg">
-                      <img src="img/portfolio/02-small.jpg" width="100%" alt="Blue sky" />
-                    </a>
-                  </div>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/03-large.jpg">
-                      <img src="img/portfolio/03-small.jpg" width="100%" alt="Blue sky" />
-                    </a>
-                  </div>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/04-large.jpg">
-                      <img src="img/portfolio/04-small.jpg" width="100%" alt="Blue sky" />
-                    </a>
-                  </div>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/05-large.jpg">
-                      <img src="img/portfolio/05-small.jpg" width="100%" alt="Blue sky" />
-                    </a>
-                  </div>
-                  <div className="col-md-4" style={{padding: 0}}>
-                    <a href="img/portfolio/06-large.jpg">
-                      <img src="img/portfolio/06-small.jpg" width="100%" alt="Blue sky" />
-                    </a>
-                  </div>
+                  {
+                    this.props.data.map(item => 
+                      <div className="col-md-4" style={{padding: 20}}>
+                        <a href={ item.image }>
+                          <img src={ item.thumbnail } width="100%" alt={ item.caption } />
+                        </a>
+                      </div>
+                    )
+                  }
                 </SRLWrapper>
               </SimpleReactLightbox>
             </div>
