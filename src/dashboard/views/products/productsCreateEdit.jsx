@@ -335,7 +335,7 @@ class ProductsCreateEdit extends Component {
                                     <Grid item xs={12} sm={6} style={{paddingLeft: 20, paddingRight: 20,}}>
                                         <input type="file" style={{ display: 'none' }} id="input-image" name="image" accept="image/*" onChange={ this.hanldeImage }/>
                                         <CardMedia
-                                            style={{ width: '100%', height: '80%', position: 'relative', zIndex: 1, border: '3px solid #E2E3E3', marginBottom: 10 }}
+                                            style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1, border: '3px solid #E2E3E3', marginBottom: 10 }}
                                             image={ this.state.image }
                                             title="Imagen del producto"
                                         />
@@ -349,15 +349,18 @@ class ProductsCreateEdit extends Component {
                                             </label>
                                         </div>
                                     </Grid>
+                                    <Grid item xs={12} style={{ marginTop: 20 }}>
+                                        {
+                                            !this.state.id &&
+                                            <FormControlLabel
+                                                control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})} checked={ this.state.resetForm } color="primary" />}
+                                                label="Limpiar campos"
+                                                style={{ marginBottom: 20 }}
+                                            />
+                                        }
+                                    </Grid>
                                 </Grid>
-                                {
-                                    !this.state.id &&
-                                    <FormControlLabel
-                                        control={<Checkbox onChange={(e) => this.setState({resetForm: e.target.checked})} checked={ this.state.resetForm } color="primary" />}
-                                        label="Limpiar campos"
-                                        style={{ marginBottom: 20 }}
-                                    />
-                                }
+
                                 <FormButtons back='/dashboard/products' titleSuccess={ this.state.id ? 'Actualizar' : 'Guardar' } />
                             </form>
                         </Paper>

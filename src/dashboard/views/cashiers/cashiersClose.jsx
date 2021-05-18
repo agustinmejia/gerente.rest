@@ -250,7 +250,7 @@ class CashiersClose extends Component {
                                                             </Alert>
                                                     }
                                                 </Grid>
-                                                <Grid item md={12} style={{paddingBottom: 10}}>
+                                                <Grid item xs={12} style={{paddingBottom: 10}}>
                                                     <Button
                                                         variant="contained"
                                                         style={{backgroundColor: color.green, color: 'white'}}
@@ -269,7 +269,7 @@ class CashiersClose extends Component {
                                                         Cerrar caja
                                                     </Button>
                                                 </Grid>
-                                                <Grid item md={12} style={{ textAlign: 'center' }}>
+                                                <Grid item xs={12} style={{ textAlign: 'center' }}>
                                                     <Link to='/dashboard/cashiers' style={{ textDecoration: 'underline' }}>Volver</Link>
                                                 </Grid>
                                             </Grid>

@@ -17,9 +17,53 @@
     <title> Gerente de restaurantes </title>
     <meta name="description" content="Sistema para administración de restaurantes">
     <meta name="author" content="@AgustinMejiaM">
+
+    <!-- Facebook Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '289555036154177');
+      fbq('track', 'PageView');
+      </script>
+      <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=289555036154177&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Facebook Pixel Code -->
   </head>
 
   <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Messenger plugin del chat Code -->
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          xfbml            : true,
+          version          : 'v10.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/es_LA/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!-- Your plugin del chat code -->
+    <!-- <div class="fb-customerchat"
+      attribution="biz_inbox"
+      page_id="111894314319067">
+    </div> -->
+
     <div id="root"></div>
     <script type="text/javascript" src="/js/jquery.1.11.1.js"></script> 
     <script type="text/javascript" src="/js/bootstrap.js"></script>

@@ -38,8 +38,8 @@ export class Gallery extends Component {
               <SimpleReactLightbox>
                 <SRLWrapper options={options}>
                   {
-                    this.props.data.map(item => 
-                      <div className="col-md-4" style={{padding: 20}}>
+                    this.props.data.map((item, index) => 
+                      <div className="col-md-4" style={{padding: 20}} key={index}>
                         <a href={ item.image }>
                           <img src={ item.thumbnail } width="100%" alt={ item.caption } />
                         </a>

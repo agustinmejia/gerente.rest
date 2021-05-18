@@ -69,7 +69,7 @@ class SalesReports extends Component {
 
     componentDidMount(){
         let date = new Date();
-        this.setState({selectMonth: date.getMonth()})
+        this.setState({selectMonth: date.getMonth() +1})
     }
 
     handleSubmit = async (event) => {
@@ -404,48 +404,50 @@ const ReportGroupSales = props => {
     }
 
     return(
-        <table className="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>N&deg;</th>
-                    <th>Cliente</th>
-                    <th>Atendido por</th>
-                    <th>Detalle</th>
-                    <th>Monto</th>
-                    <th>Descuento</th>
-                    <th style={{textAlign: 'right'}}>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    data.map((item, index) => {
-                        let total = 0;
-                        let details = '';
-                        item.details.map(detail => {
-                            total += parseFloat(detail.price) * detail.quantity;
-                            details += `${detail.quantity} ${detail.product.name}, `
-                        });
-                        totalSale += total;
-                        totalDiscount += parseFloat(item.discount);
-                        return(
-                            <tr key={item.id}>
-                                <td>{ index +1 }</td>
-                                <td>{ item.customer.person.first_name }</td>
-                                <td>{ item.employe.name }</td>
-                                <td><small>{ `${details.substring(0, details.length -2)}.` }</small></td>
-                                <td>{ total.toFixed(2) } Bs.</td>
-                                <td>{ item.discount } Bs.</td>
-                                <td style={{textAlign: 'right'}}>{ (total - parseFloat(item.discount)).toFixed(2) }  Bs.</td>
-                            </tr>
-                        )
-                    })
-                }
-                <tr>
-                    <td colSpan="6"><b>TOTAL</b></td>
-                    <td style={{textAlign: 'right'}}><b>{ (totalSale - totalDiscount).toFixed(2) } Bs.</b></td>
-                </tr>
-            </tbody>
-        </table>
+        <div className="table-responsive">
+            <table className="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N&deg;</th>
+                        <th>Cliente</th>
+                        <th>Atendido por</th>
+                        <th>Detalle</th>
+                        <th>Monto</th>
+                        <th>Descuento</th>
+                        <th style={{textAlign: 'right'}}>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        data.map((item, index) => {
+                            let total = 0;
+                            let details = '';
+                            item.details.map(detail => {
+                                total += parseFloat(detail.price) * detail.quantity;
+                                details += `${detail.quantity} ${detail.product.name}, `
+                            });
+                            totalSale += total;
+                            totalDiscount += parseFloat(item.discount);
+                            return(
+                                <tr key={item.id}>
+                                    <td>{ index +1 }</td>
+                                    <td>{ item.customer.person.first_name }</td>
+                                    <td>{ item.employe.name }</td>
+                                    <td><small>{ `${details.substring(0, details.length -2)}.` }</small></td>
+                                    <td>{ total.toFixed(2) } Bs.</td>
+                                    <td>{ item.discount } Bs.</td>
+                                    <td style={{textAlign: 'right'}}>{ (total - parseFloat(item.discount)).toFixed(2) }  Bs.</td>
+                                </tr>
+                            )
+                        })
+                    }
+                    <tr>
+                        <td colSpan="6"><b>TOTAL</b></td>
+                        <td style={{textAlign: 'right'}}><b>{ (totalSale - totalDiscount).toFixed(2) } Bs.</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     );
 }
 
@@ -462,56 +464,58 @@ const ReportGroupProducts = props => {
     }
 
     return(
-        <table className="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>N&deg;</th>
-                    <th>Producto</th>
-                    <th>Precio actual</th>
-                    <th>Cantidad</th>
-                    <th>Precio de venta (~)</th>
-                    <th style={{textAlign: 'right'}}>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                    data.map((item, index) => {
-                        let quantity = 0;
-                        let total_price = 0;
-                        let avg_price = 0;
-                        
-                        item.sales.map(sale => {
-                            quantity += sale.quantity;
-                            total_price += parseFloat(sale.price);
-                        });
+        <div className="table-responsive">
+            <table className="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N&deg;</th>
+                        <th>Producto</th>
+                        <th>Precio actual</th>
+                        <th>Cantidad</th>
+                        <th>Precio de venta (~)</th>
+                        <th style={{textAlign: 'right'}}>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        data.map((item, index) => {
+                            let quantity = 0;
+                            let total_price = 0;
+                            let avg_price = 0;
+                            
+                            item.sales.map(sale => {
+                                quantity += sale.quantity;
+                                total_price += parseFloat(sale.price);
+                            });
 
-                        avg_price = item.sales.length > 0 ? total_price/item.sales.length : 0;
-                        totalSale += quantity * avg_price;
+                            avg_price = item.sales.length > 0 ? total_price/item.sales.length : 0;
+                            totalSale += quantity * avg_price;
 
-                        if(quantity > 0){
-                            return(
-                                <tr key={item.id}>
-                                    <td>{ index +1 }</td>
-                                    <td>{ item.name } { item.type }</td>
-                                    <td>{ item.price }</td>
-                                    <td>{ quantity }</td>
-                                    <td>{ avg_price.toFixed(2) } Bs.</td>
-                                    <td style={{textAlign: 'right'}}>{ (quantity * avg_price).toFixed(2) }  Bs.</td>
-                                </tr>
-                            )
-                        }
-                    })
-                }
-                <tr>
-                    <td colSpan="5"><b>DESCUENTO</b></td>
-                    <td style={{textAlign: 'right'}}><b>{ discount.toFixed(2) } Bs.</b></td>
-                </tr>
-                <tr>
-                    <td colSpan="5"><b>TOTAL</b></td>
-                    <td style={{textAlign: 'right'}}><b>{ (totalSale - discount).toFixed(2) } Bs.</b></td>
-                </tr>
-            </tbody>
-        </table>
+                            if(quantity > 0){
+                                return(
+                                    <tr key={item.id}>
+                                        <td>{ index +1 }</td>
+                                        <td>{ item.name } { item.type }</td>
+                                        <td>{ item.price }</td>
+                                        <td>{ quantity }</td>
+                                        <td>{ avg_price.toFixed(2) } Bs.</td>
+                                        <td style={{textAlign: 'right'}}>{ (quantity * avg_price).toFixed(2) }  Bs.</td>
+                                    </tr>
+                                )
+                            }
+                        })
+                    }
+                    <tr>
+                        <td colSpan="5"><b>DESCUENTO</b></td>
+                        <td style={{textAlign: 'right'}}><b>{ discount.toFixed(2) } Bs.</b></td>
+                    </tr>
+                    <tr>
+                        <td colSpan="5"><b>TOTAL</b></td>
+                        <td style={{textAlign: 'right'}}><b>{ (totalSale - discount).toFixed(2) } Bs.</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     );
 }
 

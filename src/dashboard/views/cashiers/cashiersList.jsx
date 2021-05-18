@@ -111,7 +111,7 @@ class CashiersList extends Component {
       let tableOptions = (
         <>
           { status == 1 &&
-            <Tooltip title="Movimiento de caja" placement="top" style={{marginRight: 10}}>
+            <Tooltip title="Movimiento de caja" placement="top" style={{margin: 5}}>
               <Fab aria-label="Movimiento de caja" size='small' onClick={ () => this.setState({ showDialogDetails: true, cashierDetails: details, cashierId: id }) }>
                 <IoIosJournal size={25} color={ color.secondary } />
               </Fab>
@@ -119,7 +119,7 @@ class CashiersList extends Component {
           }
 
           { status == 1 && details.length > 0 &&
-            <Link to={`/dashboard/cashiers/${id}/close`}>
+            <Link to={`/dashboard/cashiers/${id}/close`} style={{margin: 5}}>
               <Tooltip title="Cerrar caja" placement="top">
                 <Fab aria-label="Cerrar caja" size='small'>
                   <IoIosLock size={25} color={ color.primary } />
@@ -128,7 +128,7 @@ class CashiersList extends Component {
             </Link>
           }
           { status == 1 && details.length == 0 &&
-            <Tooltip title="Eliminar caja" placement="top">
+            <Tooltip title="Eliminar caja" placement="top" style={{margin: 5}}>
               <Fab aria-label="Eliminar caja" size='small' onClick={ () => this.setState({ showDialogDelete: true, deleteId: id }) }>
                 <IoIosTrash size={25} color={ color.red } />
               </Fab>

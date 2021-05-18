@@ -19,7 +19,7 @@ import {
     Switch
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications, IoMdShareAlt } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications, IoMdShareAlt, IoIosClose } from "react-icons/io";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
@@ -86,10 +86,10 @@ class Navbar extends Component {
         return (
             <header style={{ marginBottom: 0 }}>
                 <Grid container>
-                    <Grid item md={10} xs={8} >
+                    <Grid item md={10} xs={6} >
                         { this.props.title }
                     </Grid>
-                    <Grid item md={2} xs={4} style={{ display: 'flex', justifyContent: 'flex-end' }} >
+                    <Grid item md={2} xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }} >
                         <Grid container direction="row" justify="flex-end" alignItems="center">
                             <Grid item>
                                 <>
@@ -105,9 +105,9 @@ class Navbar extends Component {
                                     }
                                     {
                                         true &&
-                                        <IconButton aria-controls="simple-menu-notifications" aria-haspopup="true" onClick={ event => this.setState({anchorElNotifications: event.currentTarget}) } style={{marginRight: 20}}>
+                                        <IconButton aria-controls="simple-menu-notifications" aria-haspopup="true" onClick={ event => this.setState({anchorElNotifications: event.currentTarget}) } style={{marginRight: 10}}>
                                             <Tooltip title="Notificaciones" placement="bottom">
-                                                <IoIosNotifications size={30} />
+                                                <IoIosNotifications size={20} />
                                             </Tooltip>
                                         </IconButton>
                                     }
@@ -199,9 +199,17 @@ class Navbar extends Component {
                         </Grid>
 
                         <Drawer anchor='right' open={ this.state.drawerOpen } onClose={(e) => this.setState({drawerOpen: false}) }>
-                            <div style={{width: 350}}>
+                            <div style={{width: 320}}>
+                                <Grid container direction="row" justify="flex-end" alignItems="flex-start">
+                                    <Grid item style={{ padding: 5, cursor: 'pointer' }}>
+                                        <Tooltip title="Cerrar" placement="left">
+                                            <IoIosClose size={40} onClick={ e => this.setState({drawerOpen: false}) } color={color.gray} />
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+
                                 {/* Panel de configuración */}
-                                <Grid container direction="column" justify="flex-start" alignItems="center" style={{paddingTop: 20,}} >
+                                <Grid container direction="column" justify="flex-start" alignItems="center" >
                                     <Grid item xs={12} >
                                         <Typography variant="h6">Configuración</Typography>
                                     </Grid>
@@ -231,7 +239,7 @@ class Navbar extends Component {
                                 <div style={{padding: 10, paddingBottom: 0, paddingTop: 30,}}><Typography variant="subtitule1" color="textSecondary">Configuración de ventas</Typography></div>
                                 <Grid container direction="row" justify="space-between" alignItems="flex-start" style={{paddingLeft: 20, paddingRight: 20}} >                                  
                                     <Grid item xs={9} style={{padding: 10}}>
-                                        <Typography variant="body1">Impresion de Recibo/Factura</Typography>
+                                        <Typography variant="body1">Imprimir Recibo</Typography>
                                     </Grid>
                                     <Grid item xs={3} >
                                         <Tooltip title="Impresión de recibos al realizar un venta" placement="bottom">

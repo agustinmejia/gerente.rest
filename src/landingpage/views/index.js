@@ -13,6 +13,7 @@ import Footer from '../components/footer';
 const Index = props => {
     return(
         <>
+            <div className="fb-customerchat" attribution="biz_inbox" pageid="111894314319067"></div>
             <Navigation />
             <Header data={props.data.Header} />
             <Features data={props.data.Features} />

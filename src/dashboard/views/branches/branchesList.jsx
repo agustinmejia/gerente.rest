@@ -81,7 +81,7 @@ class BranchesList extends Component {
     createData(id, name, phones, address) {
       let tableOptions = (
         <>
-          <Link to={`/dashboard/branches/${id}/edit`} style={{marginRight: 10}}>
+          <Link to={`/dashboard/branches/${id}/edit`} style={{margin: 5}}>
             <Tooltip title="Editar sucursal" placement="top">
               <Fab aria-label="Editar sucursal" size='small'>
                 <IoIosCreate size={25} style={{color: color.skyBlue}} />
@@ -89,7 +89,7 @@ class BranchesList extends Component {
             </Tooltip>
           </Link>
           <Tooltip title="Eliminar sucursal" placement="top">
-            <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+            <Fab aria-label="Eliminar sucursal" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) } style={{margin: 5}}>
               <IoIosTrash size={25} style={{color: color.red}} />
             </Fab>
           </Tooltip>

@@ -341,7 +341,7 @@ class EmployesCreateEdit extends Component {
                                                     Debe proporcionar un correo electrónico y contraseña para que su empleado pueda ingresar al sistema y hacer uso del mismo.
                                                 </Typography>
                                             </div>
-                                            <Grid item xs={6}>
+                                            <Grid item md={6}>
                                                 <TextField
                                                     variant="outlined"
                                                     required
@@ -354,7 +354,7 @@ class EmployesCreateEdit extends Component {
                                                     onChange={ event => this.setState({email: event.target.value}) }
                                                 />
                                             </Grid>
-                                            <Grid item xs={6}>
+                                            <Grid item md={6}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
                                                     <OutlinedInput

@@ -39,7 +39,7 @@ export const FormButtons = (props) => {
     return(
         <div style={{ paddingTop: 80 }}>
             <Grid container spacing={2} direction="row" justify="flex-end" style={{position: 'fixed', bottom: 0, right: 0, backgroundColor: 'white', padding: 20, zIndex: 10}}>
-                <Grid item xs={4} sm={3}>
+                <Grid item xs={6} md={3}>
                     <Link to={ props.back }>
                         <Button
                             fullWidth
@@ -51,7 +51,7 @@ export const FormButtons = (props) => {
                         </Button>
                     </Link>
                 </Grid>
-                <Grid item xs={4} sm={3}>
+                <Grid item xs={6} md={3}>
                     <Button
                         type="submit"
                         fullWidth
@@ -84,7 +84,7 @@ export const LoadingList = props => {
     return(
         <Grid container direction="column" justify="center" alignItems="center" style={{padding: 40}}>
             <CircularProgress style={{color: color.primary}}/>
-            <Typography variant="body" color="textSecondary" style={{ margin: 10}}>Cargando...</Typography>
+            <Typography variant="body2" color="textSecondary" style={{ margin: 10}}>Cargando...</Typography>
         </Grid>
         
     );

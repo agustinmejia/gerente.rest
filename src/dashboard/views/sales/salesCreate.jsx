@@ -48,13 +48,14 @@ import {
     ToggleButton
 } from '@material-ui/lab';
 
-import { IoIosMenu, IoIosAddCircleOutline, IoIosCreate, IoIosList, IoIosKeypad, IoIosCart, IoIosTrash } from "react-icons/io";
+import { IoIosMenu, IoIosAddCircleOutline, IoIosCreate, IoIosList, IoIosKeypad, IoIosCart, IoIosTrash, IoIosBasket } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
 import { io } from "socket.io-client";
+import CounterInput from "react-counter-input";
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
@@ -548,16 +549,16 @@ class SalesCreate extends Component {
                                 >
                                     <Grid item>
                                         <h1 style={{marginLeft: 20, color: 'rgba(0,0,0,0.6)'}}>
-                                            Caja - { this.state.cashier ? this.state.cashier.name : 'cerrada' }
+                                            Caja { this.state.cashier ? this.state.cashier.name : 'cerrada' }
                                         </h1>
                                     </Grid>
-                                    <Grid item style={{paddingTop: 10}}>
+                                    {/* <Grid item style={{paddingTop: 10}}>
                                         <Tooltip title="Cambiar de sucursal" placement="bottom">
                                             <IconButton aria-label="Cambiar de sucursal" color='primary' onClick={ event => this.props.enqueueSnackbar('Ésta opción no está disponible para tu tipo de suscripción.', { variant: 'warning' }) }>
                                                 <FaRegEdit />
                                             </IconButton>
                                         </Tooltip>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             }
                         />
@@ -582,7 +583,7 @@ class SalesCreate extends Component {
                         </Grid>
 
                         { this.state.cashier === null && this.state.loadCashier === false &&
-                            <Alert severity="error">
+                            <Alert severity="error" style={{ marginBottom: 10 }}>
                                 <AlertTitle>Advertencia</AlertTitle>
                                 Debes abrir caja para registrar tus ventas realizadas.
                                 <Button variant="outlined" color="secondary" onClick={ e => this.setState({showDialogCashier: true}) } style={{marginLeft: 10}}>
@@ -663,9 +664,9 @@ class SalesCreate extends Component {
                                     <Grid container>
 
                                         {/* Select customer */}
-                                        <Grid item sm={12}>
+                                        <Grid item xs={12} sm={12}>
                                             <Grid container>
-                                                <Grid item xs={8} sm={10} style={{margin: 0}}>
+                                                <Grid item xs={9} sm={10} style={{margin: 0}}>
                                                     <Autocomplete
                                                         id="combo-customers"
                                                         fullWidth
@@ -688,7 +689,7 @@ class SalesCreate extends Component {
                                                         value={ this.state.selectCustomerSelected }
                                                     />
                                                 </Grid>
-                                                <Grid item xs={4} sm={2} style={{paddingLeft: 5}}>
+                                                <Grid item xs={3} sm={2} style={{paddingLeft: 5}}>
                                                     {
                                                         this.state.selectCustomerId == 1 &&
                                                         <Tooltip title="Crear nuevo" placement="top">
@@ -711,7 +712,7 @@ class SalesCreate extends Component {
                                         </Grid>
 
                                         {/* Type sale */}
-                                        <Grid item sm={12} style={{marginTop: 10}}>
+                                        <Grid item xs={12} style={{marginTop: 10}}>
                                             <RadioGroup row aria-label="position" name="position" defaultValue={ this.state.radioSaleType }>
                                                 <Grid container direction="row" justify="space-around" alignItems="flex-start">
                                                     <Grid item>
@@ -744,26 +745,26 @@ class SalesCreate extends Component {
                                         </Grid>
 
                                         {/* Amounts */}
-                                        <Grid item md={12}>
+                                        <Grid item xs={12}>
                                             <Grid container direction="row" justify="flex-end" alignItems="flex-end">
-                                                <Grid item md={6} style={{textAlign: 'right', padding: 10}}>
+                                                <Grid item xs={6} md={5} style={{textAlign: 'right', padding: 10}}>
                                                     <TextField
                                                         id="input-amount" 
                                                         label="Monto recibido"
                                                         inputProps={{ type: 'number', min: '0', step: '0.5' }}
-                                                        onClick={ e => e.target.select() }
+                                                        // onClick={ e => e.target.select() }
                                                         value={ this.state.amountReceived }
                                                         onChange={ e => this.setState({amountReceived: e.target.value}) }
                                                     />
                                                 </Grid>
-                                                <Grid item md={6} style={{textAlign: 'right', padding: 10}}>
+                                                <Grid item xs={6} md={7} style={{textAlign: 'right', padding: 10}}>
                                                     <Typography variant='h4'>{ this.state.inputSaleAmount.toFixed(2) } <small style={{ fontSize: 15, padding: 0 }}>Bs.</small> </Typography>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
                                         {/* Alert refund amount */}
-                                        <Grid item md={12} style={{paddingTop: 0, paddingBottom: 10}}>
+                                        <Grid item xs={12} style={{paddingTop: 0, paddingBottom: 10}}>
                                             {
                                                 this.state.amountReceived == '' &&
                                                 <Alert severity="info">Ingresa el monto recibido por el cliente</Alert>
@@ -798,7 +799,7 @@ class SalesCreate extends Component {
                                             />
                                         </Grid> */}
 
-                                        <Grid item md={12} style={{paddingBottom: 10}}>
+                                        <Grid item xs={12} md={12} style={{paddingBottom: 10}}>
                                             <Button
                                                 variant="contained"
                                                 style={{backgroundColor: color.primary, color: 'white'}}
@@ -812,7 +813,7 @@ class SalesCreate extends Component {
                                             </Button>
 
                                         </Grid>
-                                        <Grid item md={12} style={{ textAlign: 'center', paddingBottom: 10 }}>
+                                        <Grid item xs={12} md={12} style={{ textAlign: 'center', paddingBottom: 10 }}>
                                             <Link to='/dashboard/sales' style={{ textDecoration: 'underline' }}>Ver lista de ventas</Link>
                                         </Grid>
                                     </Grid>
@@ -829,10 +830,10 @@ class SalesCreate extends Component {
                                     <Table size="small" aria-label="a dense table">
                                         <TableHead>
                                         <TableRow>
-                                            <TableCell>Producto</TableCell>
-                                            <TableCell align="right">Precio</TableCell>
-                                            <TableCell align="right">Cantidad</TableCell>
-                                            <TableCell align="right">Subtotal</TableCell>
+                                            <TableCell><Typography variant="subtitle2" color="textSecondary">Producto</Typography></TableCell>
+                                            <TableCell align="right"><Typography variant="subtitle2" color="textSecondary">Precio</Typography></TableCell>
+                                            <TableCell align="right"><Typography variant="subtitle2" color="textSecondary">Cantidad</Typography></TableCell>
+                                            <TableCell align="right"><Typography variant="subtitle2" color="textSecondary">Subtotal</Typography></TableCell>
                                             <TableCell></TableCell>
                                         </TableRow>
                                         </TableHead>
@@ -851,7 +852,7 @@ class SalesCreate extends Component {
                                                         />
                                                         <div>
                                                             <CardContent style={{ paddingTop: 0, paddingBottom: 10, }}>
-                                                                <Typography noWrap={true} component="h6" variant="h6">{ row.name }</Typography>
+                                                                <Typography noWrap={true} variant="subtitle2"><b>{ row.name }</b></Typography>
                                                                 <Typography noWrap={true} variant="subtitle2" color="textSecondary">{ row.type ? row.type : row.short_description }</Typography>
                                                             </CardContent>
                                                         </div>
@@ -859,14 +860,21 @@ class SalesCreate extends Component {
                                                     }
                                                 </TableCell>
                                                 <TableCell align="right">{ row.price }</TableCell>
-                                                <TableCell align="right">
-                                                    <TextField
+                                                <TableCell align="right" style={{ width: 95 }}>
+                                                    {/* <TextField
                                                         id={`input-quantity-${row.code}`} 
                                                         value={ row.quantity }
                                                         inputProps={{ type: 'number', min: '1', step: '1', style: {fontSize: 20, textAlign: 'center'} }}
                                                         style={{ width: 80 }}
                                                         onChange={ (e) => this.handleChangeQuantity(row.code, e.target.value) }
                                                         onClick={ e => e.target.select() }
+                                                    /> */}
+                                                    <CounterInput
+                                                        count={1}
+                                                        min={1}
+                                                        onCountChange={count => this.handleChangeQuantity(row.code, count)}
+                                                        btnStyle={{ backgroundColor: color.primary, color: 'white', borderRadius: 3, padding: '5px 10px' }}
+                                                        inputStyle={{ height: 28 }}
                                                     />
                                                 </TableCell>
                                                 <TableCell align="right">{ row.subtotal }</TableCell>
@@ -914,10 +922,10 @@ class SalesCreate extends Component {
                                 alignItems="center"
                                 style={{marginTop: 50, marginBottom: 50}}
                             >
-                                <div style={{marginBottom: 10}}>
+                                {/* <div style={{marginBottom: 10}}>
                                     <img src="/img/dashboard/cart-empty.png" style={{width: 200}}/>
-                                </div>
-                                <Typography variant='h5'>Cesta de productos vacía</Typography>
+                                </div> */}
+                                <Typography color="textSecondary" variant='h5'>Cesta de productos vacía <IoIosBasket size={30} /> </Typography>
                             </Grid>
                         }
 
@@ -978,20 +986,20 @@ class SalesCreate extends Component {
                                             {/* Sale info */}
                                             <Grid item md={6} xs={12} style={{ backgroundColor: color.secondary }}>
                                                 <Grid item md={12} style={{ textAlign: 'center', marginTop: 20}}>
-                                                    <Typography variant='h4' style={{ color: 'white' }} >{ this.state.checkType ? 'Factura' : 'Recibo de venta' }</Typography>
+                                                    <Typography variant='h5' style={{ color: 'white' }} >{ this.state.checkType ? 'Factura' : 'Recibo de venta' }</Typography>
                                                 </Grid>
                                                 <Grid container style={{ padding: 30, marginTop: 20 }}>
-                                                    <Grid item md={12}>
+                                                    <Grid item xs={12}>
                                                         <Typography variant='body2' style={{ color: 'white' }} >Cliente</Typography>
                                                         <Typography variant='h6' noWrap={false} style={{ color: 'white' }} >{ this.state.selectCustomerSelected.id == 1 ? 'Sin nombre' : `${this.state.selectCustomerSelected.person.first_name} ${this.state.selectCustomerSelected.person.last_name}` }</Typography>
                                                     </Grid>
-                                                    <Grid item md={12} style={{marginTop: 10}}>
+                                                    <Grid item xs={12} style={{marginTop: 10}}>
                                                         <Typography variant='body2' style={{ color: 'white' }} >NIT</Typography>
                                                         <Typography variant='h6' noWrap={false} style={{ color: 'white' }} >{ this.state.selectCustomerSelected.id == 1 ? '00000' : `${this.state.selectCustomerSelected.person.ci_nit}` }</Typography>
                                                     </Grid>
                                                 </Grid>
                                                 <Grid container direction="column" justify="flex-end" alignItems="flex-end" style={{paddingRight: 10 }}>
-                                                    <Grid item md={12} style={{textAlign: 'right', paddingBottom: 10}}>
+                                                    <Grid item xs={12} style={{textAlign: 'right', paddingBottom: 10}}>
                                                         <Typography variant='body2' style={{ color: 'white' }}>Monto total</Typography>
                                                         <Typography variant='h3' style={{ color: 'white' }}>{ this.state.inputSaleAmount.toFixed(2) } <small style={{ fontSize: 15, padding: 0, color: 'white' }}>Bs.</small> </Typography>
                                                     </Grid>
@@ -1136,7 +1144,7 @@ class SalesCreate extends Component {
                                                 name="amount"
                                                 helperText="Monto de apertura de la caja."
                                                 inputProps={{ type: 'number', min: '0', step: '0.5' }}
-                                                onClick={ e => e.target.select() }
+                                                // onClick={ e => e.target.select() }
                                                 error={ this.state.inputAmountCashierError }
                                                 value={ this.state.inputAmountCashier }
                                                 onChange={ event => this.setState({inputAmountCashier: event.target.value, inputAmountCashierError: false}) }
@@ -1170,7 +1178,7 @@ class SalesCreate extends Component {
 const CardProduct = props => {
     let { product } = props;
     return(
-        <Grid item xs={12} sm={3} onClick={ props.onClick }>
+        <Grid item xs={6} sm={3} onClick={ props.onClick }>
             <Tooltip title={ product.short_description }  >
                 <Card >
                     <CardActionArea>
@@ -1183,7 +1191,7 @@ const CardProduct = props => {
                         <CardContent>
                             <Grid container spacing={2} style={{marginTop: -20}}>
                                 <Grid item sm={12}>
-                                    <Typography noWrap={true}><b>{ product.name }</b></Typography>
+                                    <Typography noWrap={true} variant='subtitle2'><b>{ product.name }</b></Typography>
                                     <Typography noWrap={true} variant='subtitle2'>{ product.type ? product.type : product.short_description }</Typography>
                                 </Grid>
                                 <Grid container style={{marginTop: -10}} justify="flex-end">

@@ -103,20 +103,20 @@ class salesList extends Component {
         <>
         { status.id == 2 &&
           <Tooltip title="Pedido listo" placement="top">
-            <Fab aria-label="Pedido listo" size='small' onClick={ () => this.handleStatus(id, 3) } style={{marginRight: 10}}>
+            <Fab aria-label="Pedido listo" size='small' onClick={ () => this.handleStatus(id, 3) } style={{margin: 5}}>
               <IoMdTime size={25} style={{color: color.green}} />
             </Fab>
           </Tooltip>
         }
         { status.id == 3 &&
           <Tooltip title="Pedido entregada" placement="top">
-            <Fab aria-label="Pedido entregada" size='small' onClick={ () => this.handleStatus(id, 5) } style={{marginRight: 10}}>
+            <Fab aria-label="Pedido entregada" size='small' onClick={ () => this.handleStatus(id, 5) } style={{margin: 5}}>
               <IoMdThumbsUp size={25} style={{color: color.blue}} />
             </Fab>
           </Tooltip>
         }
           <Tooltip title="Eliminar venta" placement="top">
-              <Fab aria-label="Eliminar venta" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) }>
+              <Fab aria-label="Eliminar venta" size='small' onClick={ () => this.setState({ showDialog: true, deleteId: id }) } style={{margin: 5}}>
                   <IoIosTrash size={25} style={{color: color.red}} />
               </Fab>
           </Tooltip>

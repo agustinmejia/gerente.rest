@@ -130,7 +130,7 @@ class ProductsList extends Component {
       );
       let tableOptions = (
         <>
-          <Link to={`/dashboard/products/${id}/edit`} style={{marginRight: 10}}>
+          <Link to={`/dashboard/products/${id}/edit`} style={{margin: 5}}>
             <Tooltip title="Editar productos" placement="top">
               <Fab aria-label="Editar productos" size='small'>
                 <IoIosCreate size={25} style={{color: color.skyBlue}} />
@@ -138,7 +138,7 @@ class ProductsList extends Component {
             </Tooltip>
           </Link>
           <Tooltip title="Eliminar productos" placement="top">
-            <Fab aria-label="Eliminar productos" size='small' onClick={ () => this.setState({ showDialogDelete: true, deleteId: id }) }>
+            <Fab aria-label="Eliminar productos" size='small' onClick={ () => this.setState({ showDialogDelete: true, deleteId: id }) } style={{margin: 5}}>
               <IoIosTrash size={25} style={{color: color.red}} />
             </Fab>
           </Tooltip>
