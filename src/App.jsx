@@ -45,6 +45,7 @@ import SalesReports from "./dashboard/views/reports/sales";
 
 // Config
 import Profile from "./dashboard/views/config/profile";
+import About from "./dashboard/views/about/about";
 
 // Pages default
 import Error404 from "./dashboard/views/errors/404";
@@ -152,6 +153,7 @@ export class App extends Component {
             <GuardedRoute exact path="/dashboard/reports/sales" meta={{ auth: true }} render={(props) => <SalesReports {...props}/>} />
 
             <GuardedRoute exact path="/dashboard/profile" meta={{ auth: true }} render={(props) => <Profile {...props}/>} />
+            <GuardedRoute exact path="/dashboard/about" meta={{ auth: true }} render={(props) => <About {...props}/>} />
 
             {/* Not found */}
             <Route path="*" component={Error404} />

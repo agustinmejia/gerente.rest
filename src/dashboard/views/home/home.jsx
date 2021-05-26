@@ -13,6 +13,7 @@ import {
     ListItemText,
     Tooltip
 } from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 import { IoIosMenu, IoMdHome, IoMdBus, IoMdInformationCircle, IoMdArrowDropright, IoMdGitBranch, IoIosRestaurant, IoLogoBuffer, IoIosContacts, IoMdCart, IoMdCash } from "react-icons/io";
 
 import { connect } from 'react-redux';
@@ -138,6 +139,7 @@ class Home extends Component {
             },
             sidebarToggled: false,
             tourActive: false,
+            subscription: {},
             // Metrics
             cashAmount: 0,
             countCustomer: 0,
@@ -156,7 +158,10 @@ class Home extends Component {
     }
 
     async componentDidMount(){
-        let { user, company } = this.props.authSession;
+        let { user, company, subscription } = this.props.authSession;
+        this.setState({
+            subscription: subscription ? subscription : {}
+        });
         let res = await fetch(`${API}/api/comapny/${company.id}/metrics/${user.id}`, {headers: this.state.headers})
                         .then(res => res.json())
                         .catch(error => ({'error': error}));
@@ -321,22 +326,23 @@ class Home extends Component {
                         <>
                             <div className="row" style={{ margin: 20, marginTop: 50, marginBottom: 100 }}>
                                 <Grid container spacing={3}>
-                                    <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
+                                    { this.state.subscription.id && <AlertSubscription date={ this.state.subscription } /> }
+                                    <Grid item lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
                                         <CardMetrics url="dashboard/cashiers" title="Dinero en caja" value={ this.state.cashAmount } color={ color.blue } icon={ <IoMdCash size={50} color={ color.blue } /> } />
                                     </Grid>
-                                    <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
+                                    <Grid item lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
                                         <CardMetrics url="dashboard/sales" title="Nro de ventas" value={ this.state.countSales } color={ color.green } icon={ <IoMdCart size={50} color={ color.green } /> } />
                                     </Grid>
-                                    <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
+                                    <Grid item lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
                                         <CardMetrics url="dashboard/products" title="Productos" value={ this.state.countProducts } color={ color.red } icon={ <IoLogoBuffer size={50} color={ color.red } /> } />
                                     </Grid>
-                                    <Grid lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
-                                        <CardMetrics title="Clientes" value={ this.state.countCustomer } color={ color.yellow } icon={ <IoIosContacts size={50} color={ color.yellow } /> } />
+                                    <Grid item lg={3} sm={6} xl={3} xs={12} style={{padding: 10}} >
+                                        <CardMetrics url="#" title="Clientes" value={ this.state.countCustomer } color={ color.yellow } icon={ <IoIosContacts size={50} color={ color.yellow } /> } />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container spacing={3} style={{ marginTop: 50 }}>
-                                    <Grid lg={8} sm={6} xl={8} xs={12} style={{padding: 10}} >
+                                    <Grid item lg={8} sm={6} xl={8} xs={12} style={{padding: 10}} >
                                         <Card>
                                             <CardContent>
                                                 <div style={{marginBottom: 10}}>
@@ -351,7 +357,7 @@ class Home extends Component {
                                             </CardContent>
                                         </Card>
                                     </Grid>
-                                    <Grid lg={4} sm={6} xl={4} xs={12} style={{padding: 10}} >
+                                    <Grid item lg={4} sm={6} xl={4} xs={12} style={{padding: 10}} >
                                         <Card>
                                             <CardContent>
                                                 <div style={{marginBottom: 10}}>
@@ -431,6 +437,34 @@ const CardMetrics = (props) => (
         </Card>
     </Link>
 );
+
+const AlertSubscription = props => {
+    var today  = moment().format("YYYYMMDD");
+    var end = moment(props.date.end, "YYYYMMDD");
+    var diff = end.diff(today, "days");
+    if(diff <= 50){
+        return(
+            <Grid item xs={12}>
+                <Alert variant="filled" severity="warning">
+                    Tu suscripción expira en { diff } días, por favor contáctanos para obtener información acerca de los métodos de pago.
+                    <Link to="dashboard/about">
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            endIcon={<IoMdInformationCircle />}
+                            style={{ marginLeft: 20, backgroundColor: color.primary }}
+                        >
+                            Mas información
+                        </Button>
+                    </Link>
+                </Alert>
+            </Grid>
+        );
+    }else{
+        return <></>
+    }
+}
 
 YoutubeEmbed.propTypes = {
     embedId: PropTypes.string.isRequired

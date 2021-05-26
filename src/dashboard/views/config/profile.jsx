@@ -12,13 +12,16 @@ import {
     IconButton,
     OutlinedInput,
     InputAdornment,
-    Typography
+    Typography,
+    Chip
 }from '@material-ui/core';
 import { IoIosMenu, IoIosCamera, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+import 'moment/locale/es';
 
 // Components
 import Sidebar from "../../components/sidebar/sidebar";
@@ -49,13 +52,14 @@ class Profile extends Component {
             password: '',
             picture: `${API}/images/user.svg`,
             filePicture: null,
-            showPassword: false
+            showPassword: false,
+            subscription: {}
         }
     }
 
     componentDidMount(){
         // If edit get data employe
-        const { user } = this.props.authSession;
+        const { user, subscription } = this.props.authSession;
         const { person } = user.owner ? user.owner : user.employe;
         this.setState({
             id: user.id,
@@ -64,7 +68,8 @@ class Profile extends Component {
             ci: person.ci_nit ? person.ci_nit : '',
             phone: person.phone ? person.phone : '',
             address: person.address ? person.address : '',
-            email: user.email
+            email: user.email,
+            subscription: subscription ? subscription : {}
         });
 
         if(user.avatar){
@@ -130,7 +135,7 @@ class Profile extends Component {
         let role = 'Desconocido';
         if(user){
             if(user.owner){
-                role = 'Propietario';
+                role = 'Propietario(a)';
             }else if(user.employe){
                 if(user.roles.length > 0){
                     role = user.roles[0].name;
@@ -157,7 +162,7 @@ class Profile extends Component {
                             <form onSubmit={ this.handleSubmit } >
                                 <Grid container spacing={2} direction="row" justify="center" alignItems="flex-start">
                                     <Grid item xs={12} sm={4}>
-                                        <Paper style={{ backgroundColor: 'white', padding: 30, paddingBottom: 40, marginTop: 50}}>
+                                        <Paper style={{ backgroundColor: 'white', padding: 30, paddingBottom: 30, marginTop: 50}}>
                                             <Grid container direction="column" justify="center" alignItems="center">
                                                 <Grid item xs={12}>
                                                     <CardMedia
@@ -182,11 +187,33 @@ class Profile extends Component {
                                                 </Grid>
                                             </Grid>
                                         </Paper>
+                                        <Paper style={{ backgroundColor: 'white', padding: 30, paddingTop: 10, marginTop: 30}}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12} style={{margin:10}}>
+                                                    <Grid container alignItems="center">
+                                                        <Grid item xs={12}>
+                                                            <Typography gutterBottom variant="h6">Suscripción <Chip size="small" label={ this.state.subscription.id ? this.state.subscription.type.name : 'Desconocida' } style={{ backgroundColor: this.state.subscription.id ? this.state.subscription.type.color : '#566573', color: 'white' }} /> </Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Typography color="textSecondary" variant="body2">
+                                                        Datos de su suscripción actual.
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Typography variant="body2" color="textSecondary">Fecha de inicio</Typography>
+                                                    <Typography variant="subtitle1">{ this.state.subscription.id ? moment(this.state.subscription.start).format('DD [de] MMMM YYYY') : 'No definida' }</Typography>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Typography variant="body2" color="textSecondary">Fecha de finalización</Typography>
+                                                    <Typography variant="subtitle1">{ this.state.subscription.id ? moment(this.state.subscription.end).format('DD [de] MMMM YYYY') : 'No definida' }</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Paper>
                                     </Grid>
                                     <Grid item xs={12} sm={8}>
                                         <Paper style={{ backgroundColor: 'white', padding: 30, paddingTop: 10, marginTop: 50}}>
                                             <Grid container spacing={2}>
-                                                <div style={{ margin: 20, marginBottom: 30 }}>
+                                                <Grid item xs={12} style={{margin:10}}>
                                                     <Grid container alignItems="center">
                                                         <Grid item xs>
                                                             <Typography gutterBottom variant="h6">Datos personales</Typography>
@@ -195,7 +222,7 @@ class Profile extends Component {
                                                     <Typography color="textSecondary" variant="body2">
                                                         Puedes modificar tus datos personales registrados en nuestra plataforma.
                                                     </Typography>
-                                                </div>
+                                                </Grid>
                                                 <Grid item xs={12} sm={6}>
                                                     <TextField
                                                         name="name"
@@ -271,9 +298,9 @@ class Profile extends Component {
                                             </Grid>
                                         </Paper>
 
-                                        <Paper style={{ backgroundColor: 'white', padding: 30, paddingTop: 10, marginTop: 30}}>
+                                        <Paper style={{ backgroundColor: 'white', padding: 30, paddingTop: 10, marginTop: 30, paddingBottom: 66}}>
                                             <Grid container spacing={2}>
-                                                <div style={{margin:10, marginTop: 20, marginBottom: 30}}>
+                                                <Grid item xs={12} style={{margin:10}}>
                                                     <Grid container alignItems="center">
                                                         <Grid item xs>
                                                             <Typography gutterBottom variant="h6">Datos de inicio de sesión</Typography>
@@ -282,8 +309,8 @@ class Profile extends Component {
                                                     <Typography color="textSecondary" variant="body2">
                                                         Datos de usuario que sirven para que inicies sesión en nuestra plataforma.
                                                     </Typography>
-                                                </div>
-                                                <Grid item xs={6}>
+                                                </Grid>
+                                                <Grid item xs={12} sm={6}>
                                                     <TextField
                                                         variant="outlined"
                                                         required
@@ -296,7 +323,7 @@ class Profile extends Component {
                                                         onChange={ event => this.setState({email: event.target.value}) }
                                                     />
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     <FormControl fullWidth variant="outlined">
                                                         <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
                                                         <OutlinedInput

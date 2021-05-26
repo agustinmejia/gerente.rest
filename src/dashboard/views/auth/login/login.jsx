@@ -110,9 +110,10 @@ function SignInSide(props) {
         .then(res => res.json())
         .catch(error => ({'errorServer': error}));
         setLoading(false);
+
         if(login.user){
             if(social_token && social_token !== login.social_token){
-                setErrorMessage('Error inesperado, intente nuevamente;');
+                setErrorMessage('Error inesperado, intente nuevamente!');
                 return;
             }
             
@@ -137,7 +138,7 @@ function SignInSide(props) {
             if(login.error){
                 setErrorMessage(login.error);
             }else{
-                setErrorMessage('Ocurrió un error en nuestro servidor, intente nuevamente;');
+                setErrorMessage('Ocurrió un error en nuestro servidor, intente nuevamente!');
             }
         }
     }

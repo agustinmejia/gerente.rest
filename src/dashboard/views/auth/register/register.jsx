@@ -227,7 +227,7 @@ function SignUp(props) {
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item sm={6} xs={12}>
                                 <TextFieldCustom
                                     required={true}
                                     id="email"
@@ -239,7 +239,7 @@ function SignUp(props) {
                                     inputProps={{ type: 'email', maxLength: 50 }}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item sm={6} xs={12}>
                                 <FormControl fullWidth variant="outlined">
                                     <InputLabel htmlFor="outlined-adornment-password">Contraseña para el sistema</InputLabel>
                                     <OutlinedInput

@@ -19,7 +19,7 @@ import {
     Switch
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications, IoMdShareAlt, IoIosClose } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdPerson, IoMdOptions, IoMdPower, IoIosNotifications, IoMdShareAlt, IoIosClose, IoIosCode } from "react-icons/io";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
@@ -176,6 +176,14 @@ class Navbar extends Component {
                                             </ListItemIcon>
                                             <ListItemText primary="Configuración" style={{ color: color.primary }} />
                                         </ListItem>
+                                        <Link to="/dashboard/about">
+                                            <ListItem button>
+                                                <ListItemIcon>
+                                                    <IoIosCode size={20} color={ color.primary } />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Acerca de" />
+                                            </ListItem>
+                                        </Link>
                                     </List>
                                     <Divider style={{width: '100%'}} />
                                     <List component="nav" aria-label="Salir">
